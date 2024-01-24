@@ -2,30 +2,19 @@ using MediatR;
 
 namespace JobBoard;
 
-public record CreateJobPostCommand(
-    int CategoryId,
-    int CountryId,
-    int EmploymentTypeId,
-    string Title,
-    string Description,
-    string CompanyName,
-    string ApplyUrl,
-    bool IsRemote,
-    bool IsFeatured,
-    string? City,
-    int? MinSalary,
-    int? MaxSalary,
-    string? Currency
-) : IRequest<Result<Unit, Error>>;
-
-public class CreateJobPostCommandHandler
-    : IRequestHandler<CreateJobPostCommand, Result<Unit, Error>>
+public record CreateJobPostCommand : IRequest<Result<CreateJobPostResponse, Error>>
 {
-    public async Task<Result<Unit, Error>> Handle(
-        CreateJobPostCommand request,
-        CancellationToken cancellationToken
-    )
-    {
-        return Unit.Value;
-    }
+    public required int CategoryId { get; init; }
+    public required int CountryId { get; init; }
+    public required int EmploymentTypeId { get; init; }
+    public required string Description { get; init; }
+    public required string Title { get; init; }
+    public required string CompanyName { get; init; }
+    public required string ApplyUrl { get; init; }
+    public required bool IsRemote { get; init; }
+    public required bool IsFeatured { get; init; }
+    public string? City { get; init; }
+    public int? MinSalary { get; init; }
+    public int? MaxSalary { get; init; }
+    public string? Currency { get; init; }
 }

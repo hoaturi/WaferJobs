@@ -26,5 +26,13 @@ public readonly struct ErrorCodes
     // Validation Errors
     public static readonly ErrorCodes ValidationFailed = new("VA001");
 
+    // Email Errors
+    public static readonly ErrorCodes EmailSendFailed = new("EM001");
+
+    // Payment Errors
+    public static readonly ErrorCodes CreateSessionFailed = new("PA001");
+    public static readonly ErrorCodes CreateCustomerFailed = new("PA002");
+
+    // Internal Server Errors
     public static readonly ErrorCodes InternalServerError = new("IN001");
 }

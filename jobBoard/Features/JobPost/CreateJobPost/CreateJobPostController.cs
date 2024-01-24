@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard;
@@ -10,6 +11,7 @@ public class CreateJobPostController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
+    [Authorize(policy: RolePolicy.Business)]
     [HttpPost]
     public async Task<IActionResult> CreateJobPost(CreateJobPostCommand command)
     {
@@ -20,6 +22,6 @@ public class CreateJobPostController(ISender sender) : BaseController
             return HandleFailure(result.Error);
         }
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 }
