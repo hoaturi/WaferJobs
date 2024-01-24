@@ -15,6 +15,11 @@ public class GetJobPostController(ISender sender) : BaseController
     {
         var result = await _sender.Send(new GetJobPostQuery(id));
 
-        return Ok(result);
+        if (!result.IsSuccess)
+        {
+            return NotFound(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }
