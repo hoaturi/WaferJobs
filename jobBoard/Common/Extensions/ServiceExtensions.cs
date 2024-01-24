@@ -97,9 +97,10 @@ public static class ServiceExtensions
     // Registers Infrastructure Services
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddTransient<IEmailSender, EmailSender>();
+        services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<IJwtService, JwtService>();
         services.AddTransient<ICurrentUserService, CurrentUserService>();
+        services.AddTransient<IPaymentService, PaymentService>();
 
         return services;
     }
@@ -156,6 +157,12 @@ public static class ServiceExtensions
         services
             .AddOptions<RedisOptions>()
             .Bind(configuration.GetSection(RedisOptions.Key))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddOptions<StripeOptions>()
+            .Bind(configuration.GetSection(StripeOptions.Key))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 

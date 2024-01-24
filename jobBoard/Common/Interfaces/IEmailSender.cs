@@ -1,6 +1,6 @@
 ﻿namespace JobBoard;
 
-public interface IEmailSender
+public interface IEmailService
 {
     Task SendPasswordResetEmailAsync(EmailDto emailDto);
 }

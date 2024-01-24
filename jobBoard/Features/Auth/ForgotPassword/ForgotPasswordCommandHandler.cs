@@ -5,11 +5,11 @@ namespace JobBoard;
 
 public class ForgotPasswordCommandHandler(
     UserManager<ApplicationUser> userManager,
-    IEmailSender emailSender
+    IEmailService emailSender
 ) : IRequestHandler<ForgotPasswordCommand, Result<Unit, Error>>
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IEmailSender _emailSender = emailSender;
+    private readonly IEmailService _emailSender = emailSender;
 
     public async Task<Result<Unit, Error>> Handle(
         ForgotPasswordCommand request,
