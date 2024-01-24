@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using FluentAssertions;
+﻿using FluentAssertions;
 using JobBoard;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -37,11 +36,7 @@ public class SignupCommandHandlerTests
     public async Task WhenSuccessful_ShouldCreateUserWithRoles_And_ReturnUnit()
     {
         // Arrange
-        var request = new SignUpCommand(
-            "test@test.com",
-            "password",
-            RoleTypes.JobSeeker.ToString()
-        );
+        var request = new SignUpCommand("test@test.com", "password");
 
         _mockUserManager
             .Setup(x => x.FindByEmailAsync(request.Email))
@@ -52,7 +47,9 @@ public class SignupCommandHandlerTests
             .ReturnsAsync(IdentityResult.Success);
 
         _mockUserManager
-            .Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), request.Role))
+            .Setup(
+                x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), RoleTypes.JobSeeker.ToString())
+            )
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -68,7 +65,7 @@ public class SignupCommandHandlerTests
             Times.Once
         );
         _mockUserManager.Verify(
-            x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), request.Role),
+            x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), RoleTypes.JobSeeker.ToString()),
             Times.Once
         );
     }
@@ -77,11 +74,7 @@ public class SignupCommandHandlerTests
     public async Task WithExistingUser_ShouldReturnUserAlreadyExistsError()
     {
         // Arrange
-        var request = new SignUpCommand(
-            "existing@test.com",
-            "password",
-            RoleTypes.JobSeeker.ToString()
-        );
+        var request = new SignUpCommand("existing@test.com", "password");
 
         var existingUser = new ApplicationUser { Id = Guid.NewGuid(), Email = request.Email };
 

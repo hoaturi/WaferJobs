@@ -32,7 +32,7 @@ public class UpdateBusinessCommandTests
         var business = new Business
         {
             Name = "Test Business",
-            Size = "5",
+            BusinessSizeId = 5,
             Description = "Test Description",
             Location = "Test Location",
             Url = "https://test.com",
@@ -41,15 +41,16 @@ public class UpdateBusinessCommandTests
             UserId = user.Id
         };
 
-        var request = new UpdateBusinessCommand(
-            "Updated Business",
-            2,
-            "Updated Description",
-            "Updated Location",
-            "https://updated.com",
-            "https://twitter.com/updated",
-            "https://linkedin.com/updated"
-        );
+        var request = new UpdateBusinessCommand
+        {
+            Name = "Updated Business",
+            BusinessSizeId = 2,
+            Description = "Updated Description",
+            Location = "Updated Location",
+            Url = "https://updated.com",
+            TwitterUrl = "https://twitter.com/updated",
+            LinkedInUrl = "https://linkedin.com/updated"
+        };
 
         _appDbContext.Users.Add(user);
         _appDbContext.Businesses.Add(business);
@@ -71,7 +72,7 @@ public class UpdateBusinessCommandTests
         updatedBusiness.Name.Should().Be(request.Name);
         updatedBusiness.Description.Should().Be(request.Description);
         updatedBusiness.Location.Should().Be(request.Location);
-        updatedBusiness.Size.Should().Be(BusinessSizeMapper.MapToString(request.Size));
+        updatedBusiness.BusinessSizeId.Should().Be(request.BusinessSizeId);
         updatedBusiness.Url.Should().Be(request.Url);
         updatedBusiness.TwitterUrl.Should().Be(request.TwitterUrl);
         updatedBusiness.LinkedInUrl.Should().Be(request.LinkedInUrl);
@@ -84,15 +85,16 @@ public class UpdateBusinessCommandTests
         // Arrange
         var user = new ApplicationUser { Id = Guid.NewGuid() };
 
-        var request = new UpdateBusinessCommand(
-            "Updated Business",
-            2,
-            "Updated Description",
-            "Updated Location",
-            "https://updated.com",
-            "https://twitter.com/updated",
-            "https://linkedin.com/updated"
-        );
+        var request = new UpdateBusinessCommand
+        {
+            Name = "Updated Business",
+            BusinessSizeId = 2,
+            Description = "Updated Description",
+            Location = "Updated Location",
+            Url = "https://updated.com",
+            TwitterUrl = "https://twitter.com/updated",
+            LinkedInUrl = "https://linkedin.com/updated"
+        };
 
         _appDbContext.Users.Add(user);
         await _appDbContext.SaveChangesAsync();

@@ -36,12 +36,13 @@ public class ResetPasswordCommandHandlerTests
     public async Task WhenSuccessful_ShouldResetPassword_And_ReturnUnit()
     {
         // Arrange
-        var request = new ResetPasswordCommand(
-            Guid.NewGuid(),
-            "resetToken",
-            "newPassword",
-            "newPassword"
-        );
+        var request = new ResetPasswordCommand
+        {
+            UserId = Guid.NewGuid(),
+            Token = "resetToken",
+            Password = "newPassword",
+            ConfirmPassword = "newPassword"
+        };
 
         var user = new ApplicationUser { Id = request.UserId };
 
@@ -69,12 +70,13 @@ public class ResetPasswordCommandHandlerTests
     public async Task WhenUserNotFound_ShouldReturnUserNotFoundError()
     {
         // Arrange
-        var request = new ResetPasswordCommand(
-            Guid.NewGuid(),
-            "resetToken",
-            "newPassword",
-            "newPassword"
-        );
+        var request = new ResetPasswordCommand
+        {
+            UserId = Guid.NewGuid(),
+            Token = "resetToken",
+            Password = "newPassword",
+            ConfirmPassword = "newPassword"
+        };
 
         _mockUserManager
             .Setup(x => x.FindByIdAsync(request.UserId.ToString()))
@@ -103,12 +105,13 @@ public class ResetPasswordCommandHandlerTests
     public async Task WhenResetFails_ShouldReturnInvalidTokenError()
     {
         // Arrange
-        var request = new ResetPasswordCommand(
-            Guid.NewGuid(),
-            "resetToken",
-            "newPassword",
-            "newPassword"
-        );
+        var request = new ResetPasswordCommand
+        {
+            UserId = Guid.NewGuid(),
+            Token = "resetToken",
+            Password = "newPassword",
+            ConfirmPassword = "newPassword"
+        };
 
         var user = new ApplicationUser { Id = request.UserId };
 

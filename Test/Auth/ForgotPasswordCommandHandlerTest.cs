@@ -11,7 +11,7 @@ public class ForgotPasswordCommandHandlerTest
 {
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
-    private readonly Mock<IEmailSender> _mockEmailSender;
+    private readonly Mock<IEmailService> _mockEmailSender;
     private readonly ForgotPasswordCommandHandler _handler;
 
     public ForgotPasswordCommandHandlerTest()
@@ -28,7 +28,7 @@ public class ForgotPasswordCommandHandlerTest
             null!,
             null!
         );
-        _mockEmailSender = new Mock<IEmailSender>();
+        _mockEmailSender = new Mock<IEmailService>();
 
         _handler = new ForgotPasswordCommandHandler(
             _mockUserManager.Object,

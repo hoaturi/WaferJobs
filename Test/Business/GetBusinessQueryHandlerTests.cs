@@ -32,7 +32,7 @@ public class GetBusinessQueryHandlerTests
             Id = request.Id,
             LogoUrl = "https://test.com/logo.png",
             Name = "Test Business",
-            Size = "5",
+            BusinessSizeId = 5,
             Description = "Test Description",
             Location = "Test Location",
             Url = "https://test.com",
@@ -57,7 +57,7 @@ public class GetBusinessQueryHandlerTests
         response.Id.Should().Be(business.Id);
         response.Name.Should().Be(business.Name);
         response.LogoUrl.Should().Be(business.LogoUrl);
-        response.Size.Should().Be(business.Size);
+        response.Size.Should().Be(business.BusinessSize);
         response.Description.Should().Be(business.Description);
         response.Location.Should().Be(business.Location);
         response.Url.Should().Be(business.Url);

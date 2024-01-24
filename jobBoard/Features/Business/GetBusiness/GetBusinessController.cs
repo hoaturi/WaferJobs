@@ -11,9 +11,9 @@ public class GetBusinessController(ISender sender) : BaseController
     private readonly ISender _sender = sender;
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetBusiness([FromRoute] GetBusinessQuery id)
+    public async Task<IActionResult> GetBusiness(Guid id)
     {
-        var result = await _sender.Send(id);
+        var result = await _sender.Send(new GetBusinessQuery(id));
 
         if (!result.IsSuccess)
         {
