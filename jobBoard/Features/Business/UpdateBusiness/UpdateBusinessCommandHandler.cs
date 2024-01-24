@@ -27,7 +27,13 @@ public class UpdateBusinessCommandHandler(
             return BusinessErrors.AssociatedBusinessNotFound(userId);
         }
 
-        UpdateBusinessMapper.MapToEntity(request, business);
+        business.Name = request.Name;
+        business.Description = request.Description;
+        business.Location = request.Location;
+        business.BusinessSizeId = request.BusinessSizeId;
+        business.Url = request.Url;
+        business.TwitterUrl = request.TwitterUrl;
+        business.LinkedInUrl = request.LinkedInUrl;
 
         await _appDbContext.SaveChangesAsync(cancellationToken);
 

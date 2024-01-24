@@ -7,6 +7,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     public DbSet<Business> Businesses { get; set; }
+    public DbSet<BusinessSize> BusinessSizes { get; set; }
     public DbSet<JobPost> JobPosts { get; set; }
     public DbSet<Country> Countries { get; set; }
     public DbSet<Category> Categories { get; set; }

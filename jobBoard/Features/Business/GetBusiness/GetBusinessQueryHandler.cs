@@ -18,17 +18,18 @@ public class GetBusinessQueryHandler(AppDbContext appDbContext)
             .Where(b => b.Id == request.Id)
             .Select(
                 b =>
-                    new GetBusinessResponse(
-                        b.Id,
-                        b.Name,
-                        b.LogoUrl,
-                        b.Description,
-                        b.Location,
-                        b.Size,
-                        b.Url,
-                        b.TwitterUrl,
-                        b.LinkedInUrl
-                    )
+                    new GetBusinessResponse
+                    {
+                        Id = b.Id,
+                        Name = b.Name,
+                        LogoUrl = b.LogoUrl,
+                        Description = b.Description,
+                        Location = b.Location,
+                        Size = b.BusinessSize,
+                        Url = b.Url,
+                        TwitterUrl = b.TwitterUrl,
+                        LinkedInUrl = b.LinkedInUrl,
+                    }
             )
             .FirstOrDefaultAsync(cancellationToken);
 
