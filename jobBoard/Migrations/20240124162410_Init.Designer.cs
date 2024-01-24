@@ -3,6 +3,7 @@ using System;
 using JobBoard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobBoard.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240124162410_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,19 +54,19 @@ namespace JobBoard.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aae11c4d-4319-4ae2-a8a6-070fd2daea5a"),
+                            Id = new Guid("8d11eab8-ea2f-4634-9cea-e5244fb73522"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("1646b917-2f94-4338-84b6-22d2fe959ea2"),
+                            Id = new Guid("f61c1dd3-508e-4f39-859d-165bdc413010"),
                             Name = "JobSeeker",
                             NormalizedName = "JOBSEEKER"
                         },
                         new
                         {
-                            Id = new Guid("d9ef5714-cf43-4df9-8c13-39a3ae383556"),
+                            Id = new Guid("4552f46c-3b1b-49d6-8c9b-6923a3ab4092"),
                             Name = "Business",
                             NormalizedName = "BUSINESS"
                         });
@@ -2163,8 +2166,7 @@ namespace JobBoard.Migrations
                 {
                     b.HasOne("JobBoard.Business", "Business")
                         .WithMany("JobPosts")
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("BusinessId");
 
                     b.HasOne("JobBoard.Category", "Category")
                         .WithMany()
