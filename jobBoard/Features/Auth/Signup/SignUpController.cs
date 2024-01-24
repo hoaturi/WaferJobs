@@ -5,7 +5,7 @@ namespace JobBoard;
 
 [Tags("Auth")]
 [ApiController]
-[Route("api/auth/sign-up")]
+[Route("api/auth/signup")]
 public class SignUpController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;

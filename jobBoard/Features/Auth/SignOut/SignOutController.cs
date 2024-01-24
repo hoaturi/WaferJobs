@@ -6,7 +6,7 @@ namespace JobBoard;
 
 [Tags("Auth")]
 [ApiController]
-[Route("api/auth/sign-out")]
+[Route("api/auth/signout")]
 public class SignOutController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
