@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 
 namespace JobBoard;
@@ -31,12 +29,17 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         var failures = validationResult
             .SelectMany(result => result.Errors)
             .Where(failure => failure != null)
-            .ToDictionary(
-                failure => failure.PropertyName,
-                failure => new[] { failure.ErrorMessage }
-            );
+            .GroupBy(failure => failure.PropertyName)
+            .Select(
+                group =>
+                    new ValidationError(
+                        group.Key,
+                        group.Select(failure => failure.ErrorMessage).ToList()
+                    )
+            )
+            .ToList();
 
-        if (failures.Count != 0)
+        if (failures.Count is not 0)
         {
             throw new ValidationException(failures);
         }

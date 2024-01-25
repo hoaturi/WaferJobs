@@ -3,7 +3,7 @@ using System.Net;
 
 namespace JobBoard
 {
-    public class ValidationException(Dictionary<string, string[]> fieldErrors)
+    public class ValidationException(List<ValidationError> fieldErrors)
         : CustomException(
             ErrorCodes.ValidationFailed,
             HttpStatusCode.BadRequest,

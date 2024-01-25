@@ -25,26 +25,39 @@ public class ExceptionHandlingMiddleware : IMiddleware
             Console.WriteLine(exception);
         }
 
-        var response = CreateErrorResponse(exception);
+        var response =
+            exception is ValidationException
+                ? CreateValidationErrorResponse(exception)
+                : CreateErrorResponse(exception);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = response.StatusCode;
         await context.Response.WriteAsJsonAsync(response);
     }
 
-    private static ErrorResponse CreateErrorResponse(Exception exception)
+    private static ValidationErrorResponse CreateValidationErrorResponse(Exception exception)
     {
-        return new ErrorResponse
-        {
-            StatusCode = GetStatusCode(exception),
-            ErrorCode = GetErrorCode(exception),
-            Detail = exception.Message,
-            FieldErrors = GetFieldErrors(exception)
-        };
+        var fieldErrors = GetFieldErrors(exception);
+        var statusCode = GetStatusCode(exception);
+        var errorCode = GetErrorCode(exception);
+        var message = exception.Message;
+
+        return new ValidationErrorResponse(statusCode, errorCode, message, fieldErrors!);
     }
 
-    private static Dictionary<string, string[]> GetFieldErrors(Exception exception) =>
-        exception is ValidationException validationException ? validationException.FieldErrors : [];
+    private static ErrorResponse CreateErrorResponse(Exception exception)
+    {
+        var statusCode = GetStatusCode(exception);
+        var errorCode = GetErrorCode(exception);
+        var message = exception.Message;
+
+        return new ErrorResponse(statusCode, errorCode, message);
+    }
+
+    private static List<ValidationError>? GetFieldErrors(Exception exception) =>
+        exception is ValidationException validationException
+            ? validationException.FieldErrors
+            : default;
 
     private static int GetStatusCode(Exception exception) =>
         exception switch
@@ -63,10 +76,11 @@ public class ExceptionHandlingMiddleware : IMiddleware
         };
 }
 
-public class ErrorResponse
-{
-    public int StatusCode { get; set; }
-    public string ErrorCode { get; set; } = string.Empty;
-    public string Detail { get; set; } = string.Empty;
-    public Dictionary<string, string[]> FieldErrors { get; set; } = [];
-}
+public record ValidationErrorResponse(
+    int StatusCode,
+    string ErrorCode,
+    string Message,
+    List<ValidationError> FieldErrors
+) : ErrorResponse(StatusCode, ErrorCode, Message);
+
+public record ErrorResponse(int StatusCode, string ErrorCode, string Message);

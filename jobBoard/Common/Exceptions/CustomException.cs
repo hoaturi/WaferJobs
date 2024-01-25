@@ -2,15 +2,29 @@
 
 namespace JobBoard;
 
-public class CustomException(
-    ErrorCodes errorCode,
-    HttpStatusCode httpStatusCode,
-    string message,
-    Dictionary<string, string[]>? fieldErrors = null
-) : Exception(message)
+public class CustomException : Exception
 {
-    public ErrorCodes ErrorCode { get; } = errorCode;
-    public HttpStatusCode StatusCode { get; } = httpStatusCode;
+    public ErrorCodes ErrorCode { get; }
+    public HttpStatusCode StatusCode { get; }
+    public List<ValidationError>? FieldErrors { get; }
 
-    public Dictionary<string, string[]> FieldErrors { get; } = fieldErrors ?? [];
-}
+    public CustomException(ErrorCodes errorCode, HttpStatusCode httpStatusCode, string message)
+        : base(message)
+    {
+        ErrorCode = errorCode;
+        StatusCode = httpStatusCode;
+    }
+
+    public CustomException(
+        ErrorCodes errorCode,
+        HttpStatusCode httpStatusCode,
+        string message,
+        List<ValidationError> fieldErrors
+    )
+        : base(message)
+    {
+        ErrorCode = errorCode;
+        StatusCode = httpStatusCode;
+        FieldErrors = fieldErrors;
+    }
+};

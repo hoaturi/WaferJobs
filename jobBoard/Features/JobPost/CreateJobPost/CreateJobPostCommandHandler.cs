@@ -31,8 +31,6 @@ public class CreateJobPostCommandHandler(
                 userEmail,
                 business.Name
             );
-
-            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
 
         var jobPost = new JobPost
@@ -54,6 +52,9 @@ public class CreateJobPostCommandHandler(
             BusinessId = business.Id,
             IsPublished = false
         };
+
+        await _appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
+        await _appDbContext.SaveChangesAsync(cancellationToken);
 
         var session = await _paymentService.CreateFeaturedListingCheckoutSessions(
             business.StripeCustomerId!,
