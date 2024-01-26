@@ -5,11 +5,13 @@ namespace JobBoard;
 
 public class UpdateBusinessCommandHandler(
     AppDbContext appDbContext,
-    ICurrentUserService currentUser
+    ICurrentUserService currentUser,
+    ILogger<UpdateBusinessCommandHandler> logger
 ) : IRequestHandler<UpdateBusinessCommand, Result<Unit, Error>>
 {
     private readonly AppDbContext _appDbContext = appDbContext;
     private readonly ICurrentUserService _currentUser = currentUser;
+    private readonly ILogger<UpdateBusinessCommandHandler> _logger = logger;
 
     public async Task<Result<Unit, Error>> Handle(
         UpdateBusinessCommand request,
@@ -24,18 +26,15 @@ public class UpdateBusinessCommandHandler(
 
         if (business is null)
         {
+            _logger.LogError("Business not found for user: {UserId}", userId);
             return BusinessErrors.AssociatedBusinessNotFound(userId);
         }
 
-        business.Name = request.Name;
-        business.Description = request.Description;
-        business.Location = request.Location;
-        business.BusinessSizeId = request.BusinessSizeId;
-        business.Url = request.Url;
-        business.TwitterUrl = request.TwitterUrl;
-        business.LinkedInUrl = request.LinkedInUrl;
+        UpdateBusinessCommandMapper.MapToBusiness(request, business);
 
         await _appDbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Successfully updated business: {BusinessId}", business.Id);
 
         return Unit.Value;
     }

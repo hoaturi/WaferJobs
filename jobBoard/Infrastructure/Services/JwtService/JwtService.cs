@@ -79,6 +79,16 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
         return userId;
     }
 
+    public (string accessToken, string refreshToken) GenerateTokens(
+        ApplicationUser user,
+        IList<string> roles
+    )
+    {
+        var accessToken = GenerateAccessToken(user, [..roles]);
+        var refreshToken = GenerateRefreshToken(user);
+        return (accessToken, refreshToken);
+    }
+
     private static List<Claim> GetClaims(ApplicationUser user)
     {
         return

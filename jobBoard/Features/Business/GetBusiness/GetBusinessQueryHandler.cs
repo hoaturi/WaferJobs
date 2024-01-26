@@ -3,10 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard;
 
-public class GetBusinessQueryHandler(AppDbContext appDbContext)
-    : IRequestHandler<GetBusinessQuery, Result<GetBusinessResponse, Error>>
+public class GetBusinessQueryHandler(
+    AppDbContext appDbContext,
+    ILogger<GetBusinessQueryHandler> logger
+) : IRequestHandler<GetBusinessQuery, Result<GetBusinessResponse, Error>>
 {
     private readonly AppDbContext _appDbContext = appDbContext;
+    private readonly ILogger<GetBusinessQueryHandler> _logger = logger;
 
     public async Task<Result<GetBusinessResponse, Error>> Handle(
         GetBusinessQuery request,
@@ -35,6 +38,7 @@ public class GetBusinessQueryHandler(AppDbContext appDbContext)
 
         if (business is null)
         {
+            _logger.LogWarning("Business with id {businessId} not found", request.Id);
             return BusinessErrors.BusinessNotFound(request.Id);
         }
 

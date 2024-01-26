@@ -11,7 +11,7 @@ public class SignInCommandHandlerTests
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<IJwtService> _mockJwtService;
-    private readonly SingInCommandHandler _handler;
+    private readonly SignInCommandHandler _handler;
 
     public SignInCommandHandlerTests()
     {
@@ -29,7 +29,7 @@ public class SignInCommandHandlerTests
         );
         _mockJwtService = new Mock<IJwtService>();
 
-        _handler = new SingInCommandHandler(_mockUserManager.Object, _mockJwtService.Object);
+        _handler = new SignInCommandHandler(_mockUserManager.Object, _mockJwtService.Object);
     }
 
     [Fact]

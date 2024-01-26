@@ -6,12 +6,14 @@ namespace JobBoard;
 public class CreateJobPostCommandHandler(
     ICurrentUserService currentUser,
     IPaymentService paymentService,
-    AppDbContext appDbContext
+    AppDbContext appDbContext,
+    ILogger<CreateJobPostCommandHandler> logger
 ) : IRequestHandler<CreateJobPostCommand, Result<CreateJobPostResponse, Error>>
 {
     private readonly ICurrentUserService _currentUser = currentUser;
     private readonly IPaymentService _paymentService = paymentService;
     private readonly AppDbContext _appDbContext = appDbContext;
+    private readonly ILogger<CreateJobPostCommandHandler> _logger = logger;
 
     public async Task<Result<CreateJobPostResponse, Error>> Handle(
         CreateJobPostCommand request,
@@ -31,35 +33,26 @@ public class CreateJobPostCommandHandler(
                 userEmail,
                 business.Name
             );
+
+            _logger.LogInformation(
+                "Created Stripe customer for business: {businessId} ",
+                business.Id
+            );
         }
 
-        var jobPost = new JobPost
-        {
-            CategoryId = request.CategoryId,
-            CountryId = request.CountryId,
-            EmploymentTypeId = request.EmploymentTypeId,
-            Title = request.Title,
-            Description = request.Description,
-            CompanyName = business!.Name,
-            CompanyLogoUrl = business.LogoUrl,
-            ApplyUrl = request.ApplyUrl,
-            IsRemote = request.IsRemote,
-            IsFeatured = request.IsFeatured,
-            City = request.City,
-            MinSalary = request.MinSalary,
-            MaxSalary = request.MaxSalary,
-            Currency = request.Currency,
-            BusinessId = business.Id,
-            IsPublished = false
-        };
+        var jobPost = CreateJobPostCommandMapper.MapToJobPost(request, business);
 
         await _appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
+        _logger.LogInformation("created job post: {jobPostId}", jobPost.Id);
+
         var session = await _paymentService.CreateFeaturedListingCheckoutSessions(
-            business.StripeCustomerId!,
+            business!.StripeCustomerId!,
             jobPost.Id
         );
+
+        _logger.LogInformation("Created Stripe checkout session: {SessionId}", session.Id);
 
         return new CreateJobPostResponse(session.Url);
     }

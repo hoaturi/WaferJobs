@@ -1,10 +1,9 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace JobBoard;
 
@@ -123,6 +122,15 @@ public static class ServiceExtensions
         services.AddTransient<ExceptionHandlingMiddleware>();
 
         return services;
+    }
+
+    public static IHostBuilder UseSerilogWithSeq(this IHostBuilder hostBuilder)
+    {
+        hostBuilder.UseSerilog(
+            (context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration)
+        );
+
+        return hostBuilder;
     }
 
     public static IServiceCollection AddConfigOptions(

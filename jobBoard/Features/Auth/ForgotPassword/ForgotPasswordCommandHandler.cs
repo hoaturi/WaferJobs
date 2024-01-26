@@ -5,11 +5,13 @@ namespace JobBoard;
 
 public class ForgotPasswordCommandHandler(
     UserManager<ApplicationUser> userManager,
-    IEmailService emailSender
+    IEmailService emailService,
+    ILogger<ForgotPasswordCommandHandler> logger
 ) : IRequestHandler<ForgotPasswordCommand, Result<Unit, Error>>
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IEmailService _emailSender = emailSender;
+    private readonly IEmailService _emailService = emailService;
+    private readonly ILogger<ForgotPasswordCommandHandler> _logger = logger;
 
     public async Task<Result<Unit, Error>> Handle(
         ForgotPasswordCommand request,
@@ -20,12 +22,18 @@ public class ForgotPasswordCommandHandler(
 
         if (user is null)
         {
+            _logger.LogInformation("User with the input email not found");
             return AuthErrors.UserNotFound;
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        await _emailSender.SendPasswordResetEmailAsync(new EmailDto(user, token));
+        await _emailService.SendPasswordResetEmailAsync(new EmailDto(user, token));
+
+        _logger.LogInformation(
+            "Successfully sent password reset email for user: {UserId}",
+            user.Id
+        );
 
         return Unit.Value;
     }

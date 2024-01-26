@@ -4,7 +4,12 @@ namespace JobBoard;
 
 public class ExceptionHandlingMiddleware : IMiddleware
 {
-    public ExceptionHandlingMiddleware() { }
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+
+    public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
+    {
+        _logger = logger;
+    }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -14,17 +19,14 @@ public class ExceptionHandlingMiddleware : IMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
+
             await HandleExceptionAsync(context, ex);
         }
     }
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        if (exception is not ValidationException)
-        {
-            Console.WriteLine(exception);
-        }
-
         var response =
             exception is ValidationException
                 ? CreateValidationErrorResponse(exception)
