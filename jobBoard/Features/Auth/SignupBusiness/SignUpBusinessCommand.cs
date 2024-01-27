@@ -2,5 +2,5 @@
 
 namespace JobBoard;
 
-public record class SignUpBusinessCommand(string Email, string Password, string CompanyName)
+public record SignUpBusinessCommand(string Email, string Password, string CompanyName)
     : IRequest<Result<Unit, Error>>;

@@ -18,13 +18,7 @@ public class ResetPasswordController(ISender sender) : ControllerBase
         [FromBody] ResetPasswordRequest body
     )
     {
-        var command = new ResetPasswordCommand
-        {
-            UserId = userId,
-            Token = token,
-            Password = body.Password,
-            ConfirmPassword = body.ConfirmPassword
-        };
+        var command = new ResetPasswordCommand(userId, token, body.Password, body.ConfirmPassword);
 
         var result = await _sender.Send(command);
 
