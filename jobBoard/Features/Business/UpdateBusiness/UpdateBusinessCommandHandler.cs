@@ -30,7 +30,7 @@ public class UpdateBusinessCommandHandler(
             return BusinessErrors.AssociatedBusinessNotFound(userId);
         }
 
-        UpdateBusinessCommandMapper.MapToBusiness(request, business);
+        UpdateBusinessCommandMapper.MapToEntity(request, business);
 
         await _appDbContext.SaveChangesAsync(cancellationToken);
 

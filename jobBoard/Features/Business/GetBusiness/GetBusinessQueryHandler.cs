@@ -19,21 +19,8 @@ public class GetBusinessQueryHandler(
         var business = await _appDbContext
             .Businesses.AsNoTracking()
             .Where(b => b.Id == request.Id)
-            .Select(
-                b =>
-                    new GetBusinessResponse
-                    {
-                        Id = b.Id,
-                        Name = b.Name,
-                        LogoUrl = b.LogoUrl,
-                        Description = b.Description,
-                        Location = b.Location,
-                        Size = b.BusinessSize,
-                        Url = b.Url,
-                        TwitterUrl = b.TwitterUrl,
-                        LinkedInUrl = b.LinkedInUrl,
-                    }
-            )
+            .Include(b => b.BusinessSize)
+            .Select(b => GetBusinessQueryMapper.MapToResponse(b))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (business is null)

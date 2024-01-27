@@ -2,7 +2,7 @@
 
 public static class UpdateBusinessCommandMapper
 {
-    public static Business MapToBusiness(UpdateBusinessCommand request, Business business)
+    public static Business MapToEntity(UpdateBusinessCommand request, Business business)
     {
         business.Name = request.Name;
         business.Description = request.Description;

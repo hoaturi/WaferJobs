@@ -16,29 +16,10 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
         var jobPost = await _appDbContext
             .JobPosts.AsNoTracking()
             .Where(j => j.Id == request.Id && j.IsPublished)
-            .Select(
-                j =>
-                    new GetJobPostResponse
-                    {
-                        Id = j.Id,
-                        Category = j.Category,
-                        Country = j.Country,
-                        EmploymentType = j.EmploymentType,
-                        Title = j.Title,
-                        Description = j.Description,
-                        IsRemote = j.IsRemote,
-                        IsFeatured = j.IsFeatured,
-                        BusinessId = j.BusinessId,
-                        City = j.City,
-                        MinSalary = j.MinSalary,
-                        MaxSalary = j.MaxSalary,
-                        Currency = j.Currency,
-                        ApplyUrl = j.ApplyUrl,
-                        CompanyName = j.CompanyName,
-                        CompanyLogoUrl = j.CompanyLogoUrl,
-                        PublishedAt = j.PublishedAt,
-                    }
-            )
+            .Include(j => j.Category)
+            .Include(j => j.Country)
+            .Include(j => j.EmploymentType)
+            .Select(j => GetJobPostQueryMapper.MapToResponse(j))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (jobPost is null)

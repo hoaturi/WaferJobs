@@ -2,7 +2,7 @@
 
 public static class CreateJobPostCommandMapper
 {
-    public static JobPost MapToJobPost(CreateJobPostCommand request, Business? business)
+    public static JobPost MapToEntity(CreateJobPostCommand request, Business business)
     {
         var jobPost = new JobPost
         {
