@@ -2,7 +2,7 @@
 
 public interface IJwtService
 {
-    public string GenerateAccessToken(ApplicationUser user, List<string> roles);
+    public string GenerateAccessToken(ApplicationUser user, IList<string> roles);
 
     public string GenerateRefreshToken(ApplicationUser user);
 

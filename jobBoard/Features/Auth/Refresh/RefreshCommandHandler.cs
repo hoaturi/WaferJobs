@@ -48,7 +48,7 @@ public class RefreshCommandHandler(
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        var accessToken = _jwtService.GenerateAccessToken(user, [..roles]);
+        var accessToken = _jwtService.GenerateAccessToken(user, roles);
 
         _logger.LogInformation("Successfully refreshed access token for user: {userId}", user.Id);
 

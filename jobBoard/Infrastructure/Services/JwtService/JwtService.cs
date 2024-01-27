@@ -11,7 +11,7 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
 {
     private readonly JwtOptions _options = options.Value;
 
-    public string GenerateAccessToken(ApplicationUser user, List<string> roles)
+    public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
     {
         var claims = GetClaims(user);
 
@@ -84,7 +84,7 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
         IList<string> roles
     )
     {
-        var accessToken = GenerateAccessToken(user, [..roles]);
+        var accessToken = GenerateAccessToken(user, roles);
         var refreshToken = GenerateRefreshToken(user);
         return (accessToken, refreshToken);
     }
