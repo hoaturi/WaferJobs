@@ -30,11 +30,6 @@ public class ForgotPasswordCommandHandler(
 
         await _emailService.SendPasswordResetEmailAsync(new EmailDto(user, token));
 
-        _logger.LogInformation(
-            "Successfully sent password reset email for user: {UserId}",
-            user.Id
-        );
-
         return Unit.Value;
     }
 }

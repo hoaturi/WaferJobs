@@ -9,12 +9,18 @@ public class EmailService : IEmailService
     private readonly AzureOptions _azureOptions;
     private readonly EmailOptions _emailOptions;
     private readonly EmailClient _emailClient;
+    private readonly ILogger<EmailService> _logger;
 
-    public EmailService(IOptions<AzureOptions> azureOptions, IOptions<EmailOptions> emailOptions)
+    public EmailService(
+        IOptions<AzureOptions> azureOptions,
+        IOptions<EmailOptions> emailOptions,
+        ILogger<EmailService> logger
+    )
     {
         _azureOptions = azureOptions.Value;
         _emailOptions = emailOptions.Value;
         _emailClient = new EmailClient(_azureOptions.CommunicationServiceConnectionStrings);
+        _logger = logger;
     }
 
     public async Task SendPasswordResetEmailAsync(EmailDto dto)
@@ -37,6 +43,11 @@ public class EmailService : IEmailService
                 recipientAddress: dto.User.Email,
                 subject: "Reset Password",
                 htmlContent: htmlContent
+            );
+
+            _logger.LogInformation(
+                "Successfully sent password reset email for user: {UserId}",
+                dto.User.Id
             );
         }
         catch (Exception)

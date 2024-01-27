@@ -4,6 +4,6 @@ namespace JobBoard;
 
 public interface IPaymentService
 {
-    Task<string> CreateCustomer(string email, string name);
+    Task<string> CreateCustomer(Guid businessId, string email, string name);
     Task<Session> CreateFeaturedListingCheckoutSessions(string customerId, Guid jobId);
 }
