@@ -26,9 +26,9 @@ public class SignInCommandHandler(
             return AuthErrors.InvalidCredentials;
         }
 
-        var result = await _userManager.CheckPasswordAsync(user, request.Password);
+        var isCorrectPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
-        if (!result)
+        if (!isCorrectPassword)
         {
             _logger.LogInformation("Invalid password for user with id {UserId}", user.Id);
             return AuthErrors.InvalidCredentials;
@@ -40,7 +40,7 @@ public class SignInCommandHandler(
 
         _logger.LogInformation("User: {Id} logged in successfully", user.Id);
 
-        var userResponse = new UserResponse(user.Id, user.Email!, [..roles]);
+        var userResponse = new UserResponse(user.Id, user.Email!, [.. roles]);
         return new SignInResponse(userResponse, accessToken, refreshToken);
     }
 }

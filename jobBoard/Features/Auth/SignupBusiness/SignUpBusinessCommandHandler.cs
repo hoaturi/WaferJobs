@@ -21,22 +21,22 @@ public class SignUpBusinessCommandHandler(
     {
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var isEmailInUse = await _userManager.FindByEmailAsync(request.Email);
-        if (isEmailInUse is not null)
+        var isEmailAlreadyInUse = await _userManager.FindByEmailAsync(request.Email);
+        if (isEmailAlreadyInUse is not null)
         {
             _logger.LogInformation("The input email is already in use");
             return AuthErrors.UserAlreadyExists;
         }
 
-        var user = new ApplicationUser { Email = request.Email, UserName = request.Email, };
-        await _userManager.CreateAsync(user, request.Password);
-        await _userManager.AddToRoleAsync(user, RoleTypes.Business.ToString());
+        var newUser = new ApplicationUser { Email = request.Email, UserName = request.Email, };
+        await _userManager.CreateAsync(newUser, request.Password);
+        await _userManager.AddToRoleAsync(newUser, RoleTypes.Business.ToString());
 
-        var business = new Business { UserId = user.Id, Name = request.CompanyName, };
-        await _appDbContext.Businesses.AddAsync(business, cancellationToken);
+        var newBusiness = new Business { UserId = newUser.Id, Name = request.CompanyName, };
+        await _appDbContext.Businesses.AddAsync(newBusiness, cancellationToken);
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Successfully created business user with id: {}", user.Id);
+        _logger.LogInformation("Successfully created business user with id: {}", newUser.Id);
 
         scope.Complete();
 

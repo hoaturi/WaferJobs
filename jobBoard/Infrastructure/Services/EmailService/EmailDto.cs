@@ -1,5 +1,3 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace JobBoard;
+﻿namespace JobBoard;
 
 public sealed record EmailDto(ApplicationUser User, string Token);

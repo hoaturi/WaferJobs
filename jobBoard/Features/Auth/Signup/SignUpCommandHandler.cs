@@ -19,18 +19,18 @@ public class SignUpCommandHandler(
     {
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var isEmailInUse = await _userManager.FindByEmailAsync(request.Email);
-        if (isEmailInUse is not null)
+        var isEmailAlreadyInUse = await _userManager.FindByEmailAsync(request.Email);
+        if (isEmailAlreadyInUse is not null)
         {
             _logger.LogInformation("The input email is already in use");
             return AuthErrors.UserAlreadyExists;
         }
 
-        var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
-        await _userManager.CreateAsync(user, request.Password);
-        await _userManager.AddToRoleAsync(user, RoleTypes.JobSeeker.ToString());
+        var newUser = new ApplicationUser { UserName = request.Email, Email = request.Email };
+        await _userManager.CreateAsync(newUser, request.Password);
+        await _userManager.AddToRoleAsync(newUser, RoleTypes.JobSeeker.ToString());
 
-        _logger.LogInformation("Successfully created job seeker user with id: {}", user.Id);
+        _logger.LogInformation("Successfully created job seeker user with id: {}", newUser.Id);
 
         scope.Complete();
 

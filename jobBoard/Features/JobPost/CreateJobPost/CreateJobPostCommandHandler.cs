@@ -26,34 +26,41 @@ public class CreateJobPostCommandHandler(
             .Businesses.Where(b => b.UserId == userId)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (business is not null && business.StripeCustomerId is null)
+        if (business is null)
         {
-            var userEmail = _currentUser.GetUserEmail();
-            business.StripeCustomerId = await _paymentService.CreateCustomer(
-                userEmail,
-                business.Name
-            );
-
-            _logger.LogInformation(
-                "Created Stripe customer for business: {businessId} ",
-                business.Id
-            );
+            BusinessErrors.AssociatedBusinessNotFound(userId);
+            _logger.LogError("Business not found for user: {userId}", userId);
         }
 
-        var jobPost = CreateJobPostCommandMapper.MapToJobPost(request, business);
+        await CreateStripeCustomerIfNotExists(business!);
+
+        var jobPost = CreateJobPostCommandMapper.MapToEntity(request, business!);
 
         await _appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("created job post: {jobPostId}", jobPost.Id);
+        _logger.LogInformation("Created job post: {jobPostId}", jobPost.Id);
 
         var session = await _paymentService.CreateFeaturedListingCheckoutSessions(
             business!.StripeCustomerId!,
             jobPost.Id
         );
 
-        _logger.LogInformation("Created Stripe checkout session: {SessionId}", session.Id);
-
         return new CreateJobPostResponse(session.Url);
+    }
+
+    public async Task CreateStripeCustomerIfNotExists(Business business)
+    {
+        if (business.StripeCustomerId is not null)
+        {
+            return;
+        }
+
+        var userEmail = _currentUser.GetUserEmail();
+        business.StripeCustomerId = await _paymentService.CreateCustomer(
+            business.Id,
+            userEmail,
+            business.Name
+        );
     }
 }
