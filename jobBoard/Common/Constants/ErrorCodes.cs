@@ -1,12 +1,15 @@
 ﻿namespace JobBoard;
 
-public readonly struct ErrorCodes
+public class ErrorCodes
 {
-    private readonly string _code;
+    public string Code { get; }
 
-    private ErrorCodes(string code) => _code = code;
+    private ErrorCodes(string code)
+    {
+        Code = code;
+    }
 
-    public override string ToString() => _code;
+    public override string ToString() => Code;
 
     // User Errors
     public static readonly ErrorCodes UserAlreadyExists = new("AU001");
