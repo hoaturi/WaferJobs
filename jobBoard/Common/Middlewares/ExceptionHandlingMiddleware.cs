@@ -12,34 +12,49 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
         {
             await next(context);
         }
+        catch (ValidationException ex)
+        {
+            _logger.LogError(ex, "Validation exception occurred: {Message}", ex.Message);
+            await HandleValidationExceptionAsync(context, ex);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
-
             await HandleExceptionAsync(context, ex);
         }
     }
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        var response =
-            exception is ValidationException
-                ? CreateValidationErrorResponse(exception)
-                : CreateErrorResponse(exception);
+        var response = CreateErrorResponse(exception);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = response.StatusCode;
         await context.Response.WriteAsJsonAsync(response);
     }
 
-    private static ValidationErrorResponse CreateValidationErrorResponse(Exception exception)
+    private static async Task HandleValidationExceptionAsync(
+        HttpContext context,
+        ValidationException exception
+    )
+    {
+        var response = CreateValidationErrorResponse(exception);
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = response.StatusCode;
+        await context.Response.WriteAsJsonAsync(response);
+    }
+
+    private static ValidationErrorResponse CreateValidationErrorResponse(
+        ValidationException exception
+    )
     {
         var fieldErrors = GetFieldErrors(exception);
         var statusCode = GetStatusCode(exception);
         var errorCode = GetErrorCode(exception);
         var message = exception.Message;
 
-        return new ValidationErrorResponse(statusCode, errorCode, message, fieldErrors!);
+        return new ValidationErrorResponse(statusCode, errorCode, message, fieldErrors);
     }
 
     private static ErrorResponse CreateErrorResponse(Exception exception)
@@ -51,10 +66,10 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
         return new ErrorResponse(statusCode, errorCode, message);
     }
 
-    private static List<ValidationError>? GetFieldErrors(Exception exception) =>
-        exception is ValidationException validationException
-            ? validationException.FieldErrors
-            : default;
+    private static List<ValidationError> GetFieldErrors(ValidationException exception)
+    {
+        return exception.FieldErrors!;
+    }
 
     private static int GetStatusCode(Exception exception) =>
         exception switch

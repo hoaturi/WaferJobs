@@ -34,12 +34,12 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
                 group =>
                     new ValidationError(
                         group.Key,
-                        group.Select(failure => failure.ErrorMessage).ToList()
+                        string.Join(", ", group.Select(failure => failure.ErrorMessage))
                     )
             )
             .ToList();
 
-        if (failures.Count is not 0)
+        if (failures.Count > 0)
         {
             throw new ValidationException(failures);
         }

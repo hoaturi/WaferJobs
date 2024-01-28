@@ -96,10 +96,10 @@ public static class ServiceExtensions
     // Registers Infrastructure Services
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddTransient<IEmailService, EmailService>();
-        services.AddTransient<IJwtService, JwtService>();
-        services.AddTransient<ICurrentUserService, CurrentUserService>();
-        services.AddTransient<IPaymentService, PaymentService>();
+        services.AddSingleton<IEmailService, EmailService>();
+        services.AddSingleton<IJwtService, JwtService>();
+        services.AddSingleton<ICurrentUserService, CurrentUserService>();
+        services.AddSingleton<IPaymentService, PaymentService>();
 
         return services;
     }
@@ -119,7 +119,7 @@ public static class ServiceExtensions
     // Registers Middlewares
     public static IServiceCollection AddMiddleWares(this IServiceCollection services)
     {
-        services.AddTransient<ExceptionHandlingMiddleware>();
+        services.AddSingleton<ExceptionHandlingMiddleware>();
 
         return services;
     }
