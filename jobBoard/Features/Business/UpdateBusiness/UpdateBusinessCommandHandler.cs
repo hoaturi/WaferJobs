@@ -20,15 +20,11 @@ public class UpdateBusinessCommandHandler(
     {
         var userId = _currentUser.GetUserId();
 
-        var business = await _appDbContext
-            .Businesses.Where(b => b.UserId == userId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (business is null)
-        {
-            _logger.LogError("Business not found for user: {UserId}", userId);
-            return BusinessErrors.AssociatedBusinessNotFound(userId);
-        }
+        var business =
+            await _appDbContext
+                .Businesses.Where(b => b.UserId == userId)
+                .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new AssociatedBusinessNotFoundException(userId);
 
         UpdateBusinessCommandMapper.MapToEntity(request, business);
 

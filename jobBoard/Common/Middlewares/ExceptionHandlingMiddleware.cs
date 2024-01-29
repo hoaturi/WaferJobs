@@ -17,6 +17,11 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
             _logger.LogError(ex, "Validation exception occurred: {Message}", ex.Message);
             await HandleValidationExceptionAsync(context, ex);
         }
+        catch (CustomException ex)
+        {
+            _logger.LogError(ex, "Custom exception occurred: {Message}", ex.Message);
+            await HandleExceptionAsync(context, ex);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception occurred: {Message}", ex.Message);

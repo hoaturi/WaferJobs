@@ -8,7 +8,6 @@ public class PaymentService : IPaymentService
 {
     private readonly StripeOptions _options;
     private readonly StripeClient _client;
-
     private readonly ILogger<PaymentService> _logger;
 
     public PaymentService(IOptions<StripeOptions> options, ILogger<PaymentService> logger)

@@ -22,15 +22,11 @@ public class CreateJobPostCommandHandler(
     {
         var userId = _currentUser.GetUserId();
 
-        var business = await _appDbContext
-            .Businesses.Where(b => b.UserId == userId)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (business is null)
-        {
-            BusinessErrors.AssociatedBusinessNotFound(userId);
-            _logger.LogError("Business not found for user: {userId}", userId);
-        }
+        var business =
+            await _appDbContext
+                .Businesses.Where(b => b.UserId == userId)
+                .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new AssociatedBusinessNotFoundException(userId);
 
         await CreateStripeCustomerIfNotExists(business!);
 

@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using Azure;
 using Azure.Communication.Email;
 using Microsoft.Extensions.Options;
 
@@ -19,7 +20,7 @@ public class EmailService : IEmailService
     {
         _azureOptions = azureOptions.Value;
         _emailOptions = emailOptions.Value;
-        _emailClient = new EmailClient(_azureOptions.CommunicationServiceConnectionStrings);
+        _emailClient = new EmailClient(_azureOptions.CommunicationServiceConnectionString);
         _logger = logger;
     }
 
@@ -50,8 +51,9 @@ public class EmailService : IEmailService
                 dto.User.Id
             );
         }
-        catch (Exception)
+        catch (RequestFailedException ex)
         {
+            _logger.LogError("Failed to send password reset email: {errorCode}", ex.ErrorCode);
             throw new EmailSendFailedException();
         }
     }
