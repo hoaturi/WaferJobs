@@ -36,6 +36,9 @@ public class ErrorCodes
     public static readonly ErrorCodes CreateSessionFailed = new("PA001");
     public static readonly ErrorCodes CreateCustomerFailed = new("PA002");
 
+    // File Upload Errors
+    public static readonly ErrorCodes FileUploadFailed = new("FI001");
+
     // Internal Server Errors
     public static readonly ErrorCodes InternalServerError = new("IN001");
 }

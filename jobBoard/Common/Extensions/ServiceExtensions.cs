@@ -100,6 +100,7 @@ public static class ServiceExtensions
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IPaymentService, PaymentService>();
+        services.AddSingleton<IFileUploadService, FileUploadService>();
 
         return services;
     }
