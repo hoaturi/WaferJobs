@@ -26,14 +26,14 @@ public class SignOutCommandHandler(
         var isTokenBlackListed = await _cache.GetStringAsync(key, cancellationToken);
         if (isTokenBlackListed is not null)
         {
-            _logger.LogWarning("User tried to log out with already blacklisted token.");
+            _logger.LogError("User tried to log out with already blacklisted token.");
             return Unit.Value;
         }
 
         var validationResult = await _jwtService.ValidateRefreshToken(refreshToken);
         if (validationResult is false)
         {
-            _logger.LogWarning("User tried to log out with invalid refresh token.");
+            _logger.LogError("User tried to log out with invalid refresh token.");
             return Unit.Value;
         }
 
