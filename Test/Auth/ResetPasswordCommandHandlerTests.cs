@@ -1,8 +1,10 @@
-﻿using FluentAssertions;
+﻿using Castle.Core.Logging;
+using FluentAssertions;
 using JobBoard;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -12,6 +14,7 @@ public class ResetPasswordCommandHandlerTests
 {
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<ILogger<ResetPasswordCommandHandler>> _mockLogger;
     private readonly ResetPasswordCommandHandler _handler;
 
     public ResetPasswordCommandHandlerTests()
@@ -28,21 +31,21 @@ public class ResetPasswordCommandHandlerTests
             null!,
             null!
         );
+        _mockLogger = new Mock<ILogger<ResetPasswordCommandHandler>>();
 
-        _handler = new ResetPasswordCommandHandler(_mockUserManager.Object);
+        _handler = new ResetPasswordCommandHandler(_mockUserManager.Object, _mockLogger.Object);
     }
 
     [Fact]
     public async Task WhenSuccessful_ShouldResetPassword_And_ReturnUnit()
     {
         // Arrange
-        var request = new ResetPasswordCommand
-        {
-            UserId = Guid.NewGuid(),
-            Token = "resetToken",
-            Password = "newPassword",
-            ConfirmPassword = "newPassword"
-        };
+        var request = new ResetPasswordCommand(
+            Guid.NewGuid(),
+            "resetToken",
+            "newPassword",
+            "newPassword"
+        );
 
         var user = new ApplicationUser { Id = request.UserId };
 
@@ -70,13 +73,12 @@ public class ResetPasswordCommandHandlerTests
     public async Task WhenUserNotFound_ShouldReturnUserNotFoundError()
     {
         // Arrange
-        var request = new ResetPasswordCommand
-        {
-            UserId = Guid.NewGuid(),
-            Token = "resetToken",
-            Password = "newPassword",
-            ConfirmPassword = "newPassword"
-        };
+        var request = new ResetPasswordCommand(
+            Guid.NewGuid(),
+            "resetToken",
+            "newPassword",
+            "newPassword"
+        );
 
         _mockUserManager
             .Setup(x => x.FindByIdAsync(request.UserId.ToString()))
@@ -105,13 +107,12 @@ public class ResetPasswordCommandHandlerTests
     public async Task WhenResetFails_ShouldReturnInvalidTokenError()
     {
         // Arrange
-        var request = new ResetPasswordCommand
-        {
-            UserId = Guid.NewGuid(),
-            Token = "resetToken",
-            Password = "newPassword",
-            ConfirmPassword = "newPassword"
-        };
+        var request = new ResetPasswordCommand(
+            Guid.NewGuid(),
+            "resetToken",
+            "newPassword",
+            "newPassword"
+        );
 
         var user = new ApplicationUser { Id = request.UserId };
 

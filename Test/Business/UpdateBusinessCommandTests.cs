@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using JobBoard;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -10,6 +11,7 @@ public class UpdateBusinessCommandTests
 {
     private readonly AppDbContext _appDbContext;
     private readonly Mock<ICurrentUserService> _mockCurrentUser;
+    private readonly Mock<ILogger<UpdateBusinessCommandHandler>> _mockLogger;
     private readonly UpdateBusinessCommandHandler _handler;
 
     public UpdateBusinessCommandTests()
@@ -20,8 +22,13 @@ public class UpdateBusinessCommandTests
 
         _appDbContext = new AppDbContext(options);
         _mockCurrentUser = new Mock<ICurrentUserService>();
+        _mockLogger = new Mock<ILogger<UpdateBusinessCommandHandler>>();
 
-        _handler = new UpdateBusinessCommandHandler(_appDbContext, _mockCurrentUser.Object);
+        _handler = new UpdateBusinessCommandHandler(
+            _appDbContext,
+            _mockCurrentUser.Object,
+            _mockLogger.Object
+        );
     }
 
     [Fact]
@@ -41,16 +48,15 @@ public class UpdateBusinessCommandTests
             UserId = user.Id
         };
 
-        var request = new UpdateBusinessCommand
-        {
-            Name = "Updated Business",
-            BusinessSizeId = 2,
-            Description = "Updated Description",
-            Location = "Updated Location",
-            Url = "https://updated.com",
-            TwitterUrl = "https://twitter.com/updated",
-            LinkedInUrl = "https://linkedin.com/updated"
-        };
+        var request = new UpdateBusinessCommand(
+            "Updated Business",
+            2,
+            "Updated Description",
+            "Updated Location",
+            "https://updated.com",
+            "https://twitter.com/updated",
+            "https://linkedin.com/updated"
+        );
 
         _appDbContext.Users.Add(user);
         _appDbContext.Businesses.Add(business);
@@ -69,7 +75,7 @@ public class UpdateBusinessCommandTests
         );
 
         updatedBusiness.Should().NotBeNull();
-        updatedBusiness.Name.Should().Be(request.Name);
+        updatedBusiness!.Name.Should().Be(request.Name);
         updatedBusiness.Description.Should().Be(request.Description);
         updatedBusiness.Location.Should().Be(request.Location);
         updatedBusiness.BusinessSizeId.Should().Be(request.BusinessSizeId);
@@ -85,16 +91,15 @@ public class UpdateBusinessCommandTests
         // Arrange
         var user = new ApplicationUser { Id = Guid.NewGuid() };
 
-        var request = new UpdateBusinessCommand
-        {
-            Name = "Updated Business",
-            BusinessSizeId = 2,
-            Description = "Updated Description",
-            Location = "Updated Location",
-            Url = "https://updated.com",
-            TwitterUrl = "https://twitter.com/updated",
-            LinkedInUrl = "https://linkedin.com/updated"
-        };
+        var request = new UpdateBusinessCommand(
+            "Updated Business",
+            2,
+            "Updated Description",
+            "Updated Location",
+            "https://updated.com",
+            "https://twitter.com/updated",
+            "https://linkedin.com/updated"
+        );
 
         _appDbContext.Users.Add(user);
         await _appDbContext.SaveChangesAsync();
@@ -102,10 +107,9 @@ public class UpdateBusinessCommandTests
         _mockCurrentUser.Setup(x => x.GetUserId()).Returns(user.Id);
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        Func<Task> act = async () => await _handler.Handle(request, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().BeEquivalentTo(BusinessErrors.AssociatedBusinessNotFound(user.Id));
+        await act.Should().ThrowAsync<AssociatedBusinessNotFoundException>();
     }
 }

@@ -2,6 +2,7 @@
 using JobBoard;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -11,6 +12,7 @@ public class SignupCommandHandlerTests
 {
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<ILogger<SignUpCommandHandler>> _mockLogger;
     private readonly SignUpCommandHandler _handler;
 
     public SignupCommandHandlerTests()
@@ -28,8 +30,9 @@ public class SignupCommandHandlerTests
             null!,
             null!
         );
+        _mockLogger = new Mock<ILogger<SignUpCommandHandler>>();
 
-        _handler = new SignUpCommandHandler(_mockUserManager.Object);
+        _handler = new SignUpCommandHandler(_mockUserManager.Object, _mockLogger.Object);
     }
 
     [Fact]

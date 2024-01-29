@@ -3,6 +3,7 @@ using JobBoard;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -12,6 +13,7 @@ public class SignupBusinessCommandHandlerTests
 {
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<ILogger<SignUpBusinessCommandHandler>> _mockLogger;
     private readonly AppDbContext _appDbContext;
     private readonly SignUpBusinessCommandHandler _handler;
 
@@ -29,13 +31,18 @@ public class SignupBusinessCommandHandlerTests
             null!,
             null!
         );
+        _mockLogger = new Mock<ILogger<SignUpBusinessCommandHandler>>();
 
         var option = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(databaseName: "Test")
             .Options;
         _appDbContext = new AppDbContext(option);
 
-        _handler = new SignUpBusinessCommandHandler(_mockUserManager.Object, _appDbContext);
+        _handler = new SignUpBusinessCommandHandler(
+            _mockUserManager.Object,
+            _appDbContext,
+            _mockLogger.Object
+        );
     }
 
     [Fact]

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using JobBoard;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -11,6 +12,7 @@ public class SignInCommandHandlerTests
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<IJwtService> _mockJwtService;
+    private readonly Mock<ILogger<SignInCommandHandler>> _mockLogger;
     private readonly SignInCommandHandler _handler;
 
     public SignInCommandHandlerTests()
@@ -28,8 +30,13 @@ public class SignInCommandHandlerTests
             null!
         );
         _mockJwtService = new Mock<IJwtService>();
+        _mockLogger = new Mock<ILogger<SignInCommandHandler>>();
 
-        _handler = new SignInCommandHandler(_mockUserManager.Object, _mockJwtService.Object);
+        _handler = new SignInCommandHandler(
+            _mockUserManager.Object,
+            _mockJwtService.Object,
+            _mockLogger.Object
+        );
     }
 
     [Fact]
@@ -51,9 +58,8 @@ public class SignInCommandHandlerTests
         _mockUserManager.Setup(x => x.GetRolesAsync(mockUser)).ReturnsAsync(mockRoles);
 
         _mockJwtService
-            .Setup(x => x.GenerateAccessToken(mockUser, mockRoles))
-            .Returns(mockAccessToken);
-        _mockJwtService.Setup(x => x.GenerateRefreshToken(mockUser)).Returns(mockRefreshToken);
+            .Setup(x => x.GenerateTokens(mockUser, mockRoles))
+            .Returns((mockAccessToken, mockRefreshToken));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -73,8 +79,7 @@ public class SignInCommandHandlerTests
         _mockUserManager.Verify(x => x.FindByEmailAsync(request.Email), Times.Once);
         _mockUserManager.Verify(x => x.CheckPasswordAsync(mockUser, request.Password), Times.Once);
         _mockUserManager.Verify(x => x.GetRolesAsync(mockUser), Times.Once);
-        _mockJwtService.Verify(x => x.GenerateAccessToken(mockUser, mockRoles), Times.Once);
-        _mockJwtService.Verify(x => x.GenerateRefreshToken(mockUser), Times.Once);
+        _mockJwtService.Verify(x => x.GenerateTokens(mockUser, mockRoles), Times.Once);
     }
 
     [Fact]

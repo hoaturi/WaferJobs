@@ -2,8 +2,8 @@
 using JobBoard;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Xunit;
 
 namespace Test;
 
@@ -12,6 +12,7 @@ public class ForgotPasswordCommandHandlerTest
     private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<IEmailService> _mockEmailSender;
+    private readonly Mock<ILogger<ForgotPasswordCommandHandler>> _mockLogger;
     private readonly ForgotPasswordCommandHandler _handler;
 
     public ForgotPasswordCommandHandlerTest()
@@ -29,10 +30,12 @@ public class ForgotPasswordCommandHandlerTest
             null!
         );
         _mockEmailSender = new Mock<IEmailService>();
+        _mockLogger = new Mock<ILogger<ForgotPasswordCommandHandler>>();
 
         _handler = new ForgotPasswordCommandHandler(
             _mockUserManager.Object,
-            _mockEmailSender.Object
+            _mockEmailSender.Object,
+            _mockLogger.Object
         );
     }
 
