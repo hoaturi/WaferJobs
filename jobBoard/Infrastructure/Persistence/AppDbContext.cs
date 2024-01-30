@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Country> Countries { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<EmploymentType> EmploymentTypes { get; set; }
+    public DbSet<JobPostPayment> JobPostPayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

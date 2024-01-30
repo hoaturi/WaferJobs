@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace JobBoard;
+﻿namespace JobBoard;
 
 public class JobPost : BaseEntity
 {
@@ -27,4 +25,5 @@ public class JobPost : BaseEntity
     public Category Category { get; set; } = null!;
     public Country Country { get; set; } = null!;
     public EmploymentType EmploymentType { get; set; } = null!;
+    public JobPostPayment? Payment { get; set; }
 }

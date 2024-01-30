@@ -39,14 +39,13 @@ public class PaymentService : IPaymentService
         }
     }
 
-    public async Task<Session> CreateFeaturedListingCheckoutSessions(string customerId, Guid jobId)
+    public async Task<Session> CreateFeaturedListingCheckoutSessions(string customerId)
     {
         var options = new SessionCreateOptions
         {
             Customer = customerId,
             LineItems = [new() { Price = _options.FeaturedListingPriceId, Quantity = 1 }],
             Mode = "payment",
-            Metadata = new Dictionary<string, string> { { "jobId", jobId.ToString() } },
             SuccessUrl = _options.SuccessUrl,
             CancelUrl = _options.CancelUrl
         };

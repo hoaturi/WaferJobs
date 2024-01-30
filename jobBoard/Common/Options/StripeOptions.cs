@@ -10,6 +10,9 @@ public class StripeOptions
     public required string SecretKey { get; init; }
 
     [Required]
+    public required string WebhookSecret { get; init; }
+
+    [Required]
     public required string FeaturedListingPriceId { get; init; }
 
     [Required]
