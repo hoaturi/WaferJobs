@@ -7,16 +7,16 @@ namespace JobBoard;
 [Tags("Business")]
 [ApiController]
 [Route("api/business")]
-public class UploadBusinessLogoController(ISender sender) : BaseController
+public class UploadMyBusinessLogoController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
-    [HttpPost("logo")]
+    [HttpPost("/me/logo")]
     [Authorize(RolePolicy.Business)]
     [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 5)]
     public async Task<IActionResult> UploadLogo([FromForm] IFormFile file)
     {
-        var command = new UploadBusinessLogoCommand(file);
+        var command = new UploadMyBusinessLogoCommand(file);
 
         var result = await _sender.Send(command);
 

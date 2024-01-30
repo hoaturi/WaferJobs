@@ -13,7 +13,7 @@ public class UploadBusinessLogoCommandHandlerTests
     private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly Mock<IFileUploadService> _fileUploadServiceMock;
     private readonly AppDbContext _appDbContext;
-    private readonly UploadBusinessLogoCommandHandler _handler;
+    private readonly UploadMyBusinessLogoCommandHandler _handler;
 
     public UploadBusinessLogoCommandHandlerTests()
     {
@@ -26,7 +26,7 @@ public class UploadBusinessLogoCommandHandlerTests
 
         _appDbContext = new AppDbContext(options);
 
-        _handler = new UploadBusinessLogoCommandHandler(
+        _handler = new UploadMyBusinessLogoCommandHandler(
             _appDbContext,
             _currentUserServiceMock.Object,
             _fileUploadServiceMock.Object
@@ -67,7 +67,7 @@ public class UploadBusinessLogoCommandHandlerTests
         var logoUrl = "https://test.com/test.jpg";
 
         var mockFile = CreateMockImageFile();
-        var request = new UploadBusinessLogoCommand(mockFile);
+        var request = new UploadMyBusinessLogoCommand(mockFile);
 
         _appDbContext.Businesses.Add(business);
         _appDbContext.SaveChanges();
@@ -99,7 +99,7 @@ public class UploadBusinessLogoCommandHandlerTests
         var userId = Guid.NewGuid();
 
         var mockFile = CreateMockImageFile();
-        var request = new UploadBusinessLogoCommand(mockFile);
+        var request = new UploadMyBusinessLogoCommand(mockFile);
 
         _currentUserServiceMock.Setup(m => m.GetUserId()).Returns(userId);
 

@@ -2,18 +2,18 @@
 
 namespace JobBoard;
 
-public class UploadBusinessLogoCommandHandler(
+public class UploadMyBusinessLogoCommandHandler(
     AppDbContext appDbContext,
     ICurrentUserService currentUserService,
     IFileUploadService fileUploadService
-) : IRequestHandler<UploadBusinessLogoCommand, Result<Unit, Error>>
+) : IRequestHandler<UploadMyBusinessLogoCommand, Result<Unit, Error>>
 {
     private readonly AppDbContext _appDbContext = appDbContext;
     private readonly ICurrentUserService _currentUserService = currentUserService;
     private readonly IFileUploadService _fileUploadService = fileUploadService;
 
     public async Task<Result<Unit, Error>> Handle(
-        UploadBusinessLogoCommand request,
+        UploadMyBusinessLogoCommand request,
         CancellationToken cancellationToken
     )
     {

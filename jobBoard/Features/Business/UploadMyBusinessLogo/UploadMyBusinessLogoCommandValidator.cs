@@ -2,7 +2,7 @@
 
 namespace JobBoard;
 
-public class UploadBusinessLogoCommandValidator : AbstractValidator<UploadBusinessLogoCommand>
+public class UploadBusinessLogoCommandValidator : AbstractValidator<UploadMyBusinessLogoCommand>
 {
     private readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png"];
 
