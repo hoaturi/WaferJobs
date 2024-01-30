@@ -12,7 +12,7 @@ public class UpdateMyBusinessController(ISender sender) : BaseController
     private readonly ISender _sender = sender;
 
     [Authorize(RolePolicy.Business)]
-    [HttpPut("/me")]
+    [HttpPut("me")]
     public async Task<IActionResult> UpdateBusiness([FromBody] UpdateMyBusinessCommand command)
     {
         var result = await _sender.Send(command);

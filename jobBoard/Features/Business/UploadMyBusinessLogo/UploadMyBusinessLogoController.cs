@@ -11,7 +11,7 @@ public class UploadMyBusinessLogoController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
-    [HttpPost("/me/logo")]
+    [HttpPost("me/logo")]
     [Authorize(RolePolicy.Business)]
     [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 5)]
     public async Task<IActionResult> UploadLogo([FromForm] IFormFile file)
