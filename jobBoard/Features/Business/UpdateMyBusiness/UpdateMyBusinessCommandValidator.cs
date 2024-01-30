@@ -12,5 +12,6 @@ public class UpdateMyBusinessCommandValidator : AbstractValidator<UpdateMyBusine
         RuleFor(b => b.Url).MaximumLength(500);
         RuleFor(b => b.TwitterUrl).MaximumLength(500);
         RuleFor(b => b.LinkedInUrl).MaximumLength(500);
+        RuleFor(b => b.BusinessSizeId).GreaterThanOrEqualTo(1);
     }
 }
