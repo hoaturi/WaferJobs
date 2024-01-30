@@ -3,18 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard;
 
-public class UpdateBusinessCommandHandler(
+public class UpdateMyBusinessCommandHandler(
     AppDbContext appDbContext,
     ICurrentUserService currentUser,
-    ILogger<UpdateBusinessCommandHandler> logger
-) : IRequestHandler<UpdateBusinessCommand, Result<Unit, Error>>
+    ILogger<UpdateMyBusinessCommandHandler> logger
+) : IRequestHandler<UpdateMyBusinessCommand, Result<Unit, Error>>
 {
     private readonly AppDbContext _appDbContext = appDbContext;
     private readonly ICurrentUserService _currentUser = currentUser;
-    private readonly ILogger<UpdateBusinessCommandHandler> _logger = logger;
+    private readonly ILogger<UpdateMyBusinessCommandHandler> _logger = logger;
 
     public async Task<Result<Unit, Error>> Handle(
-        UpdateBusinessCommand request,
+        UpdateMyBusinessCommand request,
         CancellationToken cancellationToken
     )
     {
@@ -26,7 +26,7 @@ public class UpdateBusinessCommandHandler(
                 .FirstOrDefaultAsync(cancellationToken)
             ?? throw new AssociatedBusinessNotFoundException(userId);
 
-        UpdateBusinessCommandMapper.MapToEntity(request, business);
+        UpdateMyBusinessCommandMapper.MapToEntity(request, business);
 
         await _appDbContext.SaveChangesAsync(cancellationToken);
 

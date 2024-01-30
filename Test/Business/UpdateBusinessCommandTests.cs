@@ -11,8 +11,8 @@ public class UpdateBusinessCommandTests
 {
     private readonly AppDbContext _appDbContext;
     private readonly Mock<ICurrentUserService> _mockCurrentUser;
-    private readonly Mock<ILogger<UpdateBusinessCommandHandler>> _mockLogger;
-    private readonly UpdateBusinessCommandHandler _handler;
+    private readonly Mock<ILogger<UpdateMyBusinessCommandHandler>> _mockLogger;
+    private readonly UpdateMyBusinessCommandHandler _handler;
 
     public UpdateBusinessCommandTests()
     {
@@ -22,9 +22,9 @@ public class UpdateBusinessCommandTests
 
         _appDbContext = new AppDbContext(options);
         _mockCurrentUser = new Mock<ICurrentUserService>();
-        _mockLogger = new Mock<ILogger<UpdateBusinessCommandHandler>>();
+        _mockLogger = new Mock<ILogger<UpdateMyBusinessCommandHandler>>();
 
-        _handler = new UpdateBusinessCommandHandler(
+        _handler = new UpdateMyBusinessCommandHandler(
             _appDbContext,
             _mockCurrentUser.Object,
             _mockLogger.Object
@@ -48,7 +48,7 @@ public class UpdateBusinessCommandTests
             UserId = user.Id
         };
 
-        var request = new UpdateBusinessCommand(
+        var request = new UpdateMyBusinessCommand(
             "Updated Business",
             2,
             "Updated Description",
@@ -91,7 +91,7 @@ public class UpdateBusinessCommandTests
         // Arrange
         var user = new ApplicationUser { Id = Guid.NewGuid() };
 
-        var request = new UpdateBusinessCommand(
+        var request = new UpdateMyBusinessCommand(
             "Updated Business",
             2,
             "Updated Description",

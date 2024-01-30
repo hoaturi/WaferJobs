@@ -1,8 +1,8 @@
 ﻿namespace JobBoard;
 
-public static class UpdateBusinessCommandMapper
+public static class UpdateMyBusinessCommandMapper
 {
-    public static Business MapToEntity(UpdateBusinessCommand request, Business business)
+    public static Business MapToEntity(UpdateMyBusinessCommand request, Business business)
     {
         business.Name = request.Name;
         business.Description = request.Description;

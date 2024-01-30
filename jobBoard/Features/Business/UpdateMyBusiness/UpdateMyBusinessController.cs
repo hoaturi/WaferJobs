@@ -7,13 +7,13 @@ namespace JobBoard;
 [Tags("Business")]
 [ApiController]
 [Route("api/businesses")]
-public class UpdateBusinessController(ISender sender) : BaseController
+public class UpdateMyBusinessController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
     [Authorize(RolePolicy.Business)]
-    [HttpPut]
-    public async Task<IActionResult> UpdateBusiness([FromBody] UpdateBusinessCommand command)
+    [HttpPut("/me")]
+    public async Task<IActionResult> UpdateBusiness([FromBody] UpdateMyBusinessCommand command)
     {
         var result = await _sender.Send(command);
 

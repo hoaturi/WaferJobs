@@ -2,7 +2,7 @@ using MediatR;
 
 namespace JobBoard;
 
-public record UpdateBusinessCommand(
+public record UpdateMyBusinessCommand(
     string Name,
     int? BusinessSizeId,
     string? Description,

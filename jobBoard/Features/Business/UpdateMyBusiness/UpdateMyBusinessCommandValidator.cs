@@ -2,9 +2,9 @@
 
 namespace JobBoard;
 
-public class UpdateBusinessCommandValidator : AbstractValidator<UpdateBusinessCommand>
+public class UpdateMyBusinessCommandValidator : AbstractValidator<UpdateMyBusinessCommand>
 {
-    public UpdateBusinessCommandValidator()
+    public UpdateMyBusinessCommandValidator()
     {
         RuleFor(b => b.Name).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Description).MaximumLength(5000);
