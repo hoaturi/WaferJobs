@@ -7,14 +7,14 @@ using Xunit;
 
 namespace Test;
 
-public class UpdateBusinessCommandTests
+public class UpdateMyBusinessCommandTests
 {
     private readonly AppDbContext _appDbContext;
     private readonly Mock<ICurrentUserService> _mockCurrentUser;
     private readonly Mock<ILogger<UpdateMyBusinessCommandHandler>> _mockLogger;
     private readonly UpdateMyBusinessCommandHandler _handler;
 
-    public UpdateBusinessCommandTests()
+    public UpdateMyBusinessCommandTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
