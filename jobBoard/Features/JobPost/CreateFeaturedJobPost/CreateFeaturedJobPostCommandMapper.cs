@@ -1,8 +1,8 @@
 ﻿namespace JobBoard;
 
-public static class CreateJobPostCommandMapper
+public static class CreateFeaturedJobPostCommandMapper
 {
-    public static JobPost MapToEntity(CreateJobPostCommand request, Business business)
+    public static JobPost MapToEntity(CreateFeaturedJobPostCommand request, Business business)
     {
         var jobPost = new JobPost
         {
@@ -15,12 +15,12 @@ public static class CreateJobPostCommandMapper
             CompanyLogoUrl = business.LogoUrl,
             ApplyUrl = request.ApplyUrl,
             IsRemote = request.IsRemote,
-            IsFeatured = request.IsFeatured,
             City = request.City,
             MinSalary = request.MinSalary,
             MaxSalary = request.MaxSalary,
             Currency = request.Currency,
             BusinessId = business.Id,
+            IsFeatured = true,
             IsPublished = false
         };
 

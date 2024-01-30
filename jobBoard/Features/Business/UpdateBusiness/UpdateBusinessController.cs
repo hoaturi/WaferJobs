@@ -11,7 +11,7 @@ public class UpdateBusinessController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
-    [Authorize(policy: RolePolicy.Business)]
+    [Authorize(RolePolicy.Business)]
     [HttpPut]
     public async Task<IActionResult> UpdateBusiness([FromBody] UpdateBusinessCommand command)
     {

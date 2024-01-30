@@ -7,13 +7,13 @@ namespace JobBoard;
 [Tags("Job Post")]
 [ApiController]
 [Route("api/jobs")]
-public class CreateJobPostController(ISender sender) : BaseController
+public class CreateFeaturedJobPostController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
-    [Authorize(policy: RolePolicy.Business)]
+    [Authorize(RolePolicy.Business)]
     [HttpPost]
-    public async Task<IActionResult> CreateJobPost(CreateJobPostCommand command)
+    public async Task<IActionResult> CreateJobPost(CreateFeaturedJobPostCommand command)
     {
         var result = await _sender.Send(command);
 

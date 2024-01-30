@@ -2,7 +2,7 @@ using MediatR;
 
 namespace JobBoard;
 
-public record CreateJobPostCommand(
+public record CreateFeaturedJobPostCommand(
     int CategoryId,
     int CountryId,
     int EmploymentTypeId,
@@ -11,9 +11,8 @@ public record CreateJobPostCommand(
     string CompanyName,
     string ApplyUrl,
     bool IsRemote,
-    bool IsFeatured,
     string? City,
     int? MinSalary,
     int? MaxSalary,
     string? Currency
-) : IRequest<Result<CreateJobPostResponse, Error>>;
+) : IRequest<Result<CreateFeaturedJobPostResponse, Error>>;
