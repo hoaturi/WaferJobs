@@ -29,8 +29,4 @@
     <ProjectReference Include="..\JobBoard\JobBoard.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="JobPost\" />
-  </ItemGroup>
-
 </Project>
