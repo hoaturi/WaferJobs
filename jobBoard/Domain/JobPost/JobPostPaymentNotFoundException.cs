@@ -2,9 +2,9 @@
 
 namespace JobBoard;
 
-public class JobPostToPublishNotFoundException()
+public class JobPostPaymentNotFoundException()
     : CustomException(
         ErrorCodes.JobPostNotFound,
         HttpStatusCode.NotFound,
-        "Job post to publish not found"
+        "Job post payment not found"
     );

@@ -21,7 +21,7 @@ public class PublishFeaturedJobPostCommandHandler(
                 .JobPostPayments.Where(jpp => jpp.CheckoutSessionId == request.SessionId)
                 .Include(jpp => jpp.JobPost)
                 .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new JobPostToPublishNotFoundException();
+            ?? throw new JobPostPaymentNotFoundException();
 
         if (jobPostPayment.IsProcessed)
         {
