@@ -9,6 +9,30 @@ namespace JobBoard;
 
 public static class ServiceExtensions
 {
+    public static IServiceCollection AddCorsPolicy(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        var corsOptions = configuration.GetSection(CorsOptions.Key).Get<CorsOptions>()!;
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy(
+                name: "CorsPolicy",
+                builder =>
+                {
+                    builder
+                        .WithOrigins(corsOptions.AllowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
+            );
+        });
+
+        return services;
+    }
+
     // Registers DbContexts
     public static IServiceCollection AddDbContexts(
         this IServiceCollection services,
@@ -172,6 +196,12 @@ public static class ServiceExtensions
         services
             .AddOptions<StripeOptions>()
             .Bind(configuration.GetSection(StripeOptions.Key))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddOptions<CorsOptions>()
+            .Bind(configuration.GetSection(CorsOptions.Key))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 

@@ -7,6 +7,7 @@ var configuration = builder.Configuration;
 
 builder.Host.UseSerilogWithSeq();
 
+builder.Services.AddCorsPolicy(configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+app.UseCors("CorsPolicy");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
