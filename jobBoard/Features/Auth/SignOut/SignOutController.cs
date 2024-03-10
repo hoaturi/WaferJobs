@@ -22,6 +22,8 @@ public class SignOutController(ISender sender) : ControllerBase
             return this.HandleFailure(result.Error!);
         }
 
+        HttpContext.Response.Cookies.Delete("refresh_token");
+
         return Ok();
     }
 }
