@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard;
@@ -12,9 +11,11 @@ public class SignOutController(ISender sender) : ControllerBase
     private readonly ISender _sender = sender;
 
     [HttpPost]
-    public async Task<IActionResult> SignOut([FromHeader] string Authorization)
+    public new async Task<IActionResult> SignOut()
     {
-        var result = await _sender.Send(new SignOutCommand(Authorization));
+        HttpContext.Request.Cookies.TryGetValue("refresh_token", out var refreshToken);
+
+        var result = await _sender.Send(new SignOutCommand(refreshToken!));
 
         if (!result.IsSuccess)
         {

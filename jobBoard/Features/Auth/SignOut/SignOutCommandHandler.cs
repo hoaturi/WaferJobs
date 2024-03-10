@@ -20,8 +20,7 @@ public class SignOutCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var refreshToken = request.RefreshToken.Split(" ")[1];
-        var key = CacheKeys.RevokedToken + refreshToken;
+        var key = CacheKeys.RevokedToken + request.RefreshToken;
 
         var isTokenBlackListed = await _cache.GetStringAsync(key, cancellationToken);
         if (isTokenBlackListed is not null)
@@ -30,14 +29,14 @@ public class SignOutCommandHandler(
             return Unit.Value;
         }
 
-        var validationResult = await _jwtService.ValidateRefreshToken(refreshToken);
+        var validationResult = await _jwtService.ValidateRefreshToken(request.RefreshToken);
         if (validationResult is false)
         {
             _logger.LogError("User tried to log out with invalid refresh token.");
             return Unit.Value;
         }
 
-        await BlacklistToken(refreshToken, cancellationToken);
+        await BlacklistToken(request.RefreshToken, cancellationToken);
 
         _logger.LogInformation(
             "Successfully logged user out. The refresh token was added to the blacklist."

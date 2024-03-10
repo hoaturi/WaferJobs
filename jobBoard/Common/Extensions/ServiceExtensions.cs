@@ -25,7 +25,8 @@ public static class ServiceExtensions
                     builder
                         .WithOrigins(corsOptions.AllowedOrigins)
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 }
             );
         });
