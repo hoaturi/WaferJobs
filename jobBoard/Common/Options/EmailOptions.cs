@@ -12,8 +12,8 @@ public record class EmailOptions
     [Required]
     public required string BaseUrl { get; init; }
 
-    [Required]
-    public required string ResetPasswordPath { get; init; }
-
-    public string ResetPasswordUrl => $"https://{BaseUrl}{ResetPasswordPath}";
+    public string GetPasswordResetLink(string token, string userId)
+    {
+        return $"http://{BaseUrl}/auth/reset-password?token={token}&userId={userId}";
+    }
 }

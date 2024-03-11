@@ -27,19 +27,22 @@ public class EmailService : IEmailService
     public async Task SendPasswordResetEmailAsync(EmailDto dto)
     {
         var encodedToken = HttpUtility.UrlEncode(dto.Token);
-        var url = $"{_emailOptions.ResetPasswordUrl}?token={encodedToken}/userId={dto.User.Id}";
+        var passwordResetLink = _emailOptions.GetPasswordResetLink(
+            encodedToken,
+            dto.User.Id.ToString()
+        );
 
         var htmlContent =
             $@"
             <p>Please click the button below to reset your password.</p>
-            <p><a href='{url}'>Reset Password</a></p>
+            <p><a href='{passwordResetLink}'>Reset Password</a></p>
             <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
             <p>Thank you,<br>JobBoard Team</p>";
 
         try
         {
             await _emailClient.SendAsync(
-                Azure.WaitUntil.Started,
+                WaitUntil.Started,
                 senderAddress: _emailOptions.FromAddress,
                 recipientAddress: dto.User.Email,
                 subject: "Reset Password",
