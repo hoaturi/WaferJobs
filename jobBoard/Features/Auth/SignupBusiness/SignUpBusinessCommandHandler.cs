@@ -36,7 +36,7 @@ public class SignUpBusinessCommandHandler(
         await _appDbContext.Businesses.AddAsync(newBusiness, cancellationToken);
         await _appDbContext.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Successfully created business user with id: {}", newUser.Id);
+        _logger.LogInformation("Successfully created business user with id: {userId}", newUser.Id);
 
         scope.Complete();
 

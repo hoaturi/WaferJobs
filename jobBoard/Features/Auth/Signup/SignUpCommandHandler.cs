@@ -30,7 +30,10 @@ public class SignUpCommandHandler(
         await _userManager.CreateAsync(newUser, request.Password);
         await _userManager.AddToRoleAsync(newUser, RoleTypes.JobSeeker.ToString());
 
-        _logger.LogInformation("Successfully created job seeker user with id: {}", newUser.Id);
+        _logger.LogInformation(
+            "Successfully created job seeker user with id: {userId}",
+            newUser.Id
+        );
 
         scope.Complete();
 
