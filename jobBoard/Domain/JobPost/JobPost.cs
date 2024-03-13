@@ -18,8 +18,10 @@ public class JobPost : BaseEntity
     public string? CompanyLogoUrl { get; set; }
     public required bool IsRemote { get; set; }
     public required bool IsFeatured { get; set; }
+    public List<string>? Tags { get; set; }
     public bool IsPublished { get; set; }
     public DateTime PublishedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public Business? Business { get; set; }
     public Category Category { get; set; } = null!;

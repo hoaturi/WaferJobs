@@ -15,6 +15,7 @@ public record JobPostDto(
     string? Currency,
     Guid? BusinessId,
     string? CompanyLogoUrl,
+    List<string> Tags,
     DateTime PublishedAt
 );
 

@@ -20,6 +20,7 @@ public static class CreateFeaturedJobPostCommandMapper
             MaxSalary = request.MaxSalary,
             Currency = request.Currency,
             BusinessId = business.Id,
+            Tags = request.Tags,
             IsFeatured = true,
             IsPublished = false
         };

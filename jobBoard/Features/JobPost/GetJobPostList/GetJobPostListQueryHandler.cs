@@ -30,6 +30,19 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             query = query.Where(j => j.EmploymentTypeId == request.EmploymentTypeId);
         }
 
+        if (request.Keyword is not null)
+        {
+            var keyword = request.Keyword.ToLower();
+
+            query = query.Where(
+                j =>
+                    EF.Functions.ILike(j.Title, $"%{keyword}%")
+                    || EF.Functions.ILike(j.Description, $"%{keyword}%")
+                    || EF.Functions.ILike(j.CompanyName, $"%{keyword}%")
+                    || j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))
+            );
+        }
+
         query = query.Where(j => j.IsPublished);
 
         query = query

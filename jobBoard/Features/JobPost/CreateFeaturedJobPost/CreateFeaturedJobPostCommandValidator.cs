@@ -21,5 +21,6 @@ public class CreateFeaturedJobPostCommandValidator : AbstractValidator<CreateFea
             .Must((command, maxSalary) => maxSalary >= command.MinSalary)
             .WithMessage("MaxSalary must be greater than MinSalary");
         RuleFor(jp => jp.Currency).MaximumLength(3);
+        RuleFor(jp => jp.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
     }
 }

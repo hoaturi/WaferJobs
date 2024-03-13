@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -9,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobBoard.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -267,8 +268,10 @@ namespace JobBoard.Migrations
                     CompanyLogoUrl = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     IsRemote = table.Column<bool>(type: "boolean", nullable: false),
                     IsFeatured = table.Column<bool>(type: "boolean", nullable: false),
+                    Tags = table.Column<List<string>>(type: "text[]", nullable: true),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -279,7 +282,8 @@ namespace JobBoard.Migrations
                         name: "FK_JobPosts_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_JobPosts_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -300,14 +304,36 @@ namespace JobBoard.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "JobPostPayments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    JobPostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CheckoutSessionId = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    EventId = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    IsProcessed = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobPostPayments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobPostPayments_JobPosts_JobPostId",
+                        column: x => x.JobPostId,
+                        principalTable: "JobPosts",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("4552f46c-3b1b-49d6-8c9b-6923a3ab4092"), null, "Business", "BUSINESS" },
-                    { new Guid("8d11eab8-ea2f-4634-9cea-e5244fb73522"), null, "Admin", "ADMIN" },
-                    { new Guid("f61c1dd3-508e-4f39-859d-165bdc413010"), null, "JobSeeker", "JOBSEEKER" }
+                    { new Guid("02c7242b-4cb4-4467-a347-6094510ae46a"), null, "Business", "BUSINESS" },
+                    { new Guid("7bebc09a-e88c-4d5f-9a80-7e057f65a79d"), null, "Admin", "ADMIN" },
+                    { new Guid("faad2ee8-982f-4ea8-8840-4ece92faac94"), null, "JobSeeker", "JOBSEEKER" }
                 });
 
             migrationBuilder.InsertData(
@@ -667,6 +693,12 @@ namespace JobBoard.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_JobPostPayments_JobPostId",
+                table: "JobPostPayments",
+                column: "JobPostId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JobPosts_BusinessId",
                 table: "JobPosts",
                 column: "BusinessId");
@@ -706,10 +738,13 @@ namespace JobBoard.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "JobPosts");
+                name: "JobPostPayments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "JobPosts");
 
             migrationBuilder.DropTable(
                 name: "Businesses");

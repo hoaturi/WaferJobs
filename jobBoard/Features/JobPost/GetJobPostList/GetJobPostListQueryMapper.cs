@@ -19,7 +19,8 @@ public static class GetJobPostListQueryMapper
             Currency: jobPost.Currency,
             BusinessId: jobPost.BusinessId,
             CompanyLogoUrl: jobPost.CompanyLogoUrl,
-            PublishedAt: jobPost.PublishedAt
+            PublishedAt: jobPost.PublishedAt,
+            Tags: jobPost.Tags ?? []
         );
     }
 }

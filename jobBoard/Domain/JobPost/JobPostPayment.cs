@@ -2,7 +2,7 @@
 
 public class JobPostPayment : BaseEntity
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public Guid JobPostId { get; set; }
     public required string CheckoutSessionId { get; set; }
     public string? EventId { get; set; }

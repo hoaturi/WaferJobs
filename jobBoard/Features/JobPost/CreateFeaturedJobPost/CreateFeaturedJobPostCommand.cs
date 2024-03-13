@@ -14,5 +14,6 @@ public record CreateFeaturedJobPostCommand(
     string? City,
     int? MinSalary,
     int? MaxSalary,
-    string? Currency
+    string? Currency,
+    List<string>? Tags
 ) : IRequest<Result<CreateFeaturedJobPostResponse, Error>>;
