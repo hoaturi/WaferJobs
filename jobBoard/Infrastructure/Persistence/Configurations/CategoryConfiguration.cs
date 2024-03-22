@@ -7,8 +7,9 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        builder.Property(c => c.Name).IsRequired().HasMaxLength(50);
+        builder.Property(c => c.Label).IsRequired().HasMaxLength(50);
         builder.Property(c => c.Slug).IsRequired().HasMaxLength(50);
+        builder.HasIndex(c => c.Slug);
 
         var categoryJson = File.ReadAllText(
             "Infrastructure/Persistence/Configurations/SeedData/categories.json"

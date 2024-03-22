@@ -14,5 +14,10 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
         builder.Property(jp => jp.ApplyUrl).HasMaxLength(2000);
         builder.Property(jp => jp.CompanyName).IsRequired().HasMaxLength(50);
         builder.Property(jp => jp.CompanyLogoUrl).HasMaxLength(2000);
+
+        builder.HasIndex(jp => jp.Title).HasMethod("GIN").HasOperators("gin_trgm_ops");
+        builder.HasIndex(jp => jp.Description).HasMethod("GIN").HasOperators("gin_trgm_ops");
+        builder.HasIndex(jp => jp.CompanyName).HasMethod("GIN").HasOperators("gin_trgm_ops");
+        builder.HasIndex(jp => jp.Tags).HasMethod("GIN");
     }
 }

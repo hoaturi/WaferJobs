@@ -1,1014 +1,1520 @@
 [
   {
-    "name": "Afghanistan",
-    "code": "AF"
+    "label": "Afghanistan",
+    "code": "AF",
+    "id": 1,
+    "slug": "afghanistan"
   },
   {
-    "name": "Albania",
-    "code": "AL"
+    "label": "Albania",
+    "code": "AL",
+    "id": 2,
+    "slug": "albania"
   },
   {
-    "name": "Algeria",
-    "code": "DZ"
+    "label": "Algeria",
+    "code": "DZ",
+    "id": 3,
+    "slug": "algeria"
   },
   {
-    "name": "American Samoa",
-    "code": "AS"
+    "label": "American Samoa",
+    "code": "AS",
+    "id": 4,
+    "slug": "american-samoa"
   },
   {
-    "name": "Andorra",
-    "code": "AD"
+    "label": "Andorra",
+    "code": "AD",
+    "id": 5,
+    "slug": "andorra"
   },
   {
-    "name": "Angola",
-    "code": "AO"
+    "label": "Angola",
+    "code": "AO",
+    "id": 6,
+    "slug": "angola"
   },
   {
-    "name": "Anguilla",
-    "code": "AI"
+    "label": "Anguilla",
+    "code": "AI",
+    "id": 7,
+    "slug": "anguilla"
   },
   {
-    "name": "Antarctica",
-    "code": "AQ"
+    "label": "Antarctica",
+    "code": "AQ",
+    "id": 8,
+    "slug": "antarctica"
   },
   {
-    "name": "Antigua and Barbuda",
-    "code": "AG"
+    "label": "Antigua and Barbuda",
+    "code": "AG",
+    "id": 9,
+    "slug": "antigua-and-barbuda"
   },
   {
-    "name": "Argentina",
-    "code": "AR"
+    "label": "Argentina",
+    "code": "AR",
+    "id": 10,
+    "slug": "argentina"
   },
   {
-    "name": "Armenia",
-    "code": "AM"
+    "label": "Armenia",
+    "code": "AM",
+    "id": 11,
+    "slug": "armenia"
   },
   {
-    "name": "Aruba",
-    "code": "AW"
+    "label": "Aruba",
+    "code": "AW",
+    "id": 12,
+    "slug": "aruba"
   },
   {
-    "name": "Asia/Pacific Region",
-    "code": "AP"
+    "label": "Asia/Pacific Region",
+    "code": "AP",
+    "id": 13,
+    "slug": "asia/pacific-region"
   },
   {
-    "name": "Australia",
-    "code": "AU"
+    "label": "Australia",
+    "code": "AU",
+    "id": 14,
+    "slug": "australia"
   },
   {
-    "name": "Austria",
-    "code": "AT"
+    "label": "Austria",
+    "code": "AT",
+    "id": 15,
+    "slug": "austria"
   },
   {
-    "name": "Azerbaijan",
-    "code": "AZ"
+    "label": "Azerbaijan",
+    "code": "AZ",
+    "id": 16,
+    "slug": "azerbaijan"
   },
   {
-    "name": "Bahamas",
-    "code": "BS"
+    "label": "Bahamas",
+    "code": "BS",
+    "id": 17,
+    "slug": "bahamas"
   },
   {
-    "name": "Bahrain",
-    "code": "BH"
+    "label": "Bahrain",
+    "code": "BH",
+    "id": 18,
+    "slug": "bahrain"
   },
   {
-    "name": "Bangladesh",
-    "code": "BD"
+    "label": "Bangladesh",
+    "code": "BD",
+    "id": 19,
+    "slug": "bangladesh"
   },
   {
-    "name": "Barbados",
-    "code": "BB"
+    "label": "Barbados",
+    "code": "BB",
+    "id": 20,
+    "slug": "barbados"
   },
   {
-    "name": "Belarus",
-    "code": "BY"
+    "label": "Belarus",
+    "code": "BY",
+    "id": 21,
+    "slug": "belarus"
   },
   {
-    "name": "Belgium",
-    "code": "BE"
+    "label": "Belgium",
+    "code": "BE",
+    "id": 22,
+    "slug": "belgium"
   },
   {
-    "name": "Belize",
-    "code": "BZ"
+    "label": "Belize",
+    "code": "BZ",
+    "id": 23,
+    "slug": "belize"
   },
   {
-    "name": "Benin",
-    "code": "BJ"
+    "label": "Benin",
+    "code": "BJ",
+    "id": 24,
+    "slug": "benin"
   },
   {
-    "name": "Bermuda",
-    "code": "BM"
+    "label": "Bermuda",
+    "code": "BM",
+    "id": 25,
+    "slug": "bermuda"
   },
   {
-    "name": "Bhutan",
-    "code": "BT"
+    "label": "Bhutan",
+    "code": "BT",
+    "id": 26,
+    "slug": "bhutan"
   },
   {
-    "name": "Bolivia",
-    "code": "BO"
+    "label": "Bolivia",
+    "code": "BO",
+    "id": 27,
+    "slug": "bolivia"
   },
   {
-    "name": "Bonaire, Sint Eustatius and Saba",
-    "code": "BQ"
+    "label": "Bonaire, Sint Eustatius and Saba",
+    "code": "BQ",
+    "id": 28,
+    "slug": "bonaire,-sint-eustatius-and-saba"
   },
   {
-    "name": "Bosnia and Herzegovina",
-    "code": "BA"
+    "label": "Bosnia and Herzegovina",
+    "code": "BA",
+    "id": 29,
+    "slug": "bosnia-and-herzegovina"
   },
   {
-    "name": "Botswana",
-    "code": "BW"
+    "label": "Botswana",
+    "code": "BW",
+    "id": 30,
+    "slug": "botswana"
   },
   {
-    "name": "Bouvet Island",
-    "code": "BV"
+    "label": "Bouvet Island",
+    "code": "BV",
+    "id": 31,
+    "slug": "bouvet-island"
   },
   {
-    "name": "Brazil",
-    "code": "BR"
+    "label": "Brazil",
+    "code": "BR",
+    "id": 32,
+    "slug": "brazil"
   },
   {
-    "name": "British Indian Ocean Territory",
-    "code": "IO"
+    "label": "British Indian Ocean Territory",
+    "code": "IO",
+    "id": 33,
+    "slug": "british-indian-ocean-territory"
   },
   {
-    "name": "Brunei Darussalam",
-    "code": "BN"
+    "label": "Brunei Darussalam",
+    "code": "BN",
+    "id": 34,
+    "slug": "brunei-darussalam"
   },
   {
-    "name": "Bulgaria",
-    "code": "BG"
+    "label": "Bulgaria",
+    "code": "BG",
+    "id": 35,
+    "slug": "bulgaria"
   },
   {
-    "name": "Burkina Faso",
-    "code": "BF"
+    "label": "Burkina Faso",
+    "code": "BF",
+    "id": 36,
+    "slug": "burkina-faso"
   },
   {
-    "name": "Burundi",
-    "code": "BI"
+    "label": "Burundi",
+    "code": "BI",
+    "id": 37,
+    "slug": "burundi"
   },
   {
-    "name": "Cambodia",
-    "code": "KH"
+    "label": "Cambodia",
+    "code": "KH",
+    "id": 38,
+    "slug": "cambodia"
   },
   {
-    "name": "Cameroon",
-    "code": "CM"
+    "label": "Cameroon",
+    "code": "CM",
+    "id": 39,
+    "slug": "cameroon"
   },
   {
-    "name": "Canada",
-    "code": "CA"
+    "label": "Canada",
+    "code": "CA",
+    "id": 40,
+    "slug": "canada"
   },
   {
-    "name": "Cape Verde",
-    "code": "CV"
+    "label": "Cape Verde",
+    "code": "CV",
+    "id": 41,
+    "slug": "cape-verde"
   },
   {
-    "name": "Cayman Islands",
-    "code": "KY"
+    "label": "Cayman Islands",
+    "code": "KY",
+    "id": 42,
+    "slug": "cayman-islands"
   },
   {
-    "name": "Central African Republic",
-    "code": "CF"
+    "label": "Central African Republic",
+    "code": "CF",
+    "id": 43,
+    "slug": "central-african-republic"
   },
   {
-    "name": "Chad",
-    "code": "TD"
+    "label": "Chad",
+    "code": "TD",
+    "id": 44,
+    "slug": "chad"
   },
   {
-    "name": "Chile",
-    "code": "CL"
+    "label": "Chile",
+    "code": "CL",
+    "id": 45,
+    "slug": "chile"
   },
   {
-    "name": "China",
-    "code": "CN"
+    "label": "China",
+    "code": "CN",
+    "id": 46,
+    "slug": "china"
   },
   {
-    "name": "Christmas Island",
-    "code": "CX"
+    "label": "Christmas Island",
+    "code": "CX",
+    "id": 47,
+    "slug": "christmas-island"
   },
   {
-    "name": "Cocos (Keeling) Islands",
-    "code": "CC"
+    "label": "Cocos (Keeling) Islands",
+    "code": "CC",
+    "id": 48,
+    "slug": "cocos-(keeling)-islands"
   },
   {
-    "name": "Colombia",
-    "code": "CO"
+    "label": "Colombia",
+    "code": "CO",
+    "id": 49,
+    "slug": "colombia"
   },
   {
-    "name": "Comoros",
-    "code": "KM"
+    "label": "Comoros",
+    "code": "KM",
+    "id": 50,
+    "slug": "comoros"
   },
   {
-    "name": "Congo",
-    "code": "CG"
+    "label": "Congo",
+    "code": "CG",
+    "id": 51,
+    "slug": "congo"
   },
   {
-    "name": "Congo, The Democratic Republic of the",
-    "code": "CD"
+    "label": "Congo, The Democratic Republic of the",
+    "code": "CD",
+    "id": 52,
+    "slug": "congo,-the-democratic-republic-of-the"
   },
   {
-    "name": "Cook Islands",
-    "code": "CK"
+    "label": "Cook Islands",
+    "code": "CK",
+    "id": 53,
+    "slug": "cook-islands"
   },
   {
-    "name": "Costa Rica",
-    "code": "CR"
+    "label": "Costa Rica",
+    "code": "CR",
+    "id": 54,
+    "slug": "costa-rica"
   },
   {
-    "name": "Croatia",
-    "code": "HR"
+    "label": "Croatia",
+    "code": "HR",
+    "id": 55,
+    "slug": "croatia"
   },
   {
-    "name": "Cuba",
-    "code": "CU"
+    "label": "Cuba",
+    "code": "CU",
+    "id": 56,
+    "slug": "cuba"
   },
   {
-    "name": "Curaçao",
-    "code": "CW"
+    "label": "Curaçao",
+    "code": "CW",
+    "id": 57,
+    "slug": "curaçao"
   },
   {
-    "name": "Cyprus",
-    "code": "CY"
+    "label": "Cyprus",
+    "code": "CY",
+    "id": 58,
+    "slug": "cyprus"
   },
   {
-    "name": "Czech Republic",
-    "code": "CZ"
+    "label": "Czech Republic",
+    "code": "CZ",
+    "id": 59,
+    "slug": "czech-republic"
   },
   {
-    "name": "Côte d'Ivoire",
-    "code": "CI"
+    "label": "Côte d'Ivoire",
+    "code": "CI",
+    "id": 60,
+    "slug": "côte-d'ivoire"
   },
   {
-    "name": "Denmark",
-    "code": "DK"
+    "label": "Denmark",
+    "code": "DK",
+    "id": 61,
+    "slug": "denmark"
   },
   {
-    "name": "Djibouti",
-    "code": "DJ"
+    "label": "Djibouti",
+    "code": "DJ",
+    "id": 62,
+    "slug": "djibouti"
   },
   {
-    "name": "Dominica",
-    "code": "DM"
+    "label": "Dominica",
+    "code": "DM",
+    "id": 63,
+    "slug": "dominica"
   },
   {
-    "name": "Dominican Republic",
-    "code": "DO"
+    "label": "Dominican Republic",
+    "code": "DO",
+    "id": 64,
+    "slug": "dominican-republic"
   },
   {
-    "name": "Ecuador",
-    "code": "EC"
+    "label": "Ecuador",
+    "code": "EC",
+    "id": 65,
+    "slug": "ecuador"
   },
   {
-    "name": "Egypt",
-    "code": "EG"
+    "label": "Egypt",
+    "code": "EG",
+    "id": 66,
+    "slug": "egypt"
   },
   {
-    "name": "El Salvador",
-    "code": "SV"
+    "label": "El Salvador",
+    "code": "SV",
+    "id": 67,
+    "slug": "el-salvador"
   },
   {
-    "name": "Equatorial Guinea",
-    "code": "GQ"
+    "label": "Equatorial Guinea",
+    "code": "GQ",
+    "id": 68,
+    "slug": "equatorial-guinea"
   },
   {
-    "name": "Eritrea",
-    "code": "ER"
+    "label": "Eritrea",
+    "code": "ER",
+    "id": 69,
+    "slug": "eritrea"
   },
   {
-    "name": "Estonia",
-    "code": "EE"
+    "label": "Estonia",
+    "code": "EE",
+    "id": 70,
+    "slug": "estonia"
   },
   {
-    "name": "Ethiopia",
-    "code": "ET"
+    "label": "Ethiopia",
+    "code": "ET",
+    "id": 71,
+    "slug": "ethiopia"
   },
   {
-    "name": "Falkland Islands (Malvinas)",
-    "code": "FK"
+    "label": "Falkland Islands (Malvinas)",
+    "code": "FK",
+    "id": 72,
+    "slug": "falkland-islands-(malvinas)"
   },
   {
-    "name": "Faroe Islands",
-    "code": "FO"
+    "label": "Faroe Islands",
+    "code": "FO",
+    "id": 73,
+    "slug": "faroe-islands"
   },
   {
-    "name": "Fiji",
-    "code": "FJ"
+    "label": "Fiji",
+    "code": "FJ",
+    "id": 74,
+    "slug": "fiji"
   },
   {
-    "name": "Finland",
-    "code": "FI"
+    "label": "Finland",
+    "code": "FI",
+    "id": 75,
+    "slug": "finland"
   },
   {
-    "name": "France",
-    "code": "FR"
+    "label": "France",
+    "code": "FR",
+    "id": 76,
+    "slug": "france"
   },
   {
-    "name": "French Guiana",
-    "code": "GF"
+    "label": "French Guiana",
+    "code": "GF",
+    "id": 77,
+    "slug": "french-guiana"
   },
   {
-    "name": "French Polynesia",
-    "code": "PF"
+    "label": "French Polynesia",
+    "code": "PF",
+    "id": 78,
+    "slug": "french-polynesia"
   },
   {
-    "name": "French Southern Territories",
-    "code": "TF"
+    "label": "French Southern Territories",
+    "code": "TF",
+    "id": 79,
+    "slug": "french-southern-territories"
   },
   {
-    "name": "Gabon",
-    "code": "GA"
+    "label": "Gabon",
+    "code": "GA",
+    "id": 80,
+    "slug": "gabon"
   },
   {
-    "name": "Gambia",
-    "code": "GM"
+    "label": "Gambia",
+    "code": "GM",
+    "id": 81,
+    "slug": "gambia"
   },
   {
-    "name": "Georgia",
-    "code": "GE"
+    "label": "Georgia",
+    "code": "GE",
+    "id": 82,
+    "slug": "georgia"
   },
   {
-    "name": "Germany",
-    "code": "DE"
+    "label": "Germany",
+    "code": "DE",
+    "id": 83,
+    "slug": "germany"
   },
   {
-    "name": "Ghana",
-    "code": "GH"
+    "label": "Ghana",
+    "code": "GH",
+    "id": 84,
+    "slug": "ghana"
   },
   {
-    "name": "Gibraltar",
-    "code": "GI"
+    "label": "Gibraltar",
+    "code": "GI",
+    "id": 85,
+    "slug": "gibraltar"
   },
   {
-    "name": "Greece",
-    "code": "GR"
+    "label": "Greece",
+    "code": "GR",
+    "id": 86,
+    "slug": "greece"
   },
   {
-    "name": "Greenland",
-    "code": "GL"
+    "label": "Greenland",
+    "code": "GL",
+    "id": 87,
+    "slug": "greenland"
   },
   {
-    "name": "Grenada",
-    "code": "GD"
+    "label": "Grenada",
+    "code": "GD",
+    "id": 88,
+    "slug": "grenada"
   },
   {
-    "name": "Guadeloupe",
-    "code": "GP"
+    "label": "Guadeloupe",
+    "code": "GP",
+    "id": 89,
+    "slug": "guadeloupe"
   },
   {
-    "name": "Guam",
-    "code": "GU"
+    "label": "Guam",
+    "code": "GU",
+    "id": 90,
+    "slug": "guam"
   },
   {
-    "name": "Guatemala",
-    "code": "GT"
+    "label": "Guatemala",
+    "code": "GT",
+    "id": 91,
+    "slug": "guatemala"
   },
   {
-    "name": "Guernsey",
-    "code": "GG"
+    "label": "Guernsey",
+    "code": "GG",
+    "id": 92,
+    "slug": "guernsey"
   },
   {
-    "name": "Guinea",
-    "code": "GN"
+    "label": "Guinea",
+    "code": "GN",
+    "id": 93,
+    "slug": "guinea"
   },
   {
-    "name": "Guinea-Bissau",
-    "code": "GW"
+    "label": "Guinea-Bissau",
+    "code": "GW",
+    "id": 94,
+    "slug": "guinea-bissau"
   },
   {
-    "name": "Guyana",
-    "code": "GY"
+    "label": "Guyana",
+    "code": "GY",
+    "id": 95,
+    "slug": "guyana"
   },
   {
-    "name": "Haiti",
-    "code": "HT"
+    "label": "Haiti",
+    "code": "HT",
+    "id": 96,
+    "slug": "haiti"
   },
   {
-    "name": "Heard Island and Mcdonald Islands",
-    "code": "HM"
+    "label": "Heard Island and Mcdonald Islands",
+    "code": "HM",
+    "id": 97,
+    "slug": "heard-island-and-mcdonald-islands"
   },
   {
-    "name": "Holy See (Vatican City State)",
-    "code": "VA"
+    "label": "Holy See (Vatican City State)",
+    "code": "VA",
+    "id": 98,
+    "slug": "holy-see-(vatican-city-state)"
   },
   {
-    "name": "Honduras",
-    "code": "HN"
+    "label": "Honduras",
+    "code": "HN",
+    "id": 99,
+    "slug": "honduras"
   },
   {
-    "name": "Hong Kong",
-    "code": "HK"
+    "label": "Hong Kong",
+    "code": "HK",
+    "id": 100,
+    "slug": "hong-kong"
   },
   {
-    "name": "Hungary",
-    "code": "HU"
+    "label": "Hungary",
+    "code": "HU",
+    "id": 101,
+    "slug": "hungary"
   },
   {
-    "name": "Iceland",
-    "code": "IS"
+    "label": "Iceland",
+    "code": "IS",
+    "id": 102,
+    "slug": "iceland"
   },
   {
-    "name": "India",
-    "code": "IN"
+    "label": "India",
+    "code": "IN",
+    "id": 103,
+    "slug": "india"
   },
   {
-    "name": "Indonesia",
-    "code": "ID"
+    "label": "Indonesia",
+    "code": "ID",
+    "id": 104,
+    "slug": "indonesia"
   },
   {
-    "name": "Iran, Islamic Republic Of",
-    "code": "IR"
+    "label": "Iran, Islamic Republic Of",
+    "code": "IR",
+    "id": 105,
+    "slug": "iran,-islamic-republic-of"
   },
   {
-    "name": "Iraq",
-    "code": "IQ"
+    "label": "Iraq",
+    "code": "IQ",
+    "id": 106,
+    "slug": "iraq"
   },
   {
-    "name": "Ireland",
-    "code": "IE"
+    "label": "Ireland",
+    "code": "IE",
+    "id": 107,
+    "slug": "ireland"
   },
   {
-    "name": "Isle of Man",
-    "code": "IM"
+    "label": "Isle of Man",
+    "code": "IM",
+    "id": 108,
+    "slug": "isle-of-man"
   },
   {
-    "name": "Israel",
-    "code": "IL"
+    "label": "Israel",
+    "code": "IL",
+    "id": 109,
+    "slug": "israel"
   },
   {
-    "name": "Italy",
-    "code": "IT"
+    "label": "Italy",
+    "code": "IT",
+    "id": 110,
+    "slug": "italy"
   },
   {
-    "name": "Jamaica",
-    "code": "JM"
+    "label": "Jamaica",
+    "code": "JM",
+    "id": 111,
+    "slug": "jamaica"
   },
   {
-    "name": "Japan",
-    "code": "JP"
+    "label": "Japan",
+    "code": "JP",
+    "id": 112,
+    "slug": "japan"
   },
   {
-    "name": "Jersey",
-    "code": "JE"
+    "label": "Jersey",
+    "code": "JE",
+    "id": 113,
+    "slug": "jersey"
   },
   {
-    "name": "Jordan",
-    "code": "JO"
+    "label": "Jordan",
+    "code": "JO",
+    "id": 114,
+    "slug": "jordan"
   },
   {
-    "name": "Kazakhstan",
-    "code": "KZ"
+    "label": "Kazakhstan",
+    "code": "KZ",
+    "id": 115,
+    "slug": "kazakhstan"
   },
   {
-    "name": "Kenya",
-    "code": "KE"
+    "label": "Kenya",
+    "code": "KE",
+    "id": 116,
+    "slug": "kenya"
   },
   {
-    "name": "Kiribati",
-    "code": "KI"
+    "label": "Kiribati",
+    "code": "KI",
+    "id": 117,
+    "slug": "kiribati"
   },
   {
-    "name": "Korea, Republic of",
-    "code": "KR"
+    "label": "Korea, Republic of",
+    "code": "KR",
+    "id": 118,
+    "slug": "korea,-republic-of"
   },
   {
-    "name": "Kuwait",
-    "code": "KW"
+    "label": "Kuwait",
+    "code": "KW",
+    "id": 119,
+    "slug": "kuwait"
   },
   {
-    "name": "Kyrgyzstan",
-    "code": "KG"
+    "label": "Kyrgyzstan",
+    "code": "KG",
+    "id": 120,
+    "slug": "kyrgyzstan"
   },
   {
-    "name": "Laos",
-    "code": "LA"
+    "label": "Laos",
+    "code": "LA",
+    "id": 121,
+    "slug": "laos"
   },
   {
-    "name": "Latvia",
-    "code": "LV"
+    "label": "Latvia",
+    "code": "LV",
+    "id": 122,
+    "slug": "latvia"
   },
   {
-    "name": "Lebanon",
-    "code": "LB"
+    "label": "Lebanon",
+    "code": "LB",
+    "id": 123,
+    "slug": "lebanon"
   },
   {
-    "name": "Lesotho",
-    "code": "LS"
+    "label": "Lesotho",
+    "code": "LS",
+    "id": 124,
+    "slug": "lesotho"
   },
   {
-    "name": "Liberia",
-    "code": "LR"
+    "label": "Liberia",
+    "code": "LR",
+    "id": 125,
+    "slug": "liberia"
   },
   {
-    "name": "Libyan Arab Jamahiriya",
-    "code": "LY"
+    "label": "Libyan Arab Jamahiriya",
+    "code": "LY",
+    "id": 126,
+    "slug": "libyan-arab-jamahiriya"
   },
   {
-    "name": "Liechtenstein",
-    "code": "LI"
+    "label": "Liechtenstein",
+    "code": "LI",
+    "id": 127,
+    "slug": "liechtenstein"
   },
   {
-    "name": "Lithuania",
-    "code": "LT"
+    "label": "Lithuania",
+    "code": "LT",
+    "id": 128,
+    "slug": "lithuania"
   },
   {
-    "name": "Luxembourg",
-    "code": "LU"
+    "label": "Luxembourg",
+    "code": "LU",
+    "id": 129,
+    "slug": "luxembourg"
   },
   {
-    "name": "Macao",
-    "code": "MO"
+    "label": "Macao",
+    "code": "MO",
+    "id": 130,
+    "slug": "macao"
   },
   {
-    "name": "Madagascar",
-    "code": "MG"
+    "label": "Madagascar",
+    "code": "MG",
+    "id": 131,
+    "slug": "madagascar"
   },
   {
-    "name": "Malawi",
-    "code": "MW"
+    "label": "Malawi",
+    "code": "MW",
+    "id": 132,
+    "slug": "malawi"
   },
   {
-    "name": "Malaysia",
-    "code": "MY"
+    "label": "Malaysia",
+    "code": "MY",
+    "id": 133,
+    "slug": "malaysia"
   },
   {
-    "name": "Maldives",
-    "code": "MV"
+    "label": "Maldives",
+    "code": "MV",
+    "id": 134,
+    "slug": "maldives"
   },
   {
-    "name": "Mali",
-    "code": "ML"
+    "label": "Mali",
+    "code": "ML",
+    "id": 135,
+    "slug": "mali"
   },
   {
-    "name": "Malta",
-    "code": "MT"
+    "label": "Malta",
+    "code": "MT",
+    "id": 136,
+    "slug": "malta"
   },
   {
-    "name": "Marshall Islands",
-    "code": "MH"
+    "label": "Marshall Islands",
+    "code": "MH",
+    "id": 137,
+    "slug": "marshall-islands"
   },
   {
-    "name": "Martinique",
-    "code": "MQ"
+    "label": "Martinique",
+    "code": "MQ",
+    "id": 138,
+    "slug": "martinique"
   },
   {
-    "name": "Mauritania",
-    "code": "MR"
+    "label": "Mauritania",
+    "code": "MR",
+    "id": 139,
+    "slug": "mauritania"
   },
   {
-    "name": "Mauritius",
-    "code": "MU"
+    "label": "Mauritius",
+    "code": "MU",
+    "id": 140,
+    "slug": "mauritius"
   },
   {
-    "name": "Mayotte",
-    "code": "YT"
+    "label": "Mayotte",
+    "code": "YT",
+    "id": 141,
+    "slug": "mayotte"
   },
   {
-    "name": "Mexico",
-    "code": "MX"
+    "label": "Mexico",
+    "code": "MX",
+    "id": 142,
+    "slug": "mexico"
   },
   {
-    "name": "Micronesia, Federated States of",
-    "code": "FM"
+    "label": "Micronesia, Federated States of",
+    "code": "FM",
+    "id": 143,
+    "slug": "micronesia,-federated-states-of"
   },
   {
-    "name": "Moldova, Republic of",
-    "code": "MD"
+    "label": "Moldova, Republic of",
+    "code": "MD",
+    "id": 144,
+    "slug": "moldova,-republic-of"
   },
   {
-    "name": "Monaco",
-    "code": "MC"
+    "label": "Monaco",
+    "code": "MC",
+    "id": 145,
+    "slug": "monaco"
   },
   {
-    "name": "Mongolia",
-    "code": "MN"
+    "label": "Mongolia",
+    "code": "MN",
+    "id": 146,
+    "slug": "mongolia"
   },
   {
-    "name": "Montenegro",
-    "code": "ME"
+    "label": "Montenegro",
+    "code": "ME",
+    "id": 147,
+    "slug": "montenegro"
   },
   {
-    "name": "Montserrat",
-    "code": "MS"
+    "label": "Montserrat",
+    "code": "MS",
+    "id": 148,
+    "slug": "montserrat"
   },
   {
-    "name": "Morocco",
-    "code": "MA"
+    "label": "Morocco",
+    "code": "MA",
+    "id": 149,
+    "slug": "morocco"
   },
   {
-    "name": "Mozambique",
-    "code": "MZ"
+    "label": "Mozambique",
+    "code": "MZ",
+    "id": 150,
+    "slug": "mozambique"
   },
   {
-    "name": "Myanmar",
-    "code": "MM"
+    "label": "Myanmar",
+    "code": "MM",
+    "id": 151,
+    "slug": "myanmar"
   },
   {
-    "name": "Namibia",
-    "code": "NA"
+    "label": "Namibia",
+    "code": "NA",
+    "id": 152,
+    "slug": "namibia"
   },
   {
-    "name": "Nauru",
-    "code": "NR"
+    "label": "Nauru",
+    "code": "NR",
+    "id": 153,
+    "slug": "nauru"
   },
   {
-    "name": "Nepal",
-    "code": "NP"
+    "label": "Nepal",
+    "code": "NP",
+    "id": 154,
+    "slug": "nepal"
   },
   {
-    "name": "Netherlands",
-    "code": "NL"
+    "label": "Netherlands",
+    "code": "NL",
+    "id": 155,
+    "slug": "netherlands"
   },
   {
-    "name": "Netherlands Antilles",
-    "code": "AN"
+    "label": "Netherlands Antilles",
+    "code": "AN",
+    "id": 156,
+    "slug": "netherlands-antilles"
   },
   {
-    "name": "New Caledonia",
-    "code": "NC"
+    "label": "New Caledonia",
+    "code": "NC",
+    "id": 157,
+    "slug": "new-caledonia"
   },
   {
-    "name": "New Zealand",
-    "code": "NZ"
+    "label": "New Zealand",
+    "code": "NZ",
+    "id": 158,
+    "slug": "new-zealand"
   },
   {
-    "name": "Nicaragua",
-    "code": "NI"
+    "label": "Nicaragua",
+    "code": "NI",
+    "id": 159,
+    "slug": "nicaragua"
   },
   {
-    "name": "Niger",
-    "code": "NE"
+    "label": "Niger",
+    "code": "NE",
+    "id": 160,
+    "slug": "niger"
   },
   {
-    "name": "Nigeria",
-    "code": "NG"
+    "label": "Nigeria",
+    "code": "NG",
+    "id": 161,
+    "slug": "nigeria"
   },
   {
-    "name": "Niue",
-    "code": "NU"
+    "label": "Niue",
+    "code": "NU",
+    "id": 162,
+    "slug": "niue"
   },
   {
-    "name": "Norfolk Island",
-    "code": "NF"
+    "label": "Norfolk Island",
+    "code": "NF",
+    "id": 163,
+    "slug": "norfolk-island"
   },
   {
-    "name": "North Korea",
-    "code": "KP"
+    "label": "North Korea",
+    "code": "KP",
+    "id": 164,
+    "slug": "north-korea"
   },
   {
-    "name": "North Macedonia",
-    "code": "MK"
+    "label": "North Macedonia",
+    "code": "MK",
+    "id": 165,
+    "slug": "north-macedonia"
   },
   {
-    "name": "Northern Mariana Islands",
-    "code": "MP"
+    "label": "Northern Mariana Islands",
+    "code": "MP",
+    "id": 166,
+    "slug": "northern-mariana-islands"
   },
   {
-    "name": "Norway",
-    "code": "NO"
+    "label": "Norway",
+    "code": "NO",
+    "id": 167,
+    "slug": "norway"
   },
   {
-    "name": "Oman",
-    "code": "OM"
+    "label": "Oman",
+    "code": "OM",
+    "id": 168,
+    "slug": "oman"
   },
   {
-    "name": "Pakistan",
-    "code": "PK"
+    "label": "Pakistan",
+    "code": "PK",
+    "id": 169,
+    "slug": "pakistan"
   },
   {
-    "name": "Palau",
-    "code": "PW"
+    "label": "Palau",
+    "code": "PW",
+    "id": 170,
+    "slug": "palau"
   },
   {
-    "name": "Palestinian Territory, Occupied",
-    "code": "PS"
+    "label": "Palestinian Territory, Occupied",
+    "code": "PS",
+    "id": 171,
+    "slug": "palestinian-territory,-occupied"
   },
   {
-    "name": "Panama",
-    "code": "PA"
+    "label": "Panama",
+    "code": "PA",
+    "id": 172,
+    "slug": "panama"
   },
   {
-    "name": "Papua New Guinea",
-    "code": "PG"
+    "label": "Papua New Guinea",
+    "code": "PG",
+    "id": 173,
+    "slug": "papua-new-guinea"
   },
   {
-    "name": "Paraguay",
-    "code": "PY"
+    "label": "Paraguay",
+    "code": "PY",
+    "id": 174,
+    "slug": "paraguay"
   },
   {
-    "name": "Peru",
-    "code": "PE"
+    "label": "Peru",
+    "code": "PE",
+    "id": 175,
+    "slug": "peru"
   },
   {
-    "name": "Philippines",
-    "code": "PH"
+    "label": "Philippines",
+    "code": "PH",
+    "id": 176,
+    "slug": "philippines"
   },
   {
-    "name": "Pitcairn Islands",
-    "code": "PN"
+    "label": "Pitcairn Islands",
+    "code": "PN",
+    "id": 177,
+    "slug": "pitcairn-islands"
   },
   {
-    "name": "Poland",
-    "code": "PL"
+    "label": "Poland",
+    "code": "PL",
+    "id": 178,
+    "slug": "poland"
   },
   {
-    "name": "Portugal",
-    "code": "PT"
+    "label": "Portugal",
+    "code": "PT",
+    "id": 179,
+    "slug": "portugal"
   },
   {
-    "name": "Puerto Rico",
-    "code": "PR"
+    "label": "Puerto Rico",
+    "code": "PR",
+    "id": 180,
+    "slug": "puerto-rico"
   },
   {
-    "name": "Qatar",
-    "code": "QA"
+    "label": "Qatar",
+    "code": "QA",
+    "id": 181,
+    "slug": "qatar"
   },
   {
-    "name": "Reunion",
-    "code": "RE"
+    "label": "Reunion",
+    "code": "RE",
+    "id": 182,
+    "slug": "reunion"
   },
   {
-    "name": "Romania",
-    "code": "RO"
+    "label": "Romania",
+    "code": "RO",
+    "id": 183,
+    "slug": "romania"
   },
   {
-    "name": "Russian Federation",
-    "code": "RU"
+    "label": "Russian Federation",
+    "code": "RU",
+    "id": 184,
+    "slug": "russian-federation"
   },
   {
-    "name": "Rwanda",
-    "code": "RW"
+    "label": "Rwanda",
+    "code": "RW",
+    "id": 185,
+    "slug": "rwanda"
   },
   {
-    "name": "Saint Barthélemy",
-    "code": "BL"
+    "label": "Saint Barthélemy",
+    "code": "BL",
+    "id": 186,
+    "slug": "saint-barthélemy"
   },
   {
-    "name": "Saint Helena",
-    "code": "SH"
+    "label": "Saint Helena",
+    "code": "SH",
+    "id": 187,
+    "slug": "saint-helena"
   },
   {
-    "name": "Saint Kitts and Nevis",
-    "code": "KN"
+    "label": "Saint Kitts and Nevis",
+    "code": "KN",
+    "id": 188,
+    "slug": "saint-kitts-and-nevis"
   },
   {
-    "name": "Saint Lucia",
-    "code": "LC"
+    "label": "Saint Lucia",
+    "code": "LC",
+    "id": 189,
+    "slug": "saint-lucia"
   },
   {
-    "name": "Saint Martin",
-    "code": "MF"
+    "label": "Saint Martin",
+    "code": "MF",
+    "id": 190,
+    "slug": "saint-martin"
   },
   {
-    "name": "Saint Martin",
-    "code": "MF"
+    "label": "Saint Martin",
+    "code": "MF",
+    "id": 191,
+    "slug": "saint-martin"
   },
   {
-    "name": "Saint Pierre and Miquelon",
-    "code": "PM"
+    "label": "Saint Pierre and Miquelon",
+    "code": "PM",
+    "id": 192,
+    "slug": "saint-pierre-and-miquelon"
   },
   {
-    "name": "Saint Vincent and the Grenadines",
-    "code": "VC"
+    "label": "Saint Vincent and the Grenadines",
+    "code": "VC",
+    "id": 193,
+    "slug": "saint-vincent-and-the-grenadines"
   },
   {
-    "name": "Samoa",
-    "code": "WS"
+    "label": "Samoa",
+    "code": "WS",
+    "id": 194,
+    "slug": "samoa"
   },
   {
-    "name": "San Marino",
-    "code": "SM"
+    "label": "San Marino",
+    "code": "SM",
+    "id": 195,
+    "slug": "san-marino"
   },
   {
-    "name": "Sao Tome and Principe",
-    "code": "ST"
+    "label": "Sao Tome and Principe",
+    "code": "ST",
+    "id": 196,
+    "slug": "sao-tome-and-principe"
   },
   {
-    "name": "Saudi Arabia",
-    "code": "SA"
+    "label": "Saudi Arabia",
+    "code": "SA",
+    "id": 197,
+    "slug": "saudi-arabia"
   },
   {
-    "name": "Senegal",
-    "code": "SN"
+    "label": "Senegal",
+    "code": "SN",
+    "id": 198,
+    "slug": "senegal"
   },
   {
-    "name": "Serbia",
-    "code": "RS"
+    "label": "Serbia",
+    "code": "RS",
+    "id": 199,
+    "slug": "serbia"
   },
   {
-    "name": "Serbia and Montenegro",
-    "code": "CS"
+    "label": "Serbia and Montenegro",
+    "code": "CS",
+    "id": 200,
+    "slug": "serbia-and-montenegro"
   },
   {
-    "name": "Seychelles",
-    "code": "SC"
+    "label": "Seychelles",
+    "code": "SC",
+    "id": 201,
+    "slug": "seychelles"
   },
   {
-    "name": "Sierra Leone",
-    "code": "SL"
+    "label": "Sierra Leone",
+    "code": "SL",
+    "id": 202,
+    "slug": "sierra-leone"
   },
   {
-    "name": "Singapore",
-    "code": "SG"
+    "label": "Singapore",
+    "code": "SG",
+    "id": 203,
+    "slug": "singapore"
   },
   {
-    "name": "Sint Maarten",
-    "code": "SX"
+    "label": "Sint Maarten",
+    "code": "SX",
+    "id": 204,
+    "slug": "sint-maarten"
   },
   {
-    "name": "Slovakia",
-    "code": "SK"
+    "label": "Slovakia",
+    "code": "SK",
+    "id": 205,
+    "slug": "slovakia"
   },
   {
-    "name": "Slovenia",
-    "code": "SI"
+    "label": "Slovenia",
+    "code": "SI",
+    "id": 206,
+    "slug": "slovenia"
   },
   {
-    "name": "Solomon Islands",
-    "code": "SB"
+    "label": "Solomon Islands",
+    "code": "SB",
+    "id": 207,
+    "slug": "solomon-islands"
   },
   {
-    "name": "Somalia",
-    "code": "SO"
+    "label": "Somalia",
+    "code": "SO",
+    "id": 208,
+    "slug": "somalia"
   },
   {
-    "name": "South Africa",
-    "code": "ZA"
+    "label": "South Africa",
+    "code": "ZA",
+    "id": 209,
+    "slug": "south-africa"
   },
   {
-    "name": "South Georgia and the South Sandwich Islands",
-    "code": "GS"
+    "label": "South Georgia and the South Sandwich Islands",
+    "code": "GS",
+    "id": 210,
+    "slug": "south-georgia-and-the-south-sandwich-islands"
   },
   {
-    "name": "South Sudan",
-    "code": "SS"
+    "label": "South Sudan",
+    "code": "SS",
+    "id": 211,
+    "slug": "south-sudan"
   },
   {
-    "name": "Spain",
-    "code": "ES"
+    "label": "Spain",
+    "code": "ES",
+    "id": 212,
+    "slug": "spain"
   },
   {
-    "name": "Sri Lanka",
-    "code": "LK"
+    "label": "Sri Lanka",
+    "code": "LK",
+    "id": 213,
+    "slug": "sri-lanka"
   },
   {
-    "name": "Sudan",
-    "code": "SD"
+    "label": "Sudan",
+    "code": "SD",
+    "id": 214,
+    "slug": "sudan"
   },
   {
-    "name": "Suriname",
-    "code": "SR"
+    "label": "Surilabel",
+    "code": "SR",
+    "id": 215,
+    "slug": "surilabel"
   },
   {
-    "name": "Svalbard and Jan Mayen",
-    "code": "SJ"
+    "label": "Svalbard and Jan Mayen",
+    "code": "SJ",
+    "id": 216,
+    "slug": "svalbard-and-jan-mayen"
   },
   {
-    "name": "Swaziland",
-    "code": "SZ"
+    "label": "Swaziland",
+    "code": "SZ",
+    "id": 217,
+    "slug": "swaziland"
   },
   {
-    "name": "Sweden",
-    "code": "SE"
+    "label": "Sweden",
+    "code": "SE",
+    "id": 218,
+    "slug": "sweden"
   },
   {
-    "name": "Switzerland",
-    "code": "CH"
+    "label": "Switzerland",
+    "code": "CH",
+    "id": 219,
+    "slug": "switzerland"
   },
   {
-    "name": "Syrian Arab Republic",
-    "code": "SY"
+    "label": "Syrian Arab Republic",
+    "code": "SY",
+    "id": 220,
+    "slug": "syrian-arab-republic"
   },
   {
-    "name": "Taiwan",
-    "code": "TW"
+    "label": "Taiwan",
+    "code": "TW",
+    "id": 221,
+    "slug": "taiwan"
   },
   {
-    "name": "Tajikistan",
-    "code": "TJ"
+    "label": "Tajikistan",
+    "code": "TJ",
+    "id": 222,
+    "slug": "tajikistan"
   },
   {
-    "name": "Tanzania, United Republic of",
-    "code": "TZ"
+    "label": "Tanzania, United Republic of",
+    "code": "TZ",
+    "id": 223,
+    "slug": "tanzania,-united-republic-of"
   },
   {
-    "name": "Thailand",
-    "code": "TH"
+    "label": "Thailand",
+    "code": "TH",
+    "id": 224,
+    "slug": "thailand"
   },
   {
-    "name": "Timor-Leste",
-    "code": "TL"
+    "label": "Timor-Leste",
+    "code": "TL",
+    "id": 225,
+    "slug": "timor-leste"
   },
   {
-    "name": "Togo",
-    "code": "TG"
+    "label": "Togo",
+    "code": "TG",
+    "id": 226,
+    "slug": "togo"
   },
   {
-    "name": "Tokelau",
-    "code": "TK"
+    "label": "Tokelau",
+    "code": "TK",
+    "id": 227,
+    "slug": "tokelau"
   },
   {
-    "name": "Tonga",
-    "code": "TO"
+    "label": "Tonga",
+    "code": "TO",
+    "id": 228,
+    "slug": "tonga"
   },
   {
-    "name": "Trinidad and Tobago",
-    "code": "TT"
+    "label": "Trinidad and Tobago",
+    "code": "TT",
+    "id": 229,
+    "slug": "trinidad-and-tobago"
   },
   {
-    "name": "Tunisia",
-    "code": "TN"
+    "label": "Tunisia",
+    "code": "TN",
+    "id": 230,
+    "slug": "tunisia"
   },
   {
-    "name": "Turkey",
-    "code": "TR"
+    "label": "Turkey",
+    "code": "TR",
+    "id": 231,
+    "slug": "turkey"
   },
   {
-    "name": "Turkmenistan",
-    "code": "TM"
+    "label": "Turkmenistan",
+    "code": "TM",
+    "id": 232,
+    "slug": "turkmenistan"
   },
   {
-    "name": "Turks and Caicos Islands",
-    "code": "TC"
+    "label": "Turks and Caicos Islands",
+    "code": "TC",
+    "id": 233,
+    "slug": "turks-and-caicos-islands"
   },
   {
-    "name": "Tuvalu",
-    "code": "TV"
+    "label": "Tuvalu",
+    "code": "TV",
+    "id": 234,
+    "slug": "tuvalu"
   },
   {
-    "name": "Uganda",
-    "code": "UG"
+    "label": "Uganda",
+    "code": "UG",
+    "id": 235,
+    "slug": "uganda"
   },
   {
-    "name": "Ukraine",
-    "code": "UA"
+    "label": "Ukraine",
+    "code": "UA",
+    "id": 236,
+    "slug": "ukraine"
   },
   {
-    "name": "United Arab Emirates",
-    "code": "AE"
+    "label": "United Arab Emirates",
+    "code": "AE",
+    "id": 237,
+    "slug": "united-arab-emirates"
   },
   {
-    "name": "United Kingdom",
-    "code": "GB"
+    "label": "United Kingdom",
+    "code": "GB",
+    "id": 238,
+    "slug": "united-kingdom"
   },
   {
-    "name": "United States",
-    "code": "US"
+    "label": "United States",
+    "code": "US",
+    "id": 239,
+    "slug": "united-states"
   },
   {
-    "name": "United States Minor Outlying Islands",
-    "code": "UM"
+    "label": "United States Minor Outlying Islands",
+    "code": "UM",
+    "id": 240,
+    "slug": "united-states-minor-outlying-islands"
   },
   {
-    "name": "Uruguay",
-    "code": "UY"
+    "label": "Uruguay",
+    "code": "UY",
+    "id": 241,
+    "slug": "uruguay"
   },
   {
-    "name": "Uzbekistan",
-    "code": "UZ"
+    "label": "Uzbekistan",
+    "code": "UZ",
+    "id": 242,
+    "slug": "uzbekistan"
   },
   {
-    "name": "Vanuatu",
-    "code": "VU"
+    "label": "Vanuatu",
+    "code": "VU",
+    "id": 243,
+    "slug": "vanuatu"
   },
   {
-    "name": "Venezuela",
-    "code": "VE"
+    "label": "Venezuela",
+    "code": "VE",
+    "id": 244,
+    "slug": "venezuela"
   },
   {
-    "name": "Vietnam",
-    "code": "VN"
+    "label": "Vietnam",
+    "code": "VN",
+    "id": 245,
+    "slug": "vietnam"
   },
   {
-    "name": "Virgin Islands, British",
-    "code": "VG"
+    "label": "Virgin Islands, British",
+    "code": "VG",
+    "id": 246,
+    "slug": "virgin-islands,-british"
   },
   {
-    "name": "Virgin Islands, U.S.",
-    "code": "VI"
+    "label": "Virgin Islands, U.S.",
+    "code": "VI",
+    "id": 247,
+    "slug": "virgin-islands,-u.s."
   },
   {
-    "name": "Wallis and Futuna",
-    "code": "WF"
+    "label": "Wallis and Futuna",
+    "code": "WF",
+    "id": 248,
+    "slug": "wallis-and-futuna"
   },
   {
-    "name": "Western Sahara",
-    "code": "EH"
+    "label": "Western Sahara",
+    "code": "EH",
+    "id": 249,
+    "slug": "western-sahara"
   },
   {
-    "name": "Yemen",
-    "code": "YE"
+    "label": "Yemen",
+    "code": "YE",
+    "id": 250,
+    "slug": "yemen"
   },
   {
-    "name": "Zambia",
-    "code": "ZM"
+    "label": "Zambia",
+    "code": "ZM",
+    "id": 251,
+    "slug": "zambia"
   },
   {
-    "name": "Zimbabwe",
-    "code": "ZW"
+    "label": "Zimbabwe",
+    "code": "ZW",
+    "id": 252,
+    "slug": "zimbabwe"
   },
   {
-    "name": "Åland Islands",
-    "code": "AX"
+    "label": "Åland Islands",
+    "code": "AX",
+    "id": 253,
+    "slug": "åland-islands"
   }
 ]

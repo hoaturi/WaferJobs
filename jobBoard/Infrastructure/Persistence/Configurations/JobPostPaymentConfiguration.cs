@@ -10,6 +10,7 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
         builder.Property(jpp => jpp.JobPostId).IsRequired();
         builder.Property(jpp => jpp.CheckoutSessionId).IsRequired().HasMaxLength(200);
         builder.Property(jpp => jpp.EventId).HasMaxLength(200);
+        builder.HasIndex(jpp => jpp.CheckoutSessionId).IsUnique();
 
         builder
             .HasOne(jpp => jpp.JobPost)

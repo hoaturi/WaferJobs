@@ -1,7 +1,27 @@
 [
-  { "id": 1, "name": "Full Time" },
-  { "id": 2, "name": "Part Time" },
-  { "id": 3, "name": "Contract" },
-  { "id": 4, "name": "Internship" },
-  { "id": 5, "name": "Temporary" }
+  {
+    "id": 1,
+    "label": "Full Time",
+    "slug": "full-time"
+  },
+  {
+    "id": 2,
+    "label": "Part Time",
+    "slug": "part-time"
+  },
+  {
+    "id": 3,
+    "label": "Contract",
+    "slug": "contract"
+  },
+  {
+    "id": 4,
+    "label": "Internship",
+    "slug": "internship"
+  },
+  {
+    "id": 5,
+    "label": "Temporary",
+    "slug": "temporary"
+  }
 ]

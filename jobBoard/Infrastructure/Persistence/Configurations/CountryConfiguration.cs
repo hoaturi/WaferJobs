@@ -8,8 +8,10 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
 {
     public void Configure(EntityTypeBuilder<Country> builder)
     {
-        builder.Property(c => c.Name).IsRequired().HasMaxLength(50);
+        builder.Property(c => c.Label).IsRequired().HasMaxLength(50);
         builder.Property(c => c.Code).IsRequired().HasMaxLength(2);
+        builder.Property(c => c.Slug).IsRequired().HasMaxLength(50);
+        builder.HasIndex(c => c.Slug);
 
         var countryJson = File.ReadAllText(
             "Infrastructure/Persistence/Configurations/SeedData/countries.json"
