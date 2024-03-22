@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using LinqKit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard;
@@ -17,33 +18,46 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
 
         var query = _appDbContext.JobPosts.AsNoTracking();
 
-        if (request.CategoryId is not 0)
-        {
-            query = query.Where(j => j.CategoryId == request.CategoryId);
-        }
-        if (request.CountryId is not 0)
-        {
-            query = query.Where(j => j.CountryId == request.CountryId);
-        }
-        if (request.EmploymentTypeId is not 0)
-        {
-            query = query.Where(j => j.EmploymentTypeId == request.EmploymentTypeId);
-        }
-
         if (request.Keyword is not null)
         {
-            var keyword = request.Keyword.ToLower();
+            var predicate = PredicateBuilder.New<JobPost>();
 
-            query = query.Where(
-                j =>
-                    EF.Functions.ILike(j.Title, $"%{keyword}%")
-                    || EF.Functions.ILike(j.Description, $"%{keyword}%")
-                    || EF.Functions.ILike(j.CompanyName, $"%{keyword}%")
-                    || j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))
-            );
+            var keywords = request.Keyword.Split(' ');
+
+            foreach (var keyword in keywords)
+            {
+                predicate = predicate.Or(j => EF.Functions.ILike(j.Title, $"%{keyword}%"));
+                predicate = predicate.Or(j => EF.Functions.ILike(j.Description, $"%{keyword}%"));
+                predicate = predicate.Or(j => EF.Functions.ILike(j.CompanyName, $"%{keyword}%"));
+                predicate = predicate.Or(
+                    j => j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))
+                );
+            }
+
+            query = query.Where(predicate);
         }
 
-        query = query.Where(j => j.IsPublished);
+        if (request.Country is not null)
+        {
+            query = query.Where(j => request.Country == j.Country.Slug);
+        }
+
+        if (request.Remote is not null)
+        {
+            query = query.Where(j => j.IsRemote == true);
+        }
+
+        if (request.Categories is not null && request.Categories.Count != 0)
+        {
+            query = query.Where(j => request.Categories.Any(c => c == j.Category.Slug));
+        }
+
+        if (request.EmploymentTypes is not null && request.EmploymentTypes.Count != 0)
+        {
+            query = query.Where(j => request.EmploymentTypes.Any(c => c == j.EmploymentType.Slug));
+        }
+
+        query = query.Where(j => j.IsPublished && !j.IsDeleted);
 
         query = query
             .Include(j => j.Category)
@@ -52,7 +66,6 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
 
         query = query.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
 
-        // Pagination
         var jobPostList = await query
             .Skip((request.Page - 1) * pageSize)
             .Take(pageSize)

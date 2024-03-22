@@ -23,10 +23,11 @@ public static class ServiceExtensions
                 builder =>
                 {
                     builder
-                        .WithOrigins(corsOptions.AllowedOrigins)
+                        // .WithOrigins(corsOptions.AllowedOrigins)
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
+                        .AllowAnyMethod();
+                    // .AllowCredentials();
                 }
             );
         });

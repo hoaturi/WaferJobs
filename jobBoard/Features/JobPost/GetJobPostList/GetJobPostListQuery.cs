@@ -4,8 +4,9 @@ namespace JobBoard;
 
 public record GetJobPostListQuery(
     string? Keyword,
-    int CategoryId,
-    int CountryId,
-    int EmploymentTypeId,
+    string? Country,
+    string? Remote,
+    List<string>? Categories,
+    List<string>? EmploymentTypes,
     int Page
 ) : IRequest<Result<GetJobPostListResponse, Error>> { }

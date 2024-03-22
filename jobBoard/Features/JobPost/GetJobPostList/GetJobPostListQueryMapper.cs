@@ -6,9 +6,9 @@ public static class GetJobPostListQueryMapper
     {
         return new(
             Id: jobPost.Id,
-            Category: jobPost.Category.Name,
-            Country: jobPost.Country.Name,
-            EmploymentType: jobPost.EmploymentType.Name,
+            Category: jobPost.Category.Label,
+            Country: jobPost.Country.Label,
+            EmploymentType: jobPost.EmploymentType.Label,
             Title: jobPost.Title,
             IsRemote: jobPost.IsRemote,
             IsFeatured: jobPost.IsFeatured,
