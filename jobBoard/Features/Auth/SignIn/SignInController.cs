@@ -23,17 +23,21 @@ public class SignInController(IOptions<JwtOptions> jwtOptions, ISender sender) :
         }
 
         var refreshToken = result.Value.RefreshToken;
+        var accessToken = result.Value.AccessToken;
 
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            // Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
-        };
+        HttpContext.Response.Cookies.Append(
+            "refresh_token",
+            refreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
+                Path = "/"
+            }
+        );
 
-        HttpContext.Response.Cookies.Append("refresh_token", refreshToken, cookieOptions);
-
-        return Ok(new { user = result.Value.User, accessToken = result.Value.AccessToken });
+        return Ok(new { user = result.Value.User, accessToken });
     }
 }

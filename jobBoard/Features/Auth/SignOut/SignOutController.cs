@@ -22,7 +22,17 @@ public class SignOutController(ISender sender) : ControllerBase
             return this.HandleFailure(result.Error!);
         }
 
-        HttpContext.Response.Cookies.Delete("refresh_token");
+        HttpContext.Response.Cookies.Delete(
+            "refresh_token",
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                Path = "/"
+            }
+        );
 
         return Ok();
     }

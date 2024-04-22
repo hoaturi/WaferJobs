@@ -11,9 +11,11 @@ public class RefreshController(ISender sender) : ControllerBase
     private readonly ISender _sender = sender;
 
     [HttpPost]
-    public async Task<IActionResult> Refresh([FromHeader] string Authorization)
+    public async Task<IActionResult> Refresh()
     {
-        var result = await _sender.Send(new RefreshCommand(Authorization));
+        HttpContext.Request.Cookies.TryGetValue("refresh_token", out var refreshToken);
+
+        var result = await _sender.Send(new RefreshCommand(refreshToken!));
 
         if (!result.IsSuccess)
         {

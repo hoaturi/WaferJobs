@@ -21,9 +21,7 @@ public class RefreshCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var refreshToken = request.RefreshToken.Split(" ")[1];
-
-        var key = CacheKeys.RevokedToken + refreshToken;
+        var key = CacheKeys.RevokedToken + request.RefreshToken;
 
         var isTokenRevoked = await _cache.GetStringAsync(key, cancellationToken);
         if (isTokenRevoked is not null)
@@ -32,14 +30,14 @@ public class RefreshCommandHandler(
             return AuthErrors.InvalidRefreshToken;
         }
 
-        var validationResult = await _jwtService.ValidateRefreshToken(refreshToken);
+        var validationResult = await _jwtService.ValidateRefreshToken(request.RefreshToken);
         if (validationResult is false)
         {
             _logger.LogWarning("The refresh token is invalid.");
             return AuthErrors.InvalidRefreshToken;
         }
 
-        var userId = _jwtService.GetUserId(refreshToken);
+        var userId = _jwtService.GetUserId(request.RefreshToken);
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
         {
