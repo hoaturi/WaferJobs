@@ -4,9 +4,9 @@ public class JobPost : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid? BusinessId { get; set; }
-    public required int CategoryId { get; set; }
-    public required int CountryId { get; set; }
-    public required int EmploymentTypeId { get; set; }
+    public int CategoryId { get; set; }
+    public int CountryId { get; set; }
+    public int EmploymentTypeId { get; set; }
     public required string Title { get; set; }
     public required string Description { get; set; }
     public required string CompanyName { get; set; }

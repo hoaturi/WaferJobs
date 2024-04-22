@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard;
 
