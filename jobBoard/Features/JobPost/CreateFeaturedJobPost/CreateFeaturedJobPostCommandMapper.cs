@@ -2,7 +2,7 @@
 
 public static class CreateFeaturedJobPostCommandMapper
 {
-    public static JobPost MapToEntity(CreateFeaturedJobPostCommand request, Business business)
+    public static JobPost MapToEntity(CreateFeaturedJobPostCommand request, Business? business)
     {
         var jobPost = new JobPost
         {
@@ -11,15 +11,15 @@ public static class CreateFeaturedJobPostCommandMapper
             EmploymentTypeId = request.EmploymentTypeId,
             Title = request.Title,
             Description = request.Description,
-            CompanyName = business!.Name,
-            CompanyLogoUrl = business.LogoUrl,
+            CompanyName = request.CompanyName,
+            CompanyLogoUrl = request.CompanyLogoUrl,
             ApplyUrl = request.ApplyUrl,
             IsRemote = request.IsRemote,
             City = request.City,
             MinSalary = request.MinSalary,
             MaxSalary = request.MaxSalary,
             Currency = request.Currency,
-            BusinessId = business.Id,
+            BusinessId = business?.Id,
             Tags = request.Tags,
             IsFeatured = true,
             IsPublished = false

@@ -11,7 +11,6 @@ public class CreateFeaturedJobPostController(ISender sender) : BaseController
 {
     private readonly ISender _sender = sender;
 
-    [Authorize(RolePolicy.Business)]
     [HttpPost]
     public async Task<IActionResult> CreateJobPost(CreateFeaturedJobPostCommand command)
     {

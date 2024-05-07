@@ -17,7 +17,7 @@ public class PaymentService : IPaymentService
         _logger = logger;
     }
 
-    public async Task<string> CreateCustomer(Guid businessId, string email, string name)
+    public async Task<string> CreateCustomer(string email, string name, Guid? businessId = null)
     {
         var customerOptions = new CustomerCreateOptions { Email = email, Name = name };
 
@@ -26,10 +26,20 @@ public class PaymentService : IPaymentService
             var customerService = new CustomerService(_client);
             var customer = await customerService.CreateAsync(customerOptions);
 
-            _logger.LogInformation(
-                "Created Stripe customer for business: {businessId} ",
-                businessId
-            );
+            if (businessId.HasValue)
+            {
+                _logger.LogInformation(
+                    "Created Stripe customer for business: {businessId} ",
+                    businessId
+                );
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Created Stripe customer for anonymous user: {email}",
+                    email
+                );
+            }
 
             return customer.Id;
         }
@@ -39,7 +49,7 @@ public class PaymentService : IPaymentService
         }
     }
 
-    public async Task<Session> CreateFeaturedListingCheckoutSessions(string customerId)
+    public async Task<Session> CreateFeaturedJobPostCheckoutSessions(string customerId)
     {
         var options = new SessionCreateOptions
         {

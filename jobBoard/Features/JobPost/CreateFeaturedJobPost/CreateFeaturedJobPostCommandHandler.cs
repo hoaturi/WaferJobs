@@ -20,23 +20,37 @@ public class CreateFeaturedJobPostCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var userId = _currentUser.GetUserId();
+        var userId = _currentUser.TryGetUserId();
 
-        var business =
-            await _appDbContext
+        Business? business = null;
+        if (userId is not null)
+        {
+            business = await _appDbContext
                 .Businesses.Where(b => b.UserId == userId)
-                .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new AssociatedBusinessNotFoundException(userId);
+                .FirstOrDefaultAsync(cancellationToken);
+        }
 
-        await CreateStripeCustomerIfNotExists(business);
-
-        var jobPost = CreateFeaturedJobPostCommandMapper.MapToEntity(request, business!);
+        var jobPost = CreateFeaturedJobPostCommandMapper.MapToEntity(request, business);
         await _appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
         _logger.LogInformation("Creating job post: {jobPostId}", jobPost.Id);
 
-        var session = await _paymentService.CreateFeaturedListingCheckoutSessions(
-            business.StripeCustomerId!
+        string? stripeCustomerId = null;
+        if (business != null)
+        {
+            await CreateStripeCustomerIfNotExists(business);
+            stripeCustomerId = business.StripeCustomerId;
+        }
+        else
+        {
+            stripeCustomerId = await _paymentService.CreateCustomer(
+                request.CompanyEmail,
+                request.CompanyName
+            );
+        }
+
+        var session = await _paymentService.CreateFeaturedJobPostCheckoutSessions(
+            stripeCustomerId!
         );
 
         await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
@@ -55,9 +69,9 @@ public class CreateFeaturedJobPostCommandHandler(
 
         var userEmail = _currentUser.GetUserEmail();
         business.StripeCustomerId = await _paymentService.CreateCustomer(
-            business.Id,
             userEmail,
-            business.Name
+            business.Name,
+            business.Id
         );
     }
 
@@ -71,6 +85,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
         await _appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
         _logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
+
         return payment;
     }
 }
