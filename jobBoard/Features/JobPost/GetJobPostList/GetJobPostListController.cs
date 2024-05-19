@@ -1,15 +1,14 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.GetJobPostList;
 
 [Tags("Job Post")]
 [ApiController]
 [Route("api/jobs")]
-public class GetJobPostListController(ISender sender) : BaseController
+public class GetJobPostListController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [HttpGet]
     public async Task<IActionResult> GetJobPostList(
         [FromQuery(Name = "keyword")] string? keyword,
@@ -20,22 +19,10 @@ public class GetJobPostListController(ISender sender) : BaseController
         [FromQuery(Name = "page")] int page = 1
     )
     {
-        var result = await _sender.Send(
-            new GetJobPostListQuery(
-                Keyword: keyword,
-                Country: country,
-                Remote: remote,
-                Categories: categories,
-                EmploymentTypes: employmentTypes,
-                Page: page
-            )
+        var result = await sender.Send(
+            new GetJobPostListQuery(keyword, country, remote, categories, employmentTypes, page)
         );
 
-        if (!result.IsSuccess)
-        {
-            return NotFound(result.Error);
-        }
-
-        return Ok(result.Value);
+        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }
 }

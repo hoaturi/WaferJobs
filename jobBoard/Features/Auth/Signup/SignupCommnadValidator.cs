@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using JobBoard.Common.Constants;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.Signup;
 
 public class SignupCommandValidator : AbstractValidator<SignUpCommand>
 {
@@ -12,5 +13,11 @@ public class SignupCommandValidator : AbstractValidator<SignUpCommand>
             .NotEmpty()
             .MinimumLength(6)
             .WithMessage("Password must be at least 6 characters");
+
+        RuleFor(x => x.Role)
+            .NotEmpty()
+            .WithMessage("Role is required")
+            .Must(role => Enum.IsDefined(typeof(UserRoles), role))
+            .WithMessage("Invalid role specified");
     }
 }

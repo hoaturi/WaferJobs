@@ -1,13 +1,17 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Models;
 
-namespace JobBoard;
+namespace JobBoard.Domain.JobPost;
 
 public static class JobPostErrors
 {
-    public static Error JobPostNotFound(Guid Id) =>
-        new(
-            ErrorCodes.JobPostNotFound,
+    public static Error JobPostNotFound(Guid id)
+    {
+        return new Error(
+            ErrorCodes.JobPostNotFoundError,
             HttpStatusCode.NotFound,
-            $"Job post with id: {Id} not found."
+            $"Job post with id: {id} not found."
         );
+    }
 }

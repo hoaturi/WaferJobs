@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignIn;
 
 public class SignInCommandValidator : AbstractValidator<SignInCommand>
 {

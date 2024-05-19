@@ -1,15 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobBoard.Common.Models;
+using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Common.Extensions;
 
-public static class ResultHandlerExtensions
+public static class ControllerExtensions
 {
     /// <summary>
-    /// Extracts the error status code and return an IActionResult with the error as the body.
+    ///     Extracts the error status code and return an IActionResult with the error as the body.
     /// </summary>
     [NonAction]
-    public static IActionResult HandleFailure(this ControllerBase controller, Error error)
+    public static IActionResult HandleError(this ControllerBase controller, Error error)
     {
-        return new ObjectResult(error) { StatusCode = error.StatusCode, };
+        var objectResult = new ObjectResult(error)
+        {
+            StatusCode = error.StatusCode
+        };
+
+        return objectResult;
     }
 }

@@ -1,30 +1,14 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
 
-namespace JobBoard;
+namespace JobBoard.Common.Exceptions;
 
-public class CustomException : Exception
+public class CustomException(
+    ErrorCodes errorCode,
+    HttpStatusCode httpStatusCode,
+    string message)
+    : Exception(message)
 {
-    public ErrorCodes ErrorCode { get; }
-    public HttpStatusCode StatusCode { get; }
-    public List<ValidationError>? FieldErrors { get; }
-
-    public CustomException(ErrorCodes errorCode, HttpStatusCode httpStatusCode, string message)
-        : base(message)
-    {
-        ErrorCode = errorCode;
-        StatusCode = httpStatusCode;
-    }
-
-    public CustomException(
-        ErrorCodes errorCode,
-        HttpStatusCode httpStatusCode,
-        string message,
-        List<ValidationError> fieldErrors
-    )
-        : base(message)
-    {
-        ErrorCode = errorCode;
-        StatusCode = httpStatusCode;
-        FieldErrors = fieldErrors;
-    }
-};
+    public ErrorCodes ErrorCode { get; } = errorCode;
+    public HttpStatusCode StatusCode { get; } = httpStatusCode;
+}

@@ -1,5 +1,6 @@
-﻿using FluentAssertions;
-using JobBoard;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,16 +12,16 @@ namespace Test;
 
 public class SignupBusinessCommandHandlerTests
 {
-    private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
-    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
-    private readonly Mock<ILogger<SignUpBusinessCommandHandler>> _mockLogger;
     private readonly AppDbContext _appDbContext;
     private readonly SignUpBusinessCommandHandler _handler;
+    private readonly Mock<ILogger<SignUpBusinessCommandHandler>> _mockLogger;
+    private readonly Mock<UserManager<ApplicationUserEntity>> _mockUserManager;
+    private readonly Mock<IUserStore<ApplicationUserEntity>> _mockUserStore;
 
     public SignupBusinessCommandHandlerTests()
     {
-        _mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
+        _mockUserStore = new Mock<IUserStore<ApplicationUserEntity>>();
+        _mockUserManager = new Mock<UserManager<ApplicationUserEntity>>(
             _mockUserStore.Object,
             null!,
             null!,
@@ -34,7 +35,7 @@ public class SignupBusinessCommandHandlerTests
         _mockLogger = new Mock<ILogger<SignUpBusinessCommandHandler>>();
 
         var option = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "Test")
+            .UseInMemoryDatabase("Test")
             .Options;
         _appDbContext = new AppDbContext(option);
 
@@ -53,14 +54,14 @@ public class SignupBusinessCommandHandlerTests
 
         _mockUserManager
             .Setup(x => x.FindByEmailAsync(request.Email))
-            .ReturnsAsync(default(ApplicationUser));
+            .ReturnsAsync(default(ApplicationUserEntity));
         _mockUserManager
-            .Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), request.Password))
+            .Setup(x => x.CreateAsync(It.IsAny<ApplicationUserEntity>(), request.Password))
             .ReturnsAsync(IdentityResult.Success);
 
         _mockUserManager
             .Setup(
-                x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), RoleTypes.Business.ToString())
+                x => x.AddToRoleAsync(It.IsAny<ApplicationUserEntity>(), UserRoles.Business)
             )
             .ReturnsAsync(IdentityResult.Success);
 
@@ -73,11 +74,11 @@ public class SignupBusinessCommandHandlerTests
 
         _mockUserManager.Verify(x => x.FindByEmailAsync(request.Email), Times.Once);
         _mockUserManager.Verify(
-            x => x.CreateAsync(It.IsAny<ApplicationUser>(), request.Password),
+            x => x.CreateAsync(It.IsAny<ApplicationUserEntity>(), request.Password),
             Times.Once
         );
         _mockUserManager.Verify(
-            x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), RoleTypes.Business.ToString()),
+            x => x.AddToRoleAsync(It.IsAny<ApplicationUserEntity>(), UserRoles.Business),
             Times.Once
         );
 
@@ -94,7 +95,7 @@ public class SignupBusinessCommandHandlerTests
         // Arrange
         var request = new SignUpBusinessCommand("business@test.com", "password", "test Business");
 
-        var user = new ApplicationUser { Email = request.Email, UserName = request.Email, };
+        var user = new ApplicationUserEntity { Email = request.Email, UserName = request.Email };
 
         _mockUserManager.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(user);
 

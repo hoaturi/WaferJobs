@@ -1,27 +1,33 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using JobBoard.Domain.Auth;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignOut;
 
 [Tags("Auth")]
 [ApiController]
 [Route("api/auth/signout")]
 public class SignOutController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [HttpPost]
     public new async Task<IActionResult> SignOut()
     {
-        HttpContext.Request.Cookies.TryGetValue("refresh_token", out var refreshToken);
+        var refreshToken = HttpContext.Request.Cookies["refresh_token"];
 
-        var result = await _sender.Send(new SignOutCommand(refreshToken!));
+        if (refreshToken is null) return this.HandleError(AuthErrors.InvalidRefreshToken);
 
-        if (!result.IsSuccess)
-        {
-            return this.HandleFailure(result.Error!);
-        }
+        var result = await sender.Send(new SignOutCommand(refreshToken));
 
+        if (!result.IsSuccess) return this.HandleError(result.Error);
+
+        DeleteRefreshTokenCookie();
+
+        return Ok();
+    }
+
+    private void DeleteRefreshTokenCookie()
+    {
         HttpContext.Response.Cookies.Delete(
             "refresh_token",
             new CookieOptions
@@ -33,7 +39,5 @@ public class SignOutController(ISender sender) : ControllerBase
                 Path = "/"
             }
         );
-
-        return Ok();
     }
 }

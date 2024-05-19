@@ -1,6 +1,6 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Common;
 
-public abstract class BaseEntity
+public class BaseEntity
 {
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

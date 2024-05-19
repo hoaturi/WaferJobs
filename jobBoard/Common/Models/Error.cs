@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
 
-namespace JobBoard;
+namespace JobBoard.Common.Models;
 
 public class Error(ErrorCodes errorCode, HttpStatusCode statusCode, string message)
 {

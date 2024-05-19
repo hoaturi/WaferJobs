@@ -1,19 +1,24 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Features.JobPost.CreateFeaturedJobPost;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Stripe.Checkout;
 using Xunit;
 
 namespace Test;
 
 public class CreateFeaturedJobPostCommandHandlerTests
 {
-    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
-    private readonly Mock<IPaymentService> _paymentServiceMock;
-    private readonly Mock<ILogger<CreateFeaturedJobPostCommandHandler>> _loggerMock;
     private readonly AppDbContext _appDbContext;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly CreateFeaturedJobPostCommandHandler _handler;
+    private readonly Mock<ILogger<CreateFeaturedJobPostCommandHandler>> _loggerMock;
+    private readonly Mock<IPaymentService> _paymentServiceMock;
 
     public CreateFeaturedJobPostCommandHandlerTests()
     {
@@ -22,7 +27,7 @@ public class CreateFeaturedJobPostCommandHandlerTests
         _loggerMock = new Mock<ILogger<CreateFeaturedJobPostCommandHandler>>();
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "Test")
+            .UseInMemoryDatabase("Test")
             .Options;
         _appDbContext = new AppDbContext(options);
 
@@ -53,8 +58,8 @@ public class CreateFeaturedJobPostCommandHandlerTests
             Currency: "USD"
         );
 
-        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "test@test.com" };
-        var business = new Business { UserId = user.Id, Name = "Test Business", };
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid(), Email = "test@test.com" };
+        var business = new BusinessEntity { UserId = user.Id, Name = "Test Business" };
 
         var customerId = "cus_123";
         var sessionId = "session_123";
@@ -68,11 +73,11 @@ public class CreateFeaturedJobPostCommandHandlerTests
         _currentUserServiceMock.Setup(m => m.GetUserEmail()).Returns(user.Email);
 
         _paymentServiceMock
-            .Setup(m => m.CreateCustomer(business.Id, user.Email, business.Name))
+            .Setup(m => m.CreateStripeCustomer(business.Id, user.Email, business.Name))
             .ReturnsAsync("cus_123");
         _paymentServiceMock
-            .Setup(m => m.CreateFeaturedListingCheckoutSessions(customerId))
-            .ReturnsAsync(new Stripe.Checkout.Session { Id = sessionId, Url = sessionUrl });
+            .Setup(m => m.CreateCheckoutSession(customerId))
+            .ReturnsAsync(new Session { Id = sessionId, Url = sessionUrl });
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -82,20 +87,20 @@ public class CreateFeaturedJobPostCommandHandlerTests
         result.Value.Should().BeOfType<CreateFeaturedJobPostResponse>();
         result.Value.SessionUrl.Should().Be(sessionUrl);
 
-        var createdBusiness = await _appDbContext.Businesses.FirstOrDefaultAsync(
-            b => b.UserId == user.Id
+        var createdBusiness = await _appDbContext.Businesses.FirstOrDefaultAsync(b =>
+            b.UserId == user.Id
         );
         createdBusiness.Should().NotBeNull();
         createdBusiness!.StripeCustomerId.Should().Be(customerId);
 
-        var createdJobPost = await _appDbContext.JobPosts.FirstOrDefaultAsync(
-            jp => jp.BusinessId == business.Id
+        var createdJobPost = await _appDbContext.JobPosts.FirstOrDefaultAsync(jp =>
+            jp.BusinessId == business.Id
         );
         createdJobPost.Should().NotBeNull();
         createdJobPost!.Title.Should().Be(command.Title);
 
-        var createdPayment = await _appDbContext.JobPostPayments.FirstOrDefaultAsync(
-            p => p.JobPostId == createdJobPost.Id
+        var createdPayment = await _appDbContext.JobPostPayments.FirstOrDefaultAsync(p =>
+            p.JobPostId == createdJobPost.Id
         );
         createdPayment.Should().NotBeNull();
         createdPayment!.CheckoutSessionId.Should().Be(sessionId);
@@ -121,7 +126,7 @@ public class CreateFeaturedJobPostCommandHandlerTests
             Currency: "USD"
         );
 
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
         _appDbContext.Users.Add(user);
         await _appDbContext.SaveChangesAsync();
 
@@ -131,7 +136,7 @@ public class CreateFeaturedJobPostCommandHandlerTests
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<AssociatedBusinessNotFoundException>();
+        await act.Should().ThrowAsync<BusinessNotFoundForUserException>();
     }
 
     [Fact]
@@ -153,8 +158,8 @@ public class CreateFeaturedJobPostCommandHandlerTests
             Currency: "USD"
         );
 
-        var user = new ApplicationUser { Id = Guid.NewGuid(), Email = "" };
-        var business = new Business
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid(), Email = "" };
+        var business = new BusinessEntity
         {
             UserId = user.Id,
             Name = "Test Business",
@@ -172,8 +177,8 @@ public class CreateFeaturedJobPostCommandHandlerTests
         _currentUserServiceMock.Setup(m => m.GetUserEmail()).Returns(user.Email);
 
         _paymentServiceMock
-            .Setup(m => m.CreateFeaturedListingCheckoutSessions(business.StripeCustomerId))
-            .ReturnsAsync(new Stripe.Checkout.Session { Id = sessionId, Url = sessionUrl });
+            .Setup(m => m.CreateCheckoutSession(business.StripeCustomerId))
+            .ReturnsAsync(new Session { Id = sessionId, Url = sessionUrl });
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -183,8 +188,8 @@ public class CreateFeaturedJobPostCommandHandlerTests
         result.Value.Should().BeOfType<CreateFeaturedJobPostResponse>();
         result.Value.SessionUrl.Should().Be(sessionUrl);
 
-        var createdBusiness = await _appDbContext.Businesses.FirstOrDefaultAsync(
-            b => b.UserId == user.Id
+        var createdBusiness = await _appDbContext.Businesses.FirstOrDefaultAsync(b =>
+            b.UserId == user.Id
         );
         createdBusiness.Should().NotBeNull();
         createdBusiness!.StripeCustomerId.Should().Be(business.StripeCustomerId);

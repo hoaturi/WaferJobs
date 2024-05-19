@@ -1,63 +1,55 @@
 ﻿using System.Web;
 using Azure;
 using Azure.Communication.Email;
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Options;
 using Microsoft.Extensions.Options;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Services.EmailService;
 
-public class EmailService : IEmailService
+public class EmailService(
+    IOptions<AzureOptions> azureOptions,
+    IOptions<EmailOptions> emailOptions,
+    ILogger<EmailService> logger)
+    : IEmailService
 {
-    private readonly AzureOptions _azureOptions;
-    private readonly EmailOptions _emailOptions;
-    private readonly EmailClient _emailClient;
-    private readonly ILogger<EmailService> _logger;
+    private readonly EmailClient _emailClient = new(azureOptions.Value.CommunicationServiceConnectionString);
+    private readonly EmailOptions _emailOptions = emailOptions.Value;
 
-    public EmailService(
-        IOptions<AzureOptions> azureOptions,
-        IOptions<EmailOptions> emailOptions,
-        ILogger<EmailService> logger
-    )
+    public async Task SendAsync(PasswordResetDto passwordResetDto)
     {
-        _azureOptions = azureOptions.Value;
-        _emailOptions = emailOptions.Value;
-        _emailClient = new EmailClient(_azureOptions.CommunicationServiceConnectionString);
-        _logger = logger;
-    }
+        var encodedToken = HttpUtility.UrlEncode(passwordResetDto.Token);
+        var passwordResetLink =
+            _emailOptions.GetPasswordResetLink(encodedToken, passwordResetDto.UserEntity.Id.ToString());
 
-    public async Task SendPasswordResetEmailAsync(EmailDto dto)
-    {
-        var encodedToken = HttpUtility.UrlEncode(dto.Token);
-        var passwordResetLink = _emailOptions.GetPasswordResetLink(
-            encodedToken,
-            dto.User.Id.ToString()
-        );
-
-        var htmlContent =
-            $@"
-            <p>Please click the button below to reset your password.</p>
-            <p><a href='{passwordResetLink}'>Reset Password</a></p>
-            <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
-            <p>Thank you,<br>JobBoard Team</p>";
+        var emailContent = GeneratePasswordResetEmailContent(passwordResetLink);
 
         try
         {
             await _emailClient.SendAsync(
                 WaitUntil.Started,
-                senderAddress: _emailOptions.FromAddress,
-                recipientAddress: dto.User.Email,
-                subject: "Reset Password",
-                htmlContent: htmlContent
-            );
+                _emailOptions.FromAddress,
+                passwordResetDto.UserEntity.Email,
+                "Reset Password",
+                emailContent);
 
-            _logger.LogInformation(
-                "Successfully sent password reset email for user: {UserId}",
-                dto.User.Id
-            );
+            logger.LogInformation("Password reset email sent successfully for user: {UserId}",
+                passwordResetDto.UserEntity.Id);
         }
         catch (RequestFailedException ex)
         {
-            _logger.LogError("Failed to send password reset email: {errorCode}", ex.ErrorCode);
+            logger.LogError("Failed to send password reset email. Error Code: {ErrorCode}", ex.ErrorCode);
             throw new EmailSendFailedException();
         }
+    }
+
+    private static string GeneratePasswordResetEmailContent(string passwordResetLink)
+    {
+        return $"""
+                            <p>Please click the button below to reset your password.</p>
+                            <p><a href='{passwordResetLink}'>Reset Password</a></p>
+                            <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+                            <p>Thank you,<br>JobBoard Team</p>
+                """;
     }
 }

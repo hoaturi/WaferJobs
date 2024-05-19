@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
 using JobBoard;
+using JobBoard.Domain.JobPost;
+using JobBoard.Features.JobPost.PublishFeaturedJobPost;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,13 +13,13 @@ namespace Test;
 public class PublishFeaturedJobPostCommandHandlerTests : IDisposable
 {
     private readonly AppDbContext _appDbContext;
-    private readonly Mock<ILogger<PublishFeaturedJobPostCommandHandler>> _mockLogger;
     private readonly PublishFeaturedJobPostCommandHandler _handler;
+    private readonly Mock<ILogger<PublishFeaturedJobPostCommandHandler>> _mockLogger;
 
     public PublishFeaturedJobPostCommandHandlerTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase("TestDb")
             .Options;
 
         _appDbContext = new AppDbContext(options);
@@ -31,10 +34,10 @@ public class PublishFeaturedJobPostCommandHandlerTests : IDisposable
         _appDbContext.Dispose();
     }
 
-    private async Task<JobPostPayment> SetupJobPostPayment(bool isProcessed)
+    private async Task<JobPostPaymentEntity> SetupJobPostPayment(bool isProcessed)
     {
         var sessionId = "cs_test";
-        var jobPost = new JobPost
+        var jobPost = new JobPostEntity
         {
             CategoryId = 1,
             CountryId = 1,
@@ -50,12 +53,12 @@ public class PublishFeaturedJobPostCommandHandlerTests : IDisposable
             CompanyLogoUrl = "https://test.com/logo.png",
             IsRemote = true,
             IsFeatured = true,
-            IsPublished = false,
+            IsPublished = false
         };
 
-        var jobPostPayment = new JobPostPayment
+        var jobPostPayment = new JobPostPaymentEntity
         {
-            JobPost = jobPost,
+            JobPostEntity = jobPost,
             CheckoutSessionId = sessionId,
             EventId = "evt_123",
             IsProcessed = false
@@ -81,7 +84,7 @@ public class PublishFeaturedJobPostCommandHandlerTests : IDisposable
         var result = await _handler.Handle(request, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        jobPostPayment.JobPost.IsPublished.Should().BeTrue();
+        jobPostPayment.JobPostEntity.IsPublished.Should().BeTrue();
     }
 
     [Fact]

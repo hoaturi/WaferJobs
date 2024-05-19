@@ -1,101 +1,89 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Options;
+using JobBoard.Domain.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Services.JwtService;
 
 public class JwtService(IOptions<JwtOptions> options) : IJwtService
 {
-    private readonly JwtOptions _options = options.Value;
+    private readonly JwtOptions _jwtOptions = options.Value;
 
-    public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
+    public (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity,
+        IList<string> roles)
     {
-        var claims = GetClaims(user);
-
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        var signingCredentials = GetSigningCredentials(_options.AccessKey);
-        var tokenOptions = GenerateTokenOptions(signingCredentials, claims, JwtTypes.AccessToken);
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-    }
-
-    public string GenerateRefreshToken(ApplicationUser user)
-    {
-        var claims = GetClaims(user);
-        var signingCredentials = GetSigningCredentials(_options.RefreshKey);
-        var tokenOptions = GenerateTokenOptions(signingCredentials, claims, JwtTypes.RefreshToken);
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-    }
-
-    public async Task<bool> ValidateRefreshToken(string Token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_options.RefreshKey);
-
-        var validationResult = await tokenHandler.ValidateTokenAsync(
-            Token,
-            new TokenValidationParameters
-            {
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidAudience = _options.Audience,
-                ValidIssuer = _options.Issuer,
-            }
-        );
-
-        return validationResult.IsValid;
-    }
-
-    public long GetExpiration(string Token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var parsedToken = tokenHandler.ReadJwtToken(Token);
-        var expClaim = parsedToken
-            .Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp)!
-            .Value;
-
-        var exp = long.Parse(expClaim);
-
-        return exp;
-    }
-
-    public string GetUserId(string Token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var parsedToken = tokenHandler.ReadJwtToken(Token);
-        var userId = parsedToken
-            .Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)!
-            .Value;
-
-        return userId;
-    }
-
-    public (string accessToken, string refreshToken) GenerateTokens(
-        ApplicationUser user,
-        IList<string> roles
-    )
-    {
-        var accessToken = GenerateAccessToken(user, roles);
-        var refreshToken = GenerateRefreshToken(user);
+        var accessToken = GenerateToken(userEntity, roles, JwtTypes.AccessToken);
+        var refreshToken = GenerateToken(userEntity, roles, JwtTypes.RefreshToken);
         return (accessToken, refreshToken);
     }
 
-    private static List<Claim> GetClaims(ApplicationUser user)
+    public string GenerateAccessToken(ApplicationUserEntity userEntity, IList<string> roles)
+    {
+        return GenerateToken(userEntity, roles, JwtTypes.AccessToken);
+    }
+
+    public async Task<bool> ValidateToken(string token, JwtTypes jwtType)
+    {
+        var key = jwtType == JwtTypes.AccessToken ? _jwtOptions.AccessKey : _jwtOptions.RefreshKey;
+        return await ValidateToken(token, key);
+    }
+
+    public long GetExpiration(string token)
+    {
+        var parsedToken = ReadToken(token);
+        var expClaim = parsedToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Exp).Value;
+        return long.Parse(expClaim);
+    }
+
+    public Guid GetUserId(string token)
+    {
+        var parsedToken = ReadToken(token);
+        var userId = parsedToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+        return Guid.Parse(userId);
+    }
+
+    private string GenerateToken(ApplicationUserEntity userEntity, IList<string> roles, JwtTypes jwtType)
+    {
+        var claims = CreateClaims(userEntity);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        var signingCredentials =
+            GetSigningCredentials(jwtType == JwtTypes.AccessToken ? _jwtOptions.AccessKey : _jwtOptions.RefreshKey);
+        var tokenOptions = GenerateTokenOptions(signingCredentials, claims, jwtType);
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+    }
+
+    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims,
+        JwtTypes jwtType)
+    {
+        var expires = jwtType switch
+        {
+            JwtTypes.AccessToken => DateTime.Now.AddMinutes(double.Parse(_jwtOptions.AccessExpires)),
+            JwtTypes.RefreshToken => DateTime.Now.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
+            _ => throw new ArgumentException("Invalid JWT type", nameof(jwtType))
+        };
+
+        return new JwtSecurityToken(
+            _jwtOptions.Issuer,
+            _jwtOptions.Audience,
+            claims,
+            expires: expires,
+            signingCredentials: signingCredentials
+        );
+    }
+
+    private static List<Claim> CreateClaims(ApplicationUserEntity userEntity)
     {
         return
         [
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, userEntity.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, userEntity.Email!)
         ];
     }
 
@@ -106,27 +94,31 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
-    private JwtSecurityToken GenerateTokenOptions(
-        SigningCredentials signingCredentials,
-        List<Claim> claims,
-        JwtTypes jwtType = JwtTypes.AccessToken
-    )
+    private async Task<bool> ValidateToken(string token, string key)
     {
-        var expires = jwtType switch
-        {
-            JwtTypes.AccessToken => DateTime.Now.AddMinutes(double.Parse(_options.AccessExpires)),
-            JwtTypes.RefreshToken => DateTime.Now.AddDays(double.Parse(_options.RefreshExpires)),
-            _ => throw new ArgumentException("Invalid JWT type", nameof(jwtType))
-        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var keyBytes = Encoding.UTF8.GetBytes(key);
 
-        var token = new JwtSecurityToken(
-            _options.Issuer,
-            _options.Audience,
-            claims,
-            expires: expires,
-            signingCredentials: signingCredentials
+        var validationResult = await tokenHandler.ValidateTokenAsync(
+            token,
+            new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidAudience = _jwtOptions.Audience,
+                ValidIssuer = _jwtOptions.Issuer
+            }
         );
 
-        return token;
+        return validationResult.IsValid;
+    }
+
+    private static JwtSecurityToken ReadToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        return tokenHandler.ReadJwtToken(token);
     }
 }

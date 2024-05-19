@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using FluentAssertions;
-using JobBoard;
-using MediatR;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Features.Auth.SignOut;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,10 +13,10 @@ namespace Test;
 
 public class SignOutCommandHandlerTests
 {
-    private readonly Mock<IJwtService> _mockJwtService;
-    private readonly Mock<IDistributedCache> _mockCache;
-    private readonly Mock<ILogger<SignOutCommandHandler>> _mockLogger;
     private readonly SignOutCommandHandler _handler;
+    private readonly Mock<IDistributedCache> _mockCache;
+    private readonly Mock<IJwtService> _mockJwtService;
+    private readonly Mock<ILogger<SignOutCommandHandler>> _mockLogger;
 
     public SignOutCommandHandlerTests()
     {

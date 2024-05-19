@@ -1,34 +1,36 @@
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.ForgotPassword;
 
 public class ForgotPasswordCommandHandler(
-    UserManager<ApplicationUser> userManager,
+    UserManager<ApplicationUserEntity> userManager,
     IEmailService emailService,
     ILogger<ForgotPasswordCommandHandler> logger
 ) : IRequestHandler<ForgotPasswordCommand, Result<Unit, Error>>
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IEmailService _emailService = emailService;
-    private readonly ILogger<ForgotPasswordCommandHandler> _logger = logger;
-
     public async Task<Result<Unit, Error>> Handle(
-        ForgotPasswordCommand request,
+        ForgotPasswordCommand command,
         CancellationToken cancellationToken
     )
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(command.Email);
 
         if (user is null)
         {
-            _logger.LogInformation("User with the input email not found");
+            logger.LogWarning("Failed to find user with email: {Email}", command.Email);
             return AuthErrors.UserNotFound;
         }
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        await _emailService.SendPasswordResetEmailAsync(new EmailDto(user, token));
+        await emailService.SendAsync(new PasswordResetDto(user, resetToken));
+
+        logger.LogInformation("Password reset token sent to user: {UserId}", user.Id);
 
         return Unit.Value;
     }

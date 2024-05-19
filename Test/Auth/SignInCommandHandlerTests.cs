@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Features.Auth.SignIn;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -9,16 +12,16 @@ namespace Test;
 
 public class SignInCommandHandlerTests
 {
-    private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
-    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly SignInCommandHandler _handler;
     private readonly Mock<IJwtService> _mockJwtService;
     private readonly Mock<ILogger<SignInCommandHandler>> _mockLogger;
-    private readonly SignInCommandHandler _handler;
+    private readonly Mock<UserManager<ApplicationUserEntity>> _mockUserManager;
+    private readonly Mock<IUserStore<ApplicationUserEntity>> _mockUserStore;
 
     public SignInCommandHandlerTests()
     {
-        _mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
+        _mockUserStore = new Mock<IUserStore<ApplicationUserEntity>>();
+        _mockUserManager = new Mock<UserManager<ApplicationUserEntity>>(
             _mockUserStore.Object,
             null!,
             null!,
@@ -44,8 +47,8 @@ public class SignInCommandHandlerTests
     {
         // Arrange
         var request = new SignInCommand("test@test.com", "password");
-        var mockUser = new ApplicationUser { Id = Guid.NewGuid(), Email = "test@test.com", };
-        var mockRoles = new List<string> { RoleTypes.JobSeeker.ToString() };
+        var mockUser = new ApplicationUserEntity { Id = Guid.NewGuid(), Email = "test@test.com" };
+        var mockRoles = new List<string> { UserRoles.JobSeeker };
         var mockAccessToken = "mockAccessToken";
         var mockRefreshToken = "mockRefreshToken";
 
@@ -90,7 +93,7 @@ public class SignInCommandHandlerTests
 
         _mockUserManager
             .Setup(x => x.FindByEmailAsync(request.Email))
-            .ReturnsAsync(default(ApplicationUser));
+            .ReturnsAsync(default(ApplicationUserEntity));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -101,7 +104,7 @@ public class SignInCommandHandlerTests
 
         _mockUserManager.Verify(x => x.FindByEmailAsync(request.Email), Times.Once);
         _mockUserManager.Verify(
-            x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()),
+            x => x.CheckPasswordAsync(It.IsAny<ApplicationUserEntity>(), It.IsAny<string>()),
             Times.Never
         );
     }
@@ -111,7 +114,7 @@ public class SignInCommandHandlerTests
     {
         // Arrange
         var request = new SignInCommand("test@test.com", "wrongPassword");
-        var mockUser = new ApplicationUser { Id = Guid.NewGuid(), Email = request.Email };
+        var mockUser = new ApplicationUserEntity { Id = Guid.NewGuid(), Email = request.Email };
 
         _mockUserManager.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(mockUser);
         _mockUserManager

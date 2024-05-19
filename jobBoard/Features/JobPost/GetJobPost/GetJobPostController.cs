@@ -1,25 +1,19 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.GetJobPost;
 
 [Tags("Job Post")]
 [ApiController]
 [Route("api/jobs")]
-public class GetJobPostController(ISender sender) : BaseController
+public class GetJobPostController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetJobPost(Guid id)
     {
-        var result = await _sender.Send(new GetJobPostQuery(id));
+        var result = await sender.Send(new GetJobPostQuery(id));
 
-        if (!result.IsSuccess)
-        {
-            return NotFound(result.Error);
-        }
-
-        return Ok(result.Value);
+        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }
 }

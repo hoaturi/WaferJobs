@@ -1,38 +1,37 @@
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.ResetPassword;
 
 public class ResetPasswordCommandHandler(
-    UserManager<ApplicationUser> userManager,
+    UserManager<ApplicationUserEntity> userManager,
     ILogger<ResetPasswordCommandHandler> logger
 ) : IRequestHandler<ResetPasswordCommand, Result<Unit, Error>>
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly ILogger<ResetPasswordCommandHandler> _logger = logger;
-
     public async Task<Result<Unit, Error>> Handle(
-        ResetPasswordCommand request,
+        ResetPasswordCommand command,
         CancellationToken cancellationToken
     )
     {
-        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+        var user = await userManager.FindByIdAsync(command.UserId.ToString());
 
         if (user is null)
         {
-            _logger.LogWarning("User {UserId} not found", request.UserId);
+            logger.LogWarning("Failed to find user with id: {UserId}", command.UserId);
             return AuthErrors.UserNotFound;
         }
 
-        var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+        var resetResult = await userManager.ResetPasswordAsync(user, command.Token, command.Password);
 
-        if (!result.Succeeded)
+        if (!resetResult.Succeeded)
         {
-            _logger.LogWarning("Invalid reset token for user {UserId}", request.UserId);
+            logger.LogWarning("Invalid reset token for user with id: {UserId}", command.UserId);
             return AuthErrors.InvalidToken;
         }
 
-        _logger.LogInformation("Successfully reset password for user {UserId}", user.Id);
+        logger.LogInformation("Password reset successful for user with id: {UserId}", user.Id);
         return Unit.Value;
     }
 }

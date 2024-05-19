@@ -1,6 +1,6 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Common.Interfaces;
 
 public interface IFileUploadService
 {
-    Task<string> UploadBusinessLogoAsync(string fileName, Stream file);
+    Task<string> UploadFileAsync(string fileName, Stream file);
 }

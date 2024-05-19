@@ -1,25 +1,36 @@
 ﻿using System.Text;
+using JobBoard.Common.Behaviors;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Middlewares;
+using JobBoard.Common.Options;
+using JobBoard.Common.Security;
+using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CurrentUserService;
+using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.FileUploadService;
+using JobBoard.Infrastructure.Services.JwtService;
+using JobBoard.Infrastructure.Services.PaymentService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
-namespace JobBoard;
+namespace JobBoard.Common.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddCorsPolicy(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddCorsPolicy(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var corsOptions = configuration.GetSection(CorsOptions.Key).Get<CorsOptions>()!;
 
         services.AddCors(options =>
         {
             options.AddPolicy(
-                name: "CorsPolicy",
+                "CorsPolicy",
                 builder =>
                 {
                     builder
@@ -30,45 +41,30 @@ public static class ServiceExtensions
                 }
             );
         });
-
-        return services;
     }
 
     // Registers DbContexts
-    public static IServiceCollection AddDbContexts(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddDbContexts(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var dbOptions = configuration
             .GetSection(DbConnectionOptions.Key)
             .Get<DbConnectionOptions>()!;
 
-        services.AddDbContext<AppDbContext>(option => option.UseNpgsql(dbOptions.JobBoardApiDb));
-
-        return services;
+        services.AddDbContext<AppDbContext>(option => { option.UseNpgsql(dbOptions.JobBoardApiDb); });
     }
 
-    public static IServiceCollection AddRedisCache(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddRedisCache(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var redisOptions = configuration.GetSection(RedisOptions.Key).Get<RedisOptions>()!;
 
-        services.AddStackExchangeRedisCache(option =>
-        {
-            option.Configuration = redisOptions.ConnectionString;
-        });
-
-        return services;
+        services.AddStackExchangeRedisCache(option => { option.Configuration = redisOptions.ConnectionString; });
     }
 
     // Registers Authentications and Authorization
-    public static IServiceCollection AddAuthentications(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddAuthentications(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -87,19 +83,18 @@ public static class ServiceExtensions
                     ValidAudience = jwtOptions.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtOptions.AccessKey)
-                    ),
+                    )
                 };
             });
 
         services.AddAuthorization(options =>
         {
-            RolePolicy.AddRolePolicy(options, RoleTypes.Admin.ToString());
-            RolePolicy.AddRolePolicy(options, RoleTypes.JobSeeker.ToString());
-            RolePolicy.AddRolePolicy(options, RoleTypes.Business.ToString());
+            RolePolicy.AddRolePolicy(options, nameof(UserRoles.JobSeeker));
+            RolePolicy.AddRolePolicy(options, nameof(UserRoles.Business));
         });
 
         services
-            .AddIdentityCore<ApplicationUser>(option =>
+            .AddIdentityCore<ApplicationUserEntity>(option =>
             {
                 option.Password.RequireDigit = true;
                 option.Password.RequiredLength = 6;
@@ -111,58 +106,46 @@ public static class ServiceExtensions
 
                 option.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             })
-            .AddRoles<ApplicationRole>()
+            .AddRoles<ApplicationRoleEntity>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
-        return services;
     }
 
     // Registers Infrastructure Services
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddSingleton<IEmailService, EmailService>();
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IPaymentService, PaymentService>();
         services.AddSingleton<IFileUploadService, FileUploadService>();
-
-        return services;
     }
 
     //Registers Mediatr and pipeline behaviors
-    public static IServiceCollection AddMediatrAndBehaviors(this IServiceCollection services)
+    public static void AddMediatrAndBehaviors(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining<Program>();
-            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            cfg.AddOpenBehavior(typeof(RequestValidationBehavior<,>));
         });
-
-        return services;
     }
 
     // Registers Middlewares
-    public static IServiceCollection AddMiddleWares(this IServiceCollection services)
+    public static void AddMiddleWares(this IServiceCollection services)
     {
         services.AddSingleton<ExceptionHandlingMiddleware>();
-
-        return services;
     }
 
-    public static IHostBuilder UseSerilogWithSeq(this IHostBuilder hostBuilder)
+    public static void UseSerilogWithSeq(this IHostBuilder hostBuilder)
     {
         hostBuilder.UseSerilog(
             (context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration)
         );
-
-        return hostBuilder;
     }
 
-    public static IServiceCollection AddConfigOptions(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static void AddConfigOptions(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services
             .AddOptions<JwtOptions>()
@@ -184,7 +167,7 @@ public static class ServiceExtensions
 
         services
             .AddOptions<EmailOptions>()
-            .Bind(configuration.GetSection(EmailOptions.key))
+            .Bind(configuration.GetSection(EmailOptions.Key))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -205,7 +188,5 @@ public static class ServiceExtensions
             .Bind(configuration.GetSection(CorsOptions.Key))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
-        return services;
     }
 }

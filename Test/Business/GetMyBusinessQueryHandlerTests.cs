@@ -1,5 +1,10 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Features.Business.GetBusiness;
+using JobBoard.Features.Business.GetMyBusiness;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
@@ -8,8 +13,8 @@ namespace Test;
 
 public class GetMyBusinessQueryHandlerTests
 {
-    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly AppDbContext _appDbContext;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly GetMyBusinessQueryHandler _getMyBusinessQueryHandler;
 
     public GetMyBusinessQueryHandlerTests()
@@ -17,7 +22,7 @@ public class GetMyBusinessQueryHandlerTests
         _currentUserServiceMock = new Mock<ICurrentUserService>();
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "Test")
+            .UseInMemoryDatabase("Test")
             .Options;
         _appDbContext = new AppDbContext(options);
 
@@ -31,8 +36,8 @@ public class GetMyBusinessQueryHandlerTests
     public async Task WhenSuccessful_ReturnBusinessResponse()
     {
         // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
-        var business = new Business { UserId = user.Id, Name = "Test Business", };
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
+        var business = new BusinessEntity { UserId = user.Id, Name = "Test Business" };
 
         _appDbContext.Users.Add(user);
         _appDbContext.Businesses.Add(business);
@@ -59,7 +64,7 @@ public class GetMyBusinessQueryHandlerTests
     public async Task WhenBusinessNotFound_ThrowAssociatedBusinessNotFoundException()
     {
         // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
 
         _appDbContext.Users.Add(user);
         await _appDbContext.SaveChangesAsync();
@@ -74,6 +79,6 @@ public class GetMyBusinessQueryHandlerTests
             );
 
         // Assert
-        await act.Should().ThrowAsync<AssociatedBusinessNotFoundException>();
+        await act.Should().ThrowAsync<BusinessNotFoundForUserException>();
     }
 }

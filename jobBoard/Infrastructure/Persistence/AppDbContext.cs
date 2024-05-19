@@ -1,18 +1,25 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using JobBoard.Common;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPostEntities;
+using JobBoard.Domain.JobSeeker;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
+    : IdentityDbContext<ApplicationUserEntity, ApplicationRoleEntity, Guid>(options)
 {
-    public DbSet<Business> Businesses { get; set; }
-    public DbSet<BusinessSize> BusinessSizes { get; set; }
-    public DbSet<JobPost> JobPosts { get; set; }
-    public DbSet<Country> Countries { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<EmploymentType> EmploymentTypes { get; set; }
-    public DbSet<JobPostPayment> JobPostPayments { get; set; }
+    public DbSet<JobSeekerEntity> JobSeekers { get; init; }
+    public DbSet<BusinessEntity> Businesses { get; init; }
+    public DbSet<BusinessSizeEntity> BusinessSizes { get; init; }
+    public DbSet<JobPostEntity> JobPosts { get; init; }
+    public DbSet<CountryEntity> Countries { get; init; }
+    public DbSet<CategoryEntity> Categories { get; init; }
+    public DbSet<EmploymentTypeEntity> EmploymentTypes { get; init; }
+    public DbSet<JobPostPaymentEntity> JobPostPayments { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,28 +30,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        AddTimeStamps();
+        UpdateTimestamps();
         return await base.SaveChangesAsync(cancellationToken);
     }
 
-    private void AddTimeStamps()
+    private void UpdateTimestamps()
     {
-        var entires = ChangeTracker
-            .Entries()
-            .Where(
-                e =>
-                    e.Entity is BaseEntity
-                    && (e.State == EntityState.Added || e.State == EntityState.Modified)
-            );
+        var modifiedEntries = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseEntity, State: EntityState.Added or EntityState.Modified });
 
-        foreach (var entry in entires)
+        foreach (var entry in modifiedEntries)
         {
-            if (entry.State == EntityState.Added)
-            {
-                ((BaseEntity)entry.Entity).CreatedAt = DateTime.UtcNow;
-            }
+            var entity = (BaseEntity)entry.Entity;
 
-            ((BaseEntity)entry.Entity).UpdatedAt = DateTime.UtcNow;
+            if (entry.State == EntityState.Added) entity.CreatedAt = DateTime.UtcNow;
+
+            entity.UpdatedAt = DateTime.UtcNow;
         }
     }
 }

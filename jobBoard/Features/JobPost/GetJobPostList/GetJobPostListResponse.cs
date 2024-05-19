@@ -1,22 +1,5 @@
-﻿namespace JobBoard;
+﻿using JobBoard.Features.JobPost.GetJobPost;
 
-public record JobPostDto(
-    Guid Id,
-    string Category,
-    string Country,
-    string EmploymentType,
-    string Title,
-    bool IsRemote,
-    bool IsFeatured,
-    string CompanyName,
-    string? City,
-    int? MinSalary,
-    int? MaxSalary,
-    string? Currency,
-    Guid? BusinessId,
-    string? CompanyLogoUrl,
-    List<string> Tags,
-    DateTime PublishedAt
-);
+namespace JobBoard.Features.JobPost.GetJobPostList;
 
-public record GetJobPostListResponse(List<JobPostDto> JobPostList, int Total);
+public record GetJobPostListResponse(List<GetJobPostResponse> JobPostList, int Total);

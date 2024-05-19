@@ -1,4 +1,4 @@
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignIn;
 
 public record SignInResponse(UserResponse User, string AccessToken, string RefreshToken);
 

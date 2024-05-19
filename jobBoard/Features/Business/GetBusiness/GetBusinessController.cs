@@ -1,25 +1,21 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.Business.GetBusiness;
 
 [Tags("Business")]
 [ApiController]
 [Route("api/businesses")]
-public class GetBusinessController(ISender sender) : BaseController
+public class GetBusinessController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetBusiness(Guid id)
     {
         var result = await _sender.Send(new GetBusinessQuery(id));
 
-        if (!result.IsSuccess)
-        {
-            return HandleFailure(result.Error);
-        }
-
-        return Ok(result.Value);
+        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }
 }

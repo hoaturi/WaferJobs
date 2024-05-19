@@ -1,55 +1,47 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Models;
+using JobBoard.Domain.JobPost;
+using JobBoard.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.PublishFeaturedJobPost;
 
 public class PublishFeaturedJobPostCommandHandler(
     AppDbContext appDbContext,
-    ILogger<PublishFeaturedJobPostCommandHandler> logger
-) : IRequestHandler<PublishFeaturedJobPostCommand, Result<Unit, Error>>
+    ILogger<PublishFeaturedJobPostCommandHandler> logger)
+    : IRequestHandler<PublishFeaturedJobPostCommand, Result<Unit, Error>>
 {
-    private readonly AppDbContext _appDbContext = appDbContext;
-    private readonly ILogger<PublishFeaturedJobPostCommandHandler> _logger = logger;
-
     public async Task<Result<Unit, Error>> Handle(
         PublishFeaturedJobPostCommand request,
-        CancellationToken cancellationToken
-    )
+        CancellationToken cancellationToken)
     {
-        var jobPostPayment =
-            await _appDbContext
-                .JobPostPayments.Where(jpp => jpp.CheckoutSessionId == request.SessionId)
-                .Include(jpp => jpp.JobPost)
-                .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new JobPostPaymentNotFoundException();
+        var jobPostPayment = await appDbContext.JobPostPayments
+            .Include(jpp => jpp.JobPostEntity)
+            .FirstOrDefaultAsync(jpp => jpp.CheckoutSessionId == request.SessionId,
+                cancellationToken);
+
+        if (jobPostPayment is null)
+        {
+            logger.LogError("Job post payment with session id: {SessionId} not found", request.SessionId);
+            throw new JobPostPaymentNotFoundException();
+        }
+
 
         if (jobPostPayment.IsProcessed)
         {
-            _logger.LogInformation(
-                "Job post with id {JobPostId} has already been processed",
-                jobPostPayment.JobPost.Id
-            );
+            logger.LogWarning("Job post with id: {JobPostId} has already been processed",
+                jobPostPayment.JobPostEntity!.Id);
             return Unit.Value;
         }
 
-        PublishJobPost(jobPostPayment, request.StripeEventId);
-
-        await _appDbContext.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("Published job post with id {JobPostId}", jobPostPayment.JobPost.Id);
-
-        return Unit.Value;
-    }
-
-    private static JobPostPayment PublishJobPost(
-        JobPostPayment jobPostPayment,
-        string stripeEventId
-    )
-    {
-        jobPostPayment.JobPost.IsPublished = true;
-        jobPostPayment.JobPost.PublishedAt = DateTime.UtcNow;
-        jobPostPayment.EventId = stripeEventId;
+        jobPostPayment.JobPostEntity!.IsPublished = true;
+        jobPostPayment.JobPostEntity.PublishedAt = DateTime.Now;
+        jobPostPayment.EventId = request.StripeEventId;
         jobPostPayment.IsProcessed = true;
 
-        return jobPostPayment;
+        await appDbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Published job post with id: {JobPostId}", jobPostPayment.JobPostEntity!.Id);
+
+        return Unit.Value;
     }
 }

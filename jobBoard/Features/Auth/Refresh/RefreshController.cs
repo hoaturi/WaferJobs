@@ -1,27 +1,24 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using JobBoard.Domain.Auth;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.Refresh;
 
 [Tags("Auth")]
 [ApiController]
 [Route("api/auth/refresh")]
 public class RefreshController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [HttpPost]
     public async Task<IActionResult> Refresh()
     {
         HttpContext.Request.Cookies.TryGetValue("refresh_token", out var refreshToken);
 
-        var result = await _sender.Send(new RefreshCommand(refreshToken!));
+        if (refreshToken is null) return this.HandleError(AuthErrors.InvalidRefreshToken);
 
-        if (!result.IsSuccess)
-        {
-            return this.HandleFailure(result.Error);
-        }
+        var result = await sender.Send(new RefreshCommand(refreshToken));
 
-        return Ok(result.Value);
+        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }
 }

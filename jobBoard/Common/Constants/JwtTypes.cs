@@ -1,4 +1,4 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Common.Constants;
 
 public enum JwtTypes
 {

@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using JobBoard.Common.Options;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignIn;
 
 [Tags("Auth")]
 [ApiController]
@@ -10,17 +12,13 @@ namespace JobBoard;
 public class SignInController(IOptions<JwtOptions> jwtOptions, ISender sender) : ControllerBase
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
-    private readonly ISender _sender = sender;
 
     [HttpPost]
     public async Task<IActionResult> SignIn([FromBody] SignInCommand command)
     {
-        var result = await _sender.Send(command);
+        var result = await sender.Send(command);
 
-        if (!result.IsSuccess)
-        {
-            return this.HandleFailure(result.Error!);
-        }
+        if (!result.IsSuccess) return this.HandleError(result.Error);
 
         var refreshToken = result.Value.RefreshToken;
         var accessToken = result.Value.AccessToken;

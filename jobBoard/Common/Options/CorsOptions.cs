@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace JobBoard.Common.Options;
 
-namespace JobBoard;
-
-public record CorsOptions
+public class CorsOptions
 {
     public const string Key = "Cors";
 
-    [Required]
     public required string[] AllowedOrigins { get; init; }
 }

@@ -1,25 +1,19 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.Signup;
 
 [Tags("Auth")]
 [ApiController]
 [Route("api/auth/signup")]
 public class SignUpController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [HttpPost]
     public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
-        var result = await _sender.Send(command);
+        var result = await sender.Send(command);
 
-        if (!result.IsSuccess)
-        {
-            return this.HandleFailure(result.Error!);
-        }
-
-        return Ok();
+        return !result.IsSuccess ? this.HandleError(result.Error!) : Ok();
     }
 }

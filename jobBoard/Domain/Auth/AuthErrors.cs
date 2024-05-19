@@ -1,25 +1,30 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Models;
 
-namespace JobBoard;
+namespace JobBoard.Domain.Auth;
 
 public static class AuthErrors
 {
     public static readonly Error UserAlreadyExists =
         new(
-            ErrorCodes.UserAlreadyExists,
+            ErrorCodes.UserAlreadyExistsError,
             HttpStatusCode.Conflict,
             "User with this email already exists"
         );
 
     public static readonly Error InvalidCredentials =
-        new(ErrorCodes.InvalidCredentials, HttpStatusCode.Unauthorized, "Invalid credentials");
+        new(ErrorCodes.InvalidCredentialsError, HttpStatusCode.Unauthorized, "Invalid credentials");
 
     public static readonly Error UserNotFound =
-        new(ErrorCodes.UserNotFound, HttpStatusCode.NotFound, "User not found");
+        new(ErrorCodes.UserNotFoundError, HttpStatusCode.NotFound, "User not found");
 
     public static readonly Error InvalidToken =
-        new(ErrorCodes.InvalidToken, HttpStatusCode.BadRequest, "Invalid token");
+        new(ErrorCodes.InvalidTokenError, HttpStatusCode.BadRequest, "Invalid token");
+
+    public static readonly Error InvalidAccessToken =
+        new(ErrorCodes.InvalidTokenError, HttpStatusCode.Unauthorized, "Invalid access token");
 
     public static readonly Error InvalidRefreshToken =
-        new(ErrorCodes.InvalidToken, HttpStatusCode.Unauthorized, "Invalid refresh token");
+        new(ErrorCodes.InvalidTokenError, HttpStatusCode.Unauthorized, "Invalid refresh token");
 }

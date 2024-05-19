@@ -1,6 +1,7 @@
+using JobBoard.Common.Models;
 using MediatR;
 
-namespace JobBoard;
+namespace JobBoard.Features.Business.UpdateMyBusiness;
 
 public record UpdateMyBusinessCommand(
     string Name,

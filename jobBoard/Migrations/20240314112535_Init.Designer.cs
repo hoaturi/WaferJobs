@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using JobBoard;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;

@@ -1,91 +1,95 @@
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Business;
+using JobBoard.Domain.JobPost;
+using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 
 public class CreateFeaturedJobPostCommandHandler(
     ICurrentUserService currentUser,
     IPaymentService paymentService,
     AppDbContext appDbContext,
-    ILogger<CreateFeaturedJobPostCommandHandler> logger
-) : IRequestHandler<CreateFeaturedJobPostCommand, Result<CreateFeaturedJobPostResponse, Error>>
+    ILogger<CreateFeaturedJobPostCommandHandler> logger)
+    : IRequestHandler<CreateFeaturedJobPostCommand, Result<CreateFeaturedJobPostResponse, Error>>
 {
-    private readonly ICurrentUserService _currentUser = currentUser;
-    private readonly IPaymentService _paymentService = paymentService;
-    private readonly AppDbContext _appDbContext = appDbContext;
-    private readonly ILogger<CreateFeaturedJobPostCommandHandler> _logger = logger;
-
     public async Task<Result<CreateFeaturedJobPostResponse, Error>> Handle(
-        CreateFeaturedJobPostCommand request,
-        CancellationToken cancellationToken
-    )
+        CreateFeaturedJobPostCommand command,
+        CancellationToken cancellationToken)
     {
-        var userId = _currentUser.TryGetUserId();
+        var currentUserId = currentUser.TryGetUserId();
+        var business = await GetBusinessByUserId(currentUserId, cancellationToken);
 
-        Business? business = null;
-        if (userId is not null)
-        {
-            business = await _appDbContext
-                .Businesses.Where(b => b.UserId == userId)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
+        var jobPost = MapToEntity(command, business);
+        await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
-        var jobPost = CreateFeaturedJobPostCommandMapper.MapToEntity(request, business);
-        await _appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
+        logger.LogInformation("Creating job post: {jobPostId}", jobPost.Id);
 
-        _logger.LogInformation("Creating job post: {jobPostId}", jobPost.Id);
+        var stripeCustomerId = await GetOrCreateStripeCustomerId(command, business);
 
-        string? stripeCustomerId = null;
-        if (business != null)
-        {
-            await CreateStripeCustomerIfNotExists(business);
-            stripeCustomerId = business.StripeCustomerId;
-        }
-        else
-        {
-            stripeCustomerId = await _paymentService.CreateCustomer(
-                request.CompanyEmail,
-                request.CompanyName
-            );
-        }
-
-        var session = await _paymentService.CreateFeaturedJobPostCheckoutSessions(
-            stripeCustomerId!
-        );
+        var session = await paymentService.CreateCheckoutSession(stripeCustomerId);
 
         await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
 
-        await _appDbContext.SaveChangesAsync(cancellationToken);
+        await appDbContext.SaveChangesAsync(cancellationToken);
 
         return new CreateFeaturedJobPostResponse(session.Url);
     }
 
-    public async Task CreateStripeCustomerIfNotExists(Business business)
+    private async Task<BusinessEntity?> GetBusinessByUserId(Guid? userId, CancellationToken cancellationToken)
     {
-        if (business.StripeCustomerId is not null)
-        {
-            return;
-        }
-
-        var userEmail = _currentUser.GetUserEmail();
-        business.StripeCustomerId = await _paymentService.CreateCustomer(
-            userEmail,
-            business.Name,
-            business.Id
-        );
+        return userId is not null
+            ? await appDbContext.Businesses.FirstOrDefaultAsync(b => b.UserId == userId, cancellationToken)
+            : null;
     }
 
-    private async Task<JobPostPayment> CreateJobPostPayment(
-        Guid jobPostId,
-        string sessionId,
-        CancellationToken cancellationToken
-    )
+    private async Task<string> GetOrCreateStripeCustomerId(CreateFeaturedJobPostCommand command,
+        BusinessEntity? business)
     {
-        var payment = new JobPostPayment { JobPostId = jobPostId, CheckoutSessionId = sessionId, };
+        if (business?.StripeCustomerId is not null) return business.StripeCustomerId;
 
-        await _appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
-        _logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
+        var email = business?.UserId is not null ? currentUser.GetUserEmail() : command.CompanyEmail;
+        var name = business?.Name ?? command.CompanyName;
+        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, name, business?.Id);
 
-        return payment;
+        if (business is not null) business.StripeCustomerId = stripeCustomerId;
+
+        return stripeCustomerId;
+    }
+
+    private async Task CreateJobPostPayment(Guid jobPostId, string sessionId, CancellationToken cancellationToken)
+    {
+        var payment = new JobPostPaymentEntity { JobPostId = jobPostId, CheckoutSessionId = sessionId };
+
+        await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
+        logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
+    }
+
+    private static JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity? business)
+    {
+        var jobPost = new JobPostEntity
+        {
+            CategoryId = command.CategoryId,
+            CountryId = command.CountryId,
+            EmploymentTypeId = command.EmploymentTypeId,
+            Title = command.Title,
+            Description = command.Description,
+            CompanyName = command.CompanyName,
+            CompanyLogoUrl = command.CompanyLogoUrl,
+            ApplyUrl = command.ApplyUrl,
+            IsRemote = command.IsRemote,
+            City = command.City,
+            MinSalary = command.MinSalary,
+            MaxSalary = command.MaxSalary,
+            Currency = command.Currency,
+            BusinessId = business?.Id,
+            Tags = command.Tags,
+            IsFeatured = true,
+            IsPublished = false
+        };
+
+        return jobPost;
     }
 }

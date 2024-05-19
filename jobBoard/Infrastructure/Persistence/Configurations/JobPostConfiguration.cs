@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JobBoard.Domain.JobPost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
+public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
 {
-    public void Configure(EntityTypeBuilder<JobPost> builder)
+    public void Configure(EntityTypeBuilder<JobPostEntity> builder)
     {
         builder.Property(jp => jp.Title).IsRequired().HasMaxLength(100);
         builder.Property(jp => jp.Description).IsRequired().HasMaxLength(10000);

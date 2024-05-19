@@ -1,55 +1,56 @@
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.Refresh;
 
 public class RefreshCommandHandler(
-    UserManager<ApplicationUser> userManager,
+    UserManager<ApplicationUserEntity> userManager,
     IJwtService jwtService,
     IDistributedCache cache,
     ILogger<RefreshCommandHandler> logger
 ) : IRequestHandler<RefreshCommand, Result<RefreshResponse, Error>>
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IJwtService _jwtService = jwtService;
-    private readonly IDistributedCache _cache = cache;
-    private readonly ILogger<RefreshCommandHandler> _logger = logger;
-
     public async Task<Result<RefreshResponse, Error>> Handle(
-        RefreshCommand request,
+        RefreshCommand command,
         CancellationToken cancellationToken
     )
     {
-        var key = CacheKeys.RevokedToken + request.RefreshToken;
-
-        var isTokenRevoked = await _cache.GetStringAsync(key, cancellationToken);
-        if (isTokenRevoked is not null)
+        if (await IsTokenRevoked(command, cancellationToken))
         {
-            _logger.LogWarning("The refresh token is already revoked.");
+            logger.LogWarning("Refresh token {RefreshToken} is already revoked.", command.RefreshToken);
             return AuthErrors.InvalidRefreshToken;
         }
 
-        var validationResult = await _jwtService.ValidateRefreshToken(request.RefreshToken);
-        if (validationResult is false)
+        if (!await jwtService.ValidateToken(command.RefreshToken, JwtTypes.RefreshToken))
         {
-            _logger.LogWarning("The refresh token is invalid.");
+            logger.LogWarning("Refresh token {RefreshToken} is invalid.", command.RefreshToken);
             return AuthErrors.InvalidRefreshToken;
         }
 
-        var userId = _jwtService.GetUserId(request.RefreshToken);
-        var user = await _userManager.FindByIdAsync(userId);
+        var userId = jwtService.GetUserId(command.RefreshToken).ToString();
+        var user = await userManager.FindByIdAsync(userId);
         if (user is null)
         {
-            _logger.LogError("User with id: {UserId} not found", userId);
+            logger.LogError("User with id {UserId} not found.", userId);
             return AuthErrors.InvalidRefreshToken;
         }
 
-        var roles = await _userManager.GetRolesAsync(user);
-        var accessToken = _jwtService.GenerateAccessToken(user, roles);
+        var userRoles = await userManager.GetRolesAsync(user);
+        var newAccessToken = jwtService.GenerateAccessToken(user, userRoles);
 
-        _logger.LogInformation("Successfully refreshed access token for user: {userId}", user.Id);
+        logger.LogInformation("Access token refreshed for user: {UserId}", user.Id);
 
-        return new RefreshResponse(accessToken);
+        return new RefreshResponse(newAccessToken);
+    }
+
+    private async Task<bool> IsTokenRevoked(RefreshCommand command, CancellationToken cancellationToken)
+    {
+        var revokedTokenKey = CacheKeys.RevokedToken + command.RefreshToken;
+        return await cache.GetStringAsync(revokedTokenKey, cancellationToken) is not null;
     }
 }

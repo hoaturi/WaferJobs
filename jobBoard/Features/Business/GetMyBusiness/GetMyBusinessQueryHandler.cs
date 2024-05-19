@@ -1,31 +1,43 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
+using JobBoard.Features.Business.GetBusiness;
+using JobBoard.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.Business.GetMyBusiness;
 
 public class GetMyBusinessQueryHandler(
     AppDbContext appDbContext,
     ICurrentUserService currentUserService
 ) : IRequestHandler<GetMyBusinessQuery, Result<GetBusinessResponse, Error>>
 {
-    private readonly AppDbContext _appDbContext = appDbContext;
-    private readonly ICurrentUserService _currentUserService = currentUserService;
-
     public async Task<Result<GetBusinessResponse, Error>> Handle(
-        GetMyBusinessQuery request,
+        GetMyBusinessQuery query,
         CancellationToken cancellationToken
     )
     {
-        var currentUserId = _currentUserService.GetUserId();
+        var currentUserId = currentUserService.GetUserId();
 
-        var business =
-            await _appDbContext
+        var businessResponse =
+            await appDbContext
                 .Businesses.Where(b => b.UserId == currentUserId)
                 .Include(b => b.BusinessSize)
-                .Select(b => GetBusinessQueryMapper.MapToResponse(b))
+                .Select(b => new GetBusinessResponse(
+                    b.Id,
+                    b.Name,
+                    b.LogoUrl,
+                    b.Description,
+                    b.Location,
+                    b.Url,
+                    b.TwitterUrl,
+                    b.LinkedInUrl,
+                    b.BusinessSize != null ? b.BusinessSize.Name : null
+                ))
                 .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new AssociatedBusinessNotFoundException(currentUserId);
+            ?? throw new BusinessNotFoundForUserException(currentUserId);
 
-        return business;
+        return businessResponse;
     }
 }

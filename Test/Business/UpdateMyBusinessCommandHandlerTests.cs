@@ -1,5 +1,9 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Features.Business.UpdateMyBusiness;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,14 +14,14 @@ namespace Test;
 public class UpdateMyBusinessCommandHandlerTests
 {
     private readonly AppDbContext _appDbContext;
+    private readonly UpdateMyBusinessCommandHandler _handler;
     private readonly Mock<ICurrentUserService> _mockCurrentUser;
     private readonly Mock<ILogger<UpdateMyBusinessCommandHandler>> _mockLogger;
-    private readonly UpdateMyBusinessCommandHandler _handler;
 
     public UpdateMyBusinessCommandHandlerTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase("TestDb")
             .Options;
 
         _appDbContext = new AppDbContext(options);
@@ -35,8 +39,8 @@ public class UpdateMyBusinessCommandHandlerTests
     public async Task WhenSuccessful_ShouldUpdateBusiness_And_ReturnUnit()
     {
         // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
-        var business = new Business
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
+        var business = new BusinessEntity
         {
             Name = "Test Business",
             BusinessSizeId = 5,
@@ -89,7 +93,7 @@ public class UpdateMyBusinessCommandHandlerTests
     public async Task WhenBusinessNotFound_ShouldReturnAssociatedBusinessNotFound()
     {
         // Arrange
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
 
         var request = new UpdateMyBusinessCommand(
             "Updated Business",
@@ -110,6 +114,6 @@ public class UpdateMyBusinessCommandHandlerTests
         Func<Task> act = async () => await _handler.Handle(request, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<AssociatedBusinessNotFoundException>();
+        await act.Should().ThrowAsync<BusinessNotFoundForUserException>();
     }
 }

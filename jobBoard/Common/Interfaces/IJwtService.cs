@@ -1,19 +1,13 @@
-﻿namespace JobBoard;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Domain.Auth;
+
+namespace JobBoard.Common.Interfaces;
 
 public interface IJwtService
 {
-    public string GenerateAccessToken(ApplicationUser user, IList<string> roles);
-
-    public string GenerateRefreshToken(ApplicationUser user);
-
-    public (string accessToken, string refreshToken) GenerateTokens(
-        ApplicationUser user,
-        IList<string> roles
-    );
-
-    public Task<bool> ValidateRefreshToken(string Token);
-
-    public long GetExpiration(string Token);
-
-    public string GetUserId(string Token);
+    (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity, IList<string> roles);
+    string GenerateAccessToken(ApplicationUserEntity userEntity, IList<string> roles);
+    Task<bool> ValidateToken(string token, JwtTypes jwtType);
+    long GetExpiration(string token);
+    Guid GetUserId(string token);
 }

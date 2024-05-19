@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Models;
 
-namespace JobBoard
+namespace JobBoard.Common.Exceptions;
+
+public class ValidationException(List<ValidationError> fieldErrors) : CustomException(
+    ErrorCodes.ValidationFailedError,
+    HttpStatusCode.BadRequest,
+    "Validation failed")
 {
-    public class ValidationException(List<ValidationError> fieldErrors)
-        : CustomException(
-            ErrorCodes.ValidationFailed,
-            HttpStatusCode.BadRequest,
-            "Validation failed",
-            fieldErrors
-        );
+    public List<ValidationError> FieldErrors { get; } = fieldErrors;
 }

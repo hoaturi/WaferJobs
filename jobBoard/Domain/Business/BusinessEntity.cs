@@ -1,9 +1,12 @@
-﻿namespace JobBoard;
+﻿using JobBoard.Common;
+using JobBoard.Domain.JobPost;
 
-public class Business : BaseEntity
+namespace JobBoard.Domain.Business;
+
+public class BusinessEntity : BaseEntity
 {
-    public Guid Id { get; set; }
-    public required Guid UserId { get; set; }
+    public Guid Id { get; init; }
+    public required Guid UserId { get; init; }
     public int? BusinessSizeId { get; set; }
     public required string Name { get; set; }
     public string? LogoUrl { get; set; }
@@ -13,8 +16,7 @@ public class Business : BaseEntity
     public string? Url { get; set; }
     public string? TwitterUrl { get; set; }
     public string? LinkedInUrl { get; set; }
-
-    public ApplicationUser User { get; set; } = null!;
-    public List<JobPost>? JobPosts { get; set; }
-    public BusinessSize? BusinessSize { get; set; }
+    public BusinessUserEntity? User { get; init; }
+    public List<JobPostEntity>? JobPosts { get; init; }
+    public BusinessSizeEntity? BusinessSize { get; init; }
 }

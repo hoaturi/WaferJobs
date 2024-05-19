@@ -1,10 +1,12 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Exceptions;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Services.PaymentService;
 
 public class CreateSessionFailedException()
     : CustomException(
-        ErrorCodes.CreateSessionFailed,
+        ErrorCodes.CreateSessionFailedError,
         HttpStatusCode.InternalServerError,
         "Failed to create session."
     );

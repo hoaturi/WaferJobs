@@ -1,6 +1,6 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Common.Constants;
 
-public class CacheKeys
+public static class CacheKeys
 {
     public const string RevokedToken = "revokedToken:";
 }

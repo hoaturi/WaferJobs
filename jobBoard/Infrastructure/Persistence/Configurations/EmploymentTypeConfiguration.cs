@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JobBoard.Common.Extensions;
+using JobBoard.Domain.JobPostEntities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class EmploymentTypeConfiguration : IEntityTypeConfiguration<EmploymentType>
+public class EmploymentTypeConfiguration : IEntityTypeConfiguration<EmploymentTypeEntity>
 {
-    public void Configure(EntityTypeBuilder<EmploymentType> builder)
+    public void Configure(EntityTypeBuilder<EmploymentTypeEntity> builder)
     {
         builder.Property(et => et.Label).IsRequired().HasMaxLength(20);
         builder.Property(et => et.Slug).IsRequired().HasMaxLength(20);
@@ -15,7 +17,7 @@ public class EmploymentTypeConfiguration : IEntityTypeConfiguration<EmploymentTy
             "Infrastructure/Persistence/Configurations/SeedData/employmentTypes.json"
         );
 
-        var employmentTypes = employmentTypeJson.DeserializeCaseInsensitive<List<EmploymentType>>();
+        var employmentTypes = employmentTypeJson.DeserializeWithCaseInsensitivity<List<EmploymentTypeEntity>>();
 
         builder.HasData(employmentTypes);
     }

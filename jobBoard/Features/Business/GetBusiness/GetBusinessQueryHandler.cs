@@ -1,34 +1,41 @@
+using JobBoard.Common.Models;
+using JobBoard.Domain.Business;
+using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.Business.GetBusiness;
 
 public class GetBusinessQueryHandler(
     AppDbContext appDbContext,
-    ILogger<GetBusinessQueryHandler> logger
-) : IRequestHandler<GetBusinessQuery, Result<GetBusinessResponse, Error>>
+    ILogger<GetBusinessQueryHandler> logger)
+    : IRequestHandler<GetBusinessQuery, Result<GetBusinessResponse, Error>>
 {
-    private readonly AppDbContext _appDbContext = appDbContext;
-    private readonly ILogger<GetBusinessQueryHandler> _logger = logger;
-
     public async Task<Result<GetBusinessResponse, Error>> Handle(
-        GetBusinessQuery request,
-        CancellationToken cancellationToken
-    )
+        GetBusinessQuery query,
+        CancellationToken cancellationToken)
     {
-        var business = await _appDbContext
-            .Businesses.AsNoTracking()
-            .Where(b => b.Id == request.Id)
-            .Include(b => b.BusinessSize)
-            .Select(b => GetBusinessQueryMapper.MapToResponse(b))
+        var businessResponse = await appDbContext
+            .Businesses
+            .AsNoTracking()
+            .Where(b => b.Id == query.Id)
+            .Select(b => new GetBusinessResponse(
+                b.Id,
+                b.Name,
+                b.LogoUrl,
+                b.Description,
+                b.Location,
+                b.Url,
+                b.TwitterUrl,
+                b.LinkedInUrl,
+                b.BusinessSize != null ? b.BusinessSize.Name : null
+            ))
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (business is null)
-        {
-            _logger.LogWarning("Business with id {businessId} not found", request.Id);
-            return BusinessErrors.BusinessNotFound(request.Id);
-        }
 
-        return business;
+        if (businessResponse is not null) return businessResponse;
+
+        logger.LogWarning("Business with id {BusinessId} not found", query.Id);
+        return BusinessErrors.BusinessNotFound(query.Id);
     }
 }

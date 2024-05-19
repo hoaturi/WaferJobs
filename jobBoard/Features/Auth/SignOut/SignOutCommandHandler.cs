@@ -1,59 +1,58 @@
+using JobBoard.Common.Constants;
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignOut;
 
 public class SignOutCommandHandler(
     IJwtService jwtService,
     IDistributedCache cache,
-    ILogger<SignOutCommandHandler> logger
-) : IRequestHandler<SignOutCommand, Result<Unit, Error>>
+    ILogger<SignOutCommandHandler> logger)
+    : IRequestHandler<SignOutCommand, Result<Unit, Error>>
 {
-    private readonly IJwtService _jwtService = jwtService;
-    private readonly IDistributedCache _cache = cache;
-    private readonly ILogger<SignOutCommandHandler> _logger = logger;
-
-    /* If user has refresh token they will be treated as logged In
-    and refresh token will be registered in the blacklist on log out */
     public async Task<Result<Unit, Error>> Handle(
-        SignOutCommand request,
+        SignOutCommand command,
         CancellationToken cancellationToken
     )
     {
-        var key = CacheKeys.RevokedToken + request.RefreshToken;
+        var cacheKey = CacheKeys.RevokedToken + command.RefreshToken;
 
-        var isTokenBlackListed = await _cache.GetStringAsync(key, cancellationToken);
-        if (isTokenBlackListed is not null)
+        var isTokenRevoked = await cache.GetStringAsync(cacheKey, cancellationToken);
+        if (isTokenRevoked is not null)
         {
-            _logger.LogError("User tried to log out with already blacklisted token.");
+            logger.LogWarning("User tried to log out with an already revoked refresh token: {RefreshToken}",
+                command.RefreshToken);
             return Unit.Value;
         }
 
-        var validationResult = await _jwtService.ValidateRefreshToken(request.RefreshToken);
-        if (validationResult is false)
+        var isTokenValid = await jwtService.ValidateToken(command.RefreshToken, JwtTypes.RefreshToken);
+        if (!isTokenValid)
         {
-            _logger.LogError("User tried to log out with invalid refresh token.");
+            logger.LogWarning("User tried to log out with an invalid refresh token: {RefreshToken}",
+                command.RefreshToken);
             return Unit.Value;
         }
 
-        await BlacklistToken(request.RefreshToken, cancellationToken);
+        await RevokeRefreshToken(command.RefreshToken, cancellationToken);
 
-        _logger.LogInformation(
-            "Successfully logged user out. The refresh token was added to the blacklist."
-        );
+        logger.LogInformation("Successfully logged user out. The refresh token: {RefreshToken} was revoked.",
+            command.RefreshToken);
 
         return Unit.Value;
     }
 
-    private async Task BlacklistToken(string token, CancellationToken cancellationToken)
+    private async Task RevokeRefreshToken(string refreshToken, CancellationToken cancellationToken)
     {
-        var key = CacheKeys.RevokedToken + token;
-        var jwtExpiration = _jwtService.GetExpiration(token);
-        var dateTimeNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var cacheExpirationInSeconds = jwtExpiration - dateTimeNow;
+        var cacheKey = CacheKeys.RevokedToken + refreshToken;
+        var tokenExpiration = jwtService.GetExpiration(refreshToken);
+        var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var cacheExpirationInSeconds = tokenExpiration - currentTimestamp;
 
-        await _cache.SetStringAsync(
-            key,
+        await cache.SetStringAsync(
+            cacheKey,
             RefreshTokenStatus.Revoked.ToString(),
             new DistributedCacheEntryOptions
             {

@@ -1,27 +1,29 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Extensions;
+using JobBoard.Common.Options;
+using JobBoard.Features.JobPost.PublishFeaturedJobPost;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
 
-namespace JobBoard;
+namespace JobBoard.Features.PaymentWebhook;
 
 [Tags("Payment Webhook")]
 [ApiController]
 [Route("api/payment-webhook")]
 public class PaymentWebhookController(ISender sender, IOptions<StripeOptions> stripeOptions)
-    : BaseController
+    : ControllerBase
 {
-    private readonly ISender _sender = sender;
     private readonly StripeOptions _stripeOptions = stripeOptions.Value;
 
     [HttpPost]
     public async Task<IActionResult> HandleWebhooks()
     {
-        var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        var eventJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
         var stripeEvent = EventUtility.ConstructEvent(
-            json,
+            eventJson,
             Request.Headers["Stripe-Signature"],
             _stripeOptions.WebhookSecret
         );
@@ -29,17 +31,15 @@ public class PaymentWebhookController(ISender sender, IOptions<StripeOptions> st
         switch (stripeEvent.Type)
         {
             case Events.CheckoutSessionCompleted:
+                var checkoutSession = stripeEvent.Data.Object as Session;
 
-                var session = stripeEvent.Data.Object as Session;
+                var publishJobPostCommand = new PublishFeaturedJobPostCommand(
+                    stripeEvent.Id, checkoutSession!.Id
+                );
 
-                var command = new PublishFeaturedJobPostCommand(stripeEvent.Id, session!.Id);
+                var publishJobPostResult = await sender.Send(publishJobPostCommand);
 
-                var result = await _sender.Send(command);
-
-                if (!result.IsSuccess)
-                {
-                    return HandleFailure(result.Error);
-                }
+                if (!publishJobPostResult.IsSuccess) return this.HandleError(publishJobPostResult.Error);
 
                 break;
         }

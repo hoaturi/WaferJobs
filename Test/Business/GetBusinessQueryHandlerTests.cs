@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Features.Business.GetBusiness;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,13 +13,13 @@ namespace Test;
 public class GetBusinessQueryHandlerTests
 {
     private readonly AppDbContext _appDbContext;
-    private readonly Mock<ILogger<GetBusinessQueryHandler>> _mockLogger;
     private readonly GetBusinessQueryHandler _handler;
+    private readonly Mock<ILogger<GetBusinessQueryHandler>> _mockLogger;
 
     public GetBusinessQueryHandlerTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase("TestDb")
             .Options;
 
         _appDbContext = new AppDbContext(options);
@@ -30,8 +33,8 @@ public class GetBusinessQueryHandlerTests
     {
         // Arrange
         var request = new GetBusinessQuery(Guid.NewGuid());
-        var user = new ApplicationUser { Id = Guid.NewGuid() };
-        var business = new Business
+        var user = new ApplicationUserEntity { Id = Guid.NewGuid() };
+        var business = new BusinessEntity
         {
             Id = request.Id,
             LogoUrl = "https://test.com/logo.png",

@@ -1,4 +1,4 @@
-namespace JobBoard;
+namespace JobBoard.Features.Business.GetBusiness;
 
 public record GetBusinessResponse(
     Guid Id,

@@ -1,11 +1,7 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Common.Models;
 
 public class Result<TValue, TError>
 {
-    public bool IsSuccess { get; }
-    public TError Error { get; }
-    public TValue Value { get; }
-
     private Result(TValue value)
     {
         IsSuccess = true;
@@ -20,7 +16,17 @@ public class Result<TValue, TError>
         Error = error;
     }
 
-    public static implicit operator Result<TValue, TError>(TValue value) => new(value);
+    public bool IsSuccess { get; }
+    public TError Error { get; }
+    public TValue Value { get; }
 
-    public static implicit operator Result<TValue, TError>(TError error) => new(error);
+    public static implicit operator Result<TValue, TError>(TValue value)
+    {
+        return new Result<TValue, TError>(value);
+    }
+
+    public static implicit operator Result<TValue, TError>(TError error)
+    {
+        return new Result<TValue, TError>(error);
+    }
 }

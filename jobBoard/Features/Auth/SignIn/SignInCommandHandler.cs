@@ -1,46 +1,46 @@
+using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace JobBoard;
+namespace JobBoard.Features.Auth.SignIn;
 
 public class SignInCommandHandler(
-    UserManager<ApplicationUser> userManager,
+    UserManager<ApplicationUserEntity> userManager,
     IJwtService jwtService,
     ILogger<SignInCommandHandler> logger
 ) : IRequestHandler<SignInCommand, Result<SignInResponse, Error>>
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly IJwtService _jwtService = jwtService;
-    private readonly ILogger<SignInCommandHandler> _logger = logger;
-
     public async Task<Result<SignInResponse, Error>> Handle(
-        SignInCommand request,
+        SignInCommand command,
         CancellationToken cancellationToken
     )
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(command.Email);
 
         if (user is null)
         {
-            _logger.LogInformation("User with the input email not found");
+            logger.LogWarning("Failed to find user with email: {Email}", command.Email);
             return AuthErrors.InvalidCredentials;
         }
 
-        var isCorrectPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+        var isCorrectPassword = await userManager.CheckPasswordAsync(user, command.Password);
 
         if (!isCorrectPassword)
         {
-            _logger.LogInformation("Invalid password for user with id {UserId}", user.Id);
+            logger.LogWarning("Invalid password for user with id: {UserId}", user.Id);
             return AuthErrors.InvalidCredentials;
         }
 
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await userManager.GetRolesAsync(user);
 
-        var (accessToken, refreshToken) = _jwtService.GenerateTokens(user, roles);
+        var (accessToken, refreshToken) = jwtService.GenerateTokens(user, roles);
 
-        _logger.LogInformation("User: {Id} logged in successfully", user.Id);
+        logger.LogInformation("User: {Id} logged in successfully", user.Id);
 
-        var userResponse = new UserResponse(user.Id, user.Email!, [.. roles]);
+        var userResponse = new UserResponse(user.Id, user.Email!, roles.ToArray());
+
         return new SignInResponse(userResponse, accessToken, refreshToken);
     }
 }

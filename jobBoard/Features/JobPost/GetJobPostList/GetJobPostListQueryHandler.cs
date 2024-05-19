@@ -1,78 +1,83 @@
-﻿using LinqKit;
+﻿using JobBoard.Common.Models;
+using JobBoard.Domain.JobPost;
+using JobBoard.Features.JobPost.GetJobPost;
+using JobBoard.Infrastructure.Persistence;
+using LinqKit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.GetJobPostList;
 
 public class GetJobPostListQueryHandler(AppDbContext appDbContext)
     : IRequestHandler<GetJobPostListQuery, Result<GetJobPostListResponse, Error>>
 {
-    private readonly AppDbContext _appDbContext = appDbContext;
+    private const int PageSize = 20;
 
-    public async Task<Result<GetJobPostListResponse, Error>> Handle(
-        GetJobPostListQuery request,
-        CancellationToken cancellationToken
-    )
+    public async Task<Result<GetJobPostListResponse, Error>> Handle(GetJobPostListQuery query,
+        CancellationToken cancellationToken)
     {
-        var pageSize = 20;
+        var jobPostsQuery = appDbContext.JobPosts.AsNoTracking();
 
-        var query = _appDbContext.JobPosts.AsNoTracking();
-
-        if (request.Keyword is not null)
+        if (query.Keyword is not null)
         {
-            var predicate = PredicateBuilder.New<JobPost>();
+            var predicate = PredicateBuilder.New<JobPostEntity>();
+            var keywords = query.Keyword.Split(' ');
 
-            var keywords = request.Keyword.Split(' ');
+            //  ILIKE is Postgresql specific !! 
+            predicate = keywords.Aggregate(predicate, (current, keyword) => current
+                .Or(j => EF.Functions.ILike(j.Title, $"%{keyword}%"))
+                .Or(j => EF.Functions.ILike(j.Description, $"%{keyword}%"))
+                .Or(j => EF.Functions.ILike(j.CompanyName, $"%{keyword}%"))
+                .Or(j => j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))));
 
-            foreach (var keyword in keywords)
-            {
-                predicate = predicate.Or(j => EF.Functions.ILike(j.Title, $"%{keyword}%"));
-                predicate = predicate.Or(j => EF.Functions.ILike(j.Description, $"%{keyword}%"));
-                predicate = predicate.Or(j => EF.Functions.ILike(j.CompanyName, $"%{keyword}%"));
-                predicate = predicate.Or(
-                    j => j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))
-                );
-            }
-
-            query = query.Where(predicate);
+            jobPostsQuery = jobPostsQuery.Where(predicate);
         }
 
-        if (request.Country is not null)
-        {
-            query = query.Where(j => request.Country == j.Country.Slug);
-        }
+        if (query.Country is not null)
+            jobPostsQuery = jobPostsQuery.Where(j => query.Country == j.Country.Slug);
 
-        if (request.Remote is not null)
-        {
-            query = query.Where(j => j.IsRemote == true);
-        }
+        if (query.Remote is not null)
+            jobPostsQuery = jobPostsQuery.Where(j => j.IsRemote);
 
-        if (request.Categories is not null && request.Categories.Count != 0)
-        {
-            query = query.Where(j => request.Categories.Any(c => c == j.Category.Slug));
-        }
+        if (query.Categories is not null && query.Categories.Count != 0)
+            jobPostsQuery = jobPostsQuery.Where(j => query.Categories.Contains(j.Category.Slug));
 
-        if (request.EmploymentTypes is not null && request.EmploymentTypes.Count != 0)
-        {
-            query = query.Where(j => request.EmploymentTypes.Any(c => c == j.EmploymentType.Slug));
-        }
+        if (query.EmploymentTypes is not null && query.EmploymentTypes.Count != 0)
+            jobPostsQuery = jobPostsQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Slug));
 
-        query = query.Where(j => j.IsPublished && !j.IsDeleted);
-
-        query = query
+        jobPostsQuery = jobPostsQuery.Where(j => j.IsPublished && !j.IsDeleted)
             .Include(j => j.Category)
             .Include(j => j.Country)
-            .Include(j => j.EmploymentType);
+            .Include(j => j.EmploymentType)
+            .OrderByDescending(j => j.IsFeatured)
+            .ThenByDescending(j => j.PublishedAt);
 
-        query = query.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
-
-        var jobPostList = await query
-            .Skip((request.Page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(j => GetJobPostListQueryMapper.MapToResponse(j))
+        var jobPostList = await jobPostsQuery
+            .Skip((query.Page - 1) * PageSize)
+            .Take(PageSize)
+            .Select(j => new GetJobPostResponse(
+                j.Id,
+                j.Category.Label,
+                j.Country.Label,
+                j.EmploymentType.Label,
+                j.Title,
+                j.Description,
+                j.IsRemote,
+                j.IsFeatured,
+                j.CompanyName,
+                j.City,
+                j.MinSalary,
+                j.MaxSalary,
+                j.Currency,
+                null,
+                j.BusinessId,
+                j.CompanyLogoUrl,
+                j.Tags,
+                j.PublishedAt
+            ))
             .ToListAsync(cancellationToken);
 
-        var totalJobPostCount = await query.CountAsync(cancellationToken);
+        var totalJobPostCount = await jobPostsQuery.CountAsync(cancellationToken);
 
         return new GetJobPostListResponse(jobPostList, totalJobPostCount);
     }

@@ -1,40 +1,47 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Interfaces;
+using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Persistence;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard;
+namespace JobBoard.Features.Business.UploadMyBusinessLogo;
 
 public class UploadMyBusinessLogoCommandHandler(
     AppDbContext appDbContext,
     ICurrentUserService currentUserService,
-    IFileUploadService fileUploadService
-) : IRequestHandler<UploadMyBusinessLogoCommand, Result<Unit, Error>>
+    IFileUploadService fileUploadService,
+    ILogger<UploadMyBusinessLogoCommandHandler> logger)
+    : IRequestHandler<UploadMyBusinessLogoCommand, Result<Unit, Error>>
 {
-    private readonly AppDbContext _appDbContext = appDbContext;
-    private readonly ICurrentUserService _currentUserService = currentUserService;
-    private readonly IFileUploadService _fileUploadService = fileUploadService;
-
     public async Task<Result<Unit, Error>> Handle(
-        UploadMyBusinessLogoCommand request,
-        CancellationToken cancellationToken
-    )
+        UploadMyBusinessLogoCommand command,
+        CancellationToken cancellationToken)
     {
-        var userId = _currentUserService.GetUserId();
+        var currentUserId = currentUserService.GetUserId();
 
-        var business =
-            _appDbContext.Businesses.Where(b => b.UserId == userId).FirstOrDefault()
-            ?? throw new AssociatedBusinessNotFoundException(userId);
+        var business = await appDbContext
+            .Businesses
+            .FirstOrDefaultAsync(b => b.UserId == currentUserId, cancellationToken);
 
-        var originalFileExtension = Path.GetExtension(request.File.FileName);
+        if (business is null)
+        {
+            logger.LogWarning("Business not found for user with id {UserId}", currentUserId);
+            throw new BusinessNotFoundForUserException(currentUserId);
+        }
 
+        var originalFileExtension = Path.GetExtension(command.File.FileName);
         var fileName = $"{business.Id}{originalFileExtension}";
 
-        var logoUrl = await _fileUploadService.UploadBusinessLogoAsync(
+        var logoUrl = await fileUploadService.UploadFileAsync(
             fileName,
-            request.File.OpenReadStream()
-        );
+            command.File.OpenReadStream());
 
         business.LogoUrl = logoUrl;
 
-        await _appDbContext.SaveChangesAsync(cancellationToken);
+        await appDbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Successfully uploaded logo for business with id {BusinessId}", business.Id);
 
         return Unit.Value;
     }

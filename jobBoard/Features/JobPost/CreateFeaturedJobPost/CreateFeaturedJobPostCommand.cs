@@ -1,6 +1,7 @@
+using JobBoard.Common.Models;
 using MediatR;
 
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 
 public record CreateFeaturedJobPostCommand(
     int CategoryId,

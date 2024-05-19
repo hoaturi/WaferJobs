@@ -1,4 +1,4 @@
-namespace JobBoard;
+namespace JobBoard.Features.JobPost.GetJobPost;
 
 public record GetJobPostResponse(
     Guid Id,
@@ -17,5 +17,6 @@ public record GetJobPostResponse(
     string? ApplyUrl,
     Guid? BusinessId,
     string? CompanyLogoUrl,
+    List<string>? Tags,
     DateTime PublishedAt
 );

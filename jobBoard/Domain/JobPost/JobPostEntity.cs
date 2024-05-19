@@ -1,6 +1,10 @@
-﻿namespace JobBoard;
+﻿using JobBoard.Common;
+using JobBoard.Domain.Business;
+using JobBoard.Domain.JobPostEntities;
 
-public class JobPost : BaseEntity
+namespace JobBoard.Domain.JobPost;
+
+public class JobPostEntity : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid? BusinessId { get; set; }
@@ -23,9 +27,9 @@ public class JobPost : BaseEntity
     public DateTime PublishedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
 
-    public Business? Business { get; set; }
-    public Category Category { get; set; } = null!;
-    public Country Country { get; set; } = null!;
-    public EmploymentType EmploymentType { get; set; } = null!;
-    public JobPostPayment? Payment { get; set; }
+    public BusinessEntity? Business { get; set; }
+    public CategoryEntity Category { get; set; } = null!;
+    public CountryEntity Country { get; set; } = null!;
+    public EmploymentTypeEntity EmploymentType { get; set; } = null!;
+    public JobPostPaymentEntity? Payment { get; set; }
 }

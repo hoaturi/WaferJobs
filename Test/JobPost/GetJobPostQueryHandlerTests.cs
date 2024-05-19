@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPostEntities;
+using JobBoard.Features.JobPost.GetJobPost;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -13,7 +16,7 @@ public class GetJobPostQueryHandlerTests
     public GetJobPostQueryHandlerTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "testDb")
+            .UseInMemoryDatabase("testDb")
             .Options;
 
         _appDbContext = new AppDbContext(options);
@@ -27,21 +30,21 @@ public class GetJobPostQueryHandlerTests
         // Arrange
         var request = new GetJobPostQuery(Guid.NewGuid());
 
-        var category = new Category
+        var category = new CategoryEntity
         {
             Id = 1,
             Name = "Test Category",
             Slug = "test-category"
         };
-        var country = new Country
+        var country = new CountryEntity
         {
             Id = 1,
             Name = "Test Country",
             Code = "TC"
         };
-        var employmentType = new EmploymentType { Id = 1, Name = "Test Employment Type", };
+        var employmentType = new EmploymentTypeEntity { Id = 1, Name = "Test Employment Type" };
 
-        var jobPost = new JobPost
+        var jobPost = new JobPostEntity
         {
             Id = request.Id,
             CategoryId = 1,
@@ -59,7 +62,7 @@ public class GetJobPostQueryHandlerTests
             IsRemote = true,
             IsFeatured = true,
             IsPublished = true,
-            PublishedAt = DateTime.UtcNow,
+            PublishedAt = DateTime.UtcNow
         };
         _appDbContext.Categories.Add(category);
         _appDbContext.Countries.Add(country);

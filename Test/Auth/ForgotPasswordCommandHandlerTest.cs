@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
-using JobBoard;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Features.Auth.ForgotPassword;
+using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -9,16 +12,16 @@ namespace Test;
 
 public class ForgotPasswordCommandHandlerTest
 {
-    private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
-    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly ForgotPasswordCommandHandler _handler;
     private readonly Mock<IEmailService> _mockEmailSender;
     private readonly Mock<ILogger<ForgotPasswordCommandHandler>> _mockLogger;
-    private readonly ForgotPasswordCommandHandler _handler;
+    private readonly Mock<UserManager<ApplicationUserEntity>> _mockUserManager;
+    private readonly Mock<IUserStore<ApplicationUserEntity>> _mockUserStore;
 
     public ForgotPasswordCommandHandlerTest()
     {
-        _mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
+        _mockUserStore = new Mock<IUserStore<ApplicationUserEntity>>();
+        _mockUserManager = new Mock<UserManager<ApplicationUserEntity>>(
             _mockUserStore.Object,
             null!,
             null!,
@@ -43,12 +46,12 @@ public class ForgotPasswordCommandHandlerTest
     {
         // Arrange
         var request = new ForgotPasswordCommand("test@test.com");
-        var user = new ApplicationUser { Email = request.Email };
+        var user = new ApplicationUserEntity { Email = request.Email };
         var token = "resetToken";
 
         _mockUserManager.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(user);
         _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(user)).ReturnsAsync("token");
-        _mockEmailSender.Setup(x => x.SendPasswordResetEmailAsync(new EmailDto(user, token)));
+        _mockEmailSender.Setup(x => x.SendAsync(new PasswordResetDto(user, token)));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -66,7 +69,7 @@ public class ForgotPasswordCommandHandlerTest
 
         _mockUserManager
             .Setup(x => x.FindByEmailAsync(request.Email))
-            .ReturnsAsync(default(ApplicationUser));
+            .ReturnsAsync(default(ApplicationUserEntity));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -76,7 +79,7 @@ public class ForgotPasswordCommandHandlerTest
         result.Error.Should().Be(AuthErrors.UserNotFound);
         _mockUserManager.Verify(x => x.FindByEmailAsync(request.Email), Times.Once);
         _mockUserManager.Verify(
-            x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()),
+            x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUserEntity>()),
             Times.Never
         );
     }

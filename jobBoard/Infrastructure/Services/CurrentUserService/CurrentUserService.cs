@@ -1,49 +1,29 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using JobBoard.Common.Exceptions;
+using JobBoard.Common.Interfaces;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Services.CurrentUserService;
 
-public class CurrentUserService(IHttpContextAccessor accessor) : ICurrentUserService
+public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _accessor = accessor;
-
     public Guid GetUserId()
     {
-        var userId = (
-            _accessor
-                .HttpContext?.User
-                .Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)
-                ?.Value ?? throw new InvalidJwtException()
-        );
-
-        return Guid.Parse(userId);
+        var userIdClaim = httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Sub);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId)) throw new InvalidJwtException();
+        return userId;
     }
 
     public Guid? TryGetUserId()
     {
-        var userId = (
-            _accessor
-                .HttpContext?.User
-                .Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)
-                ?.Value
-        );
-
-        if (userId is null)
-        {
-            return null;
-        }
-
-        return Guid.Parse(userId);
+        var userIdClaim = httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Sub);
+        if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId)) return userId;
+        return null;
     }
 
     public string GetUserEmail()
     {
-        var email = (
-            _accessor
-                .HttpContext?.User
-                .Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)
-                ?.Value ?? throw new InvalidJwtException()
-        );
-
-        return email;
+        var emailClaim = httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Email);
+        if (emailClaim == null) throw new InvalidJwtException();
+        return emailClaim.Value;
     }
 }

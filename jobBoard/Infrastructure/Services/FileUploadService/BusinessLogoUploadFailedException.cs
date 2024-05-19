@@ -1,10 +1,12 @@
 ﻿using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Exceptions;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Services.FileUploadService;
 
 public class BusinessLogoUploadFailedException()
     : CustomException(
-        ErrorCodes.FileUploadFailed,
+        ErrorCodes.FileUploadFailedError,
         HttpStatusCode.InternalServerError,
-        $"Failed to upload business logo"
+        "Failed to upload business logo"
     );

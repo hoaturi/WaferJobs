@@ -1,9 +1,8 @@
-﻿using Castle.Core.Logging;
-using FluentAssertions;
-using JobBoard;
+﻿using FluentAssertions;
+using JobBoard.Domain.Auth;
+using JobBoard.Features.Auth.ResetPassword;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -12,15 +11,15 @@ namespace Test;
 
 public class ResetPasswordCommandHandlerTests
 {
-    private readonly Mock<IUserStore<ApplicationUser>> _mockUserStore;
-    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
-    private readonly Mock<ILogger<ResetPasswordCommandHandler>> _mockLogger;
     private readonly ResetPasswordCommandHandler _handler;
+    private readonly Mock<ILogger<ResetPasswordCommandHandler>> _mockLogger;
+    private readonly Mock<UserManager<ApplicationUserEntity>> _mockUserManager;
+    private readonly Mock<IUserStore<ApplicationUserEntity>> _mockUserStore;
 
     public ResetPasswordCommandHandlerTests()
     {
-        _mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
+        _mockUserStore = new Mock<IUserStore<ApplicationUserEntity>>();
+        _mockUserManager = new Mock<UserManager<ApplicationUserEntity>>(
             _mockUserStore.Object,
             null!,
             null!,
@@ -47,7 +46,7 @@ public class ResetPasswordCommandHandlerTests
             "newPassword"
         );
 
-        var user = new ApplicationUser { Id = request.UserId };
+        var user = new ApplicationUserEntity { Id = request.UserId };
 
         _mockUserManager.Setup(x => x.FindByIdAsync(request.UserId.ToString())).ReturnsAsync(user);
 
@@ -82,7 +81,7 @@ public class ResetPasswordCommandHandlerTests
 
         _mockUserManager
             .Setup(x => x.FindByIdAsync(request.UserId.ToString()))
-            .ReturnsAsync(default(ApplicationUser));
+            .ReturnsAsync(default(ApplicationUserEntity));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -95,7 +94,7 @@ public class ResetPasswordCommandHandlerTests
         _mockUserManager.Verify(
             x =>
                 x.ResetPasswordAsync(
-                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<ApplicationUserEntity>(),
                     It.IsAny<string>(),
                     It.IsAny<string>()
                 ),
@@ -114,7 +113,7 @@ public class ResetPasswordCommandHandlerTests
             "newPassword"
         );
 
-        var user = new ApplicationUser { Id = request.UserId };
+        var user = new ApplicationUserEntity { Id = request.UserId };
 
         _mockUserManager.Setup(x => x.FindByIdAsync(request.UserId.ToString())).ReturnsAsync(user);
 

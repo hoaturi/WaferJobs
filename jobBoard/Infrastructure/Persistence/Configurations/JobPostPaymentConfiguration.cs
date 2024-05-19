@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JobBoard.Domain.JobPost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JobBoard;
+namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayment>
+public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPaymentEntity>
 {
-    public void Configure(EntityTypeBuilder<JobPostPayment> builder)
+    public void Configure(EntityTypeBuilder<JobPostPaymentEntity> builder)
     {
         builder.Property(jpp => jpp.JobPostId).IsRequired();
         builder.Property(jpp => jpp.CheckoutSessionId).IsRequired().HasMaxLength(200);
@@ -13,9 +14,9 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
         builder.HasIndex(jpp => jpp.CheckoutSessionId).IsUnique();
 
         builder
-            .HasOne(jpp => jpp.JobPost)
+            .HasOne(jpp => jpp.JobPostEntity)
             .WithOne(jp => jp.Payment)
-            .HasForeignKey<JobPostPayment>(jpp => jpp.JobPostId)
+            .HasForeignKey<JobPostPaymentEntity>(jpp => jpp.JobPostId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
     }

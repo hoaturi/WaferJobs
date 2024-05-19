@@ -1,27 +1,17 @@
-﻿using System.Net;
+using System.Net;
+using JobBoard.Common.Constants;
+using JobBoard.Common.Models;
 
-namespace JobBoard;
+namespace JobBoard.Domain.Business;
 
-public class BusinessErrors
+public static class BusinessErrors
 {
-    public static Error BusinessNotFound(Guid id) =>
-        new(
-            ErrorCodes.BusinessNotFound,
+    public static Error BusinessNotFound(Guid id)
+    {
+        return new Error(
+            ErrorCodes.BusinessNotFoundError,
             HttpStatusCode.NotFound,
             $"Business profile with id:{id} was not found."
         );
-
-    public static Error BusinessAlreadyExists(Guid userId) =>
-        new(
-            ErrorCodes.BusinessAlreadyExists,
-            HttpStatusCode.Conflict,
-            $"User with id: {userId} already has a associated business profile."
-        );
-
-    public static Error AssociatedBusinessNotFound(Guid userId) =>
-        new(
-            ErrorCodes.AssociatedBusinessNotFound,
-            HttpStatusCode.BadRequest,
-            $"User with id: {userId} does not have a business associated with it."
-        );
+    }
 }

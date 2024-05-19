@@ -1,5 +1,6 @@
 using FluentValidation;
-using JobBoard;
+using JobBoard.Common.Extensions;
+using JobBoard.Common.Middlewares;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

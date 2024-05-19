@@ -1,6 +1,9 @@
-﻿using System.Text;
-using FluentAssertions;
-using JobBoard;
+﻿using FluentAssertions;
+using JobBoard.Common.Interfaces;
+using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
+using JobBoard.Features.Business.UploadMyBusinessLogo;
+using JobBoard.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -10,9 +13,9 @@ namespace Test;
 
 public class UploadBusinessLogoCommandHandlerTests
 {
+    private readonly AppDbContext _appDbContext;
     private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly Mock<IFileUploadService> _fileUploadServiceMock;
-    private readonly AppDbContext _appDbContext;
     private readonly UploadMyBusinessLogoCommandHandler _handler;
 
     public UploadBusinessLogoCommandHandlerTests()
@@ -21,7 +24,7 @@ public class UploadBusinessLogoCommandHandlerTests
         _fileUploadServiceMock = new Mock<IFileUploadService>();
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase("TestDb")
             .Options;
 
         _appDbContext = new AppDbContext(options);
@@ -53,7 +56,7 @@ public class UploadBusinessLogoCommandHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var business = new Business
+        var business = new BusinessEntity
         {
             Name = "Test Business",
             BusinessSizeId = 5,
@@ -74,7 +77,7 @@ public class UploadBusinessLogoCommandHandlerTests
 
         _currentUserServiceMock.Setup(m => m.GetUserId()).Returns(userId);
         _fileUploadServiceMock
-            .Setup(m => m.UploadBusinessLogoAsync(It.IsAny<string>(), It.IsAny<Stream>()))
+            .Setup(m => m.UploadFileAsync(It.IsAny<string>(), It.IsAny<Stream>()))
             .ReturnsAsync(logoUrl);
 
         // Act
@@ -109,6 +112,6 @@ public class UploadBusinessLogoCommandHandlerTests
         );
 
         // Assert
-        await act.Should().ThrowAsync<AssociatedBusinessNotFoundException>();
+        await act.Should().ThrowAsync<BusinessNotFoundForUserException>();
     }
 }
