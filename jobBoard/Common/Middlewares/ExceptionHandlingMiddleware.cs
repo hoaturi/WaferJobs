@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using JobBoard.Common.Constants;
 using JobBoard.Common.Exceptions;
-using JobBoard.Common.Models;
 
 namespace JobBoard.Common.Middlewares;
 
@@ -15,75 +14,85 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex);
+            var response = ex switch
+            {
+                CustomValidationException validationException => CreateCustomValidationErrorResponse(
+                    validationException),
+                CustomException customException => CreateCustomErrorResponse(customException),
+                _ => CreateInternalServerErrorResponse(ex)
+            };
+
+            logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
+            await WriteResponseAsync(context, response);
         }
-    }
-
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        var response = exception switch
-        {
-            ValidationException validationException => CreateValidationErrorResponse(validationException),
-            CustomException customException => CreateErrorResponse(customException),
-            _ => CreateErrorResponse(exception)
-        };
-
-        logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
-        await WriteResponseAsync(context, response);
     }
 
     private static async Task WriteResponseAsync(HttpContext context, ErrorResponse response)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = response.StatusCode;
-        await context.Response.WriteAsJsonAsync(response);
+        context.Response.StatusCode = (int)response.StatusCode;
+
+
+        if (response is ValidationErrorResponse validationErrorResponse)
+            await context.Response.WriteAsJsonAsync(new
+            {
+                response.StatusCode,
+                response.ErrorCode,
+                response.Message,
+                validationErrorResponse.Errors
+            });
+        else
+            await context.Response.WriteAsJsonAsync(response);
     }
 
-    private static ValidationErrorResponse CreateValidationErrorResponse(ValidationException exception)
+
+    private static ValidationErrorResponse CreateCustomValidationErrorResponse(CustomValidationException exception)
     {
-        var statusCode = DetermineStatusCode(exception);
-        var errorCode = DetermineErrorCode(exception);
+        var statusCode = HttpStatusCode.BadRequest;
+        var errorCode = ErrorCodes.ValidationFailedError;
         var message = exception.Message;
-        var fieldErrors = exception.FieldErrors;
+        var fieldErrors = exception.Errors;
 
         return new ValidationErrorResponse(statusCode, errorCode, message, fieldErrors);
     }
 
-    private static ErrorResponse CreateErrorResponse(Exception exception)
+    private static ErrorResponse CreateCustomErrorResponse(CustomException exception)
     {
-        var statusCode = DetermineStatusCode(exception);
-        var errorCode = DetermineErrorCode(exception);
+        var statusCode = exception.StatusCode;
+        var errorCode = exception.ErrorCode;
         var message = exception.Message;
 
         return new ErrorResponse(statusCode, errorCode, message);
     }
 
-    private static int DetermineStatusCode(Exception exception)
-    {
-        return exception switch
-        {
-            ValidationException => (int)HttpStatusCode.BadRequest,
-            CustomException customException => (int)customException.StatusCode,
-            _ => (int)HttpStatusCode.InternalServerError
-        };
-    }
 
-    private static string DetermineErrorCode(Exception exception)
+    private static ErrorResponse CreateInternalServerErrorResponse(Exception exception)
     {
-        return exception switch
-        {
-            ValidationException => nameof(ErrorCodes.ValidationFailedError),
-            CustomException customException => nameof(customException.ErrorCode),
-            _ => nameof(ErrorCodes.InternalServerError)
-        };
+        const HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
+        var errorCode = ErrorCodes.InternalServerError;
+        const string message = "An unexpected error occurred.";
+
+        return new ErrorResponse(statusCode, errorCode, message);
+    }
+}
+
+public record ErrorResponse(HttpStatusCode StatusCode, string ErrorCode, string Message)
+{
+    public ErrorResponse(HttpStatusCode statusCode, ErrorCodes errorCode, string message)
+        : this(statusCode, errorCode.ToString(), message)
+    {
     }
 }
 
 public record ValidationErrorResponse(
-    int StatusCode,
+    HttpStatusCode StatusCode,
     string ErrorCode,
     string Message,
-    List<ValidationError> FieldErrors)
-    : ErrorResponse(StatusCode, ErrorCode, Message);
-
-public record ErrorResponse(int StatusCode, string ErrorCode, string Message);
+    IReadOnlyList<ValidationError>? Errors) : ErrorResponse(StatusCode, ErrorCode, Message)
+{
+    public ValidationErrorResponse(HttpStatusCode statusCode, ErrorCodes errorCode, string message,
+        IReadOnlyList<ValidationError>? errors)
+        : this(statusCode, errorCode.ToString(), message, errors)
+    {
+    }
+}

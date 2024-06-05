@@ -1,29 +1,24 @@
 ﻿using FluentValidation;
+using JobBoard.Common.Exceptions;
 using JobBoard.Common.Models;
 using MediatR;
-using ValidationException = JobBoard.Common.Exceptions.ValidationException;
 
 namespace JobBoard.Common.Behaviors;
 
-public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class RequestValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> requestValidators)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly IEnumerable<IValidator<TRequest>> _requestValidators;
-
-    public RequestValidationBehavior(IEnumerable<IValidator<TRequest>> requestValidators)
-    {
-        _requestValidators = requestValidators;
-    }
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        if (!_requestValidators.Any()) return await next();
+        if (!requestValidators.Any()) return await next();
 
         var validationContext = new ValidationContext<TRequest>(request);
 
         var validationResults =
-            await Task.WhenAll(_requestValidators.Select(validator => validator.ValidateAsync(validationContext)));
+            await Task.WhenAll(requestValidators.Select(validator =>
+                validator.ValidateAsync(validationContext, cancellationToken)));
 
         var validationFailures = validationResults
             .SelectMany(result => result.Errors)
@@ -33,7 +28,8 @@ public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
                 new ValidationError(group.Key, string.Join(", ", group.Select(failure => failure.ErrorMessage))))
             .ToList();
 
-        if (validationFailures.Count > 0) throw new ValidationException(validationFailures);
+
+        if (validationFailures.Count > 0) throw new CustomValidationException(validationFailures);
 
         return await next();
     }
