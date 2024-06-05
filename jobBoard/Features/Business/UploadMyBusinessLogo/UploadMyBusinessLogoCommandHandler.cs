@@ -33,15 +33,13 @@ public class UploadMyBusinessLogoCommandHandler(
         var originalFileExtension = Path.GetExtension(command.File.FileName);
         var fileName = $"{business.Id}{originalFileExtension}";
 
-        var logoUrl = await fileUploadService.UploadFileAsync(
+        var uploadedLogoUrl = await fileUploadService.UploadBusinessLogoAsync(
             fileName,
             command.File.OpenReadStream());
 
-        business.LogoUrl = logoUrl;
+        business.LogoUrl = uploadedLogoUrl;
 
         await appDbContext.SaveChangesAsync(cancellationToken);
-
-        logger.LogInformation("Successfully uploaded logo for business with id {BusinessId}", business.Id);
 
         return Unit.Value;
     }

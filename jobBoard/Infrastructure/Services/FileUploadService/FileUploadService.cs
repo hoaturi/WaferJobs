@@ -19,7 +19,7 @@ public class FileUploadService : IFileUploadService
         _logger = logger;
     }
 
-    public async Task<string> UploadFileAsync(string fileName, Stream fileStream)
+    public async Task<string> UploadBusinessLogoAsync(string fileName, Stream fileStream)
     {
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_azureOptions.BusinessLogoContainer);
         var blobClient = blobContainerClient.GetBlobClient(fileName);
