@@ -12,6 +12,7 @@ builder.Services.AddCorsPolicy(configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureApiBehaviorOptions();
 
 builder.Services.AddInfrastructureServices();
 builder.Services.AddConfigOptions(configuration);
