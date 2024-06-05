@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using JobBoard.Common.Behaviors;
 using JobBoard.Common.Constants;
+using JobBoard.Common.Exceptions;
 using JobBoard.Common.Interfaces;
 using JobBoard.Common.Middlewares;
 using JobBoard.Common.Options;
@@ -14,6 +15,7 @@ using JobBoard.Infrastructure.Services.JwtService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -43,7 +45,29 @@ public static class ServiceExtensions
         });
     }
 
-    // Registers DbContexts
+    public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
+    {
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var errorMessages = context.ModelState
+                    .Where(x => x.Value is { Errors.Count: > 0 })
+                    .SelectMany(x => x.Value!.Errors.Select(e => new
+                    {
+                        Field = x.Key,
+                        Message = e.ErrorMessage
+                    }))
+                    .ToList();
+
+                throw new CustomValidationException(
+                    errorMessages.Select(x => new ValidationError(x.Field, x.Message)).ToList()
+                );
+            };
+        });
+    }
+
+// Registers DbContexts
     public static void AddDbContexts(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -62,7 +86,8 @@ public static class ServiceExtensions
         services.AddStackExchangeRedisCache(option => { option.Configuration = redisOptions.ConnectionString; });
     }
 
-    // Registers Authentications and Authorization
+
+// Registers Authentications and Authorization
     public static void AddAuthentications(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -111,7 +136,7 @@ public static class ServiceExtensions
             .AddDefaultTokenProviders();
     }
 
-    // Registers Infrastructure Services
+// Registers Infrastructure Services
     public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddSingleton<IEmailService, EmailService>();
@@ -121,7 +146,7 @@ public static class ServiceExtensions
         services.AddSingleton<IFileUploadService, FileUploadService>();
     }
 
-    //Registers Mediatr and pipeline behaviors
+//Registers Mediatr and pipeline behaviors
     public static void AddMediatrAndBehaviors(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
@@ -131,7 +156,7 @@ public static class ServiceExtensions
         });
     }
 
-    // Registers Middlewares
+// Registers Middlewares
     public static void AddMiddleWares(this IServiceCollection services)
     {
         services.AddSingleton<ExceptionHandlingMiddleware>();
