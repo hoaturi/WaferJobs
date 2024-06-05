@@ -11,15 +11,10 @@ public class ConditionalAuthorizationAttribute : Attribute, IAuthorizationFilter
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var authHeader = context.HttpContext.Request.Headers.Authorization.FirstOrDefault();
-        if (authHeader is not null && authHeader.StartsWith("Bearer "))
-        {
-            var authResult = context
-                .HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)
-                .Result;
-            if (!authResult.Succeeded)
-            {
-                context.Result = new UnauthorizedResult();
-            }
-        }
+        if (authHeader is null || !authHeader.StartsWith("Bearer ")) return;
+        var authResult = context
+            .HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)
+            .Result;
+        if (!authResult.Succeeded) context.Result = new UnauthorizedResult();
     }
 }
