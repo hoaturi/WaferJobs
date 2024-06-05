@@ -30,7 +30,7 @@ public class GetMyBusinessQueryHandler(
                     b.LogoUrl,
                     b.Description,
                     b.Location,
-                    b.Url,
+                    b.WebsiteUrl,
                     b.TwitterUrl,
                     b.LinkedInUrl,
                     b.BusinessSize != null ? b.BusinessSize.Name : null

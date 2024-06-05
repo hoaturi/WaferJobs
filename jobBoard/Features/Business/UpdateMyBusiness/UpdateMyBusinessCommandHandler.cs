@@ -34,7 +34,7 @@ public class UpdateMyBusinessCommandHandler(
         business.Description = query.Description;
         business.Location = query.Location;
         business.BusinessSizeId = query.BusinessSizeId;
-        business.Url = query.Url;
+        business.WebsiteUrl = query.Url;
         business.TwitterUrl = query.TwitterUrl;
         business.LinkedInUrl = query.LinkedInUrl;
 

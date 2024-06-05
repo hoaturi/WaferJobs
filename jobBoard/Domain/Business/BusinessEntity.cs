@@ -13,7 +13,7 @@ public class BusinessEntity : BaseEntity
     public string? Description { get; set; }
     public string? Location { get; set; }
     public string? StripeCustomerId { get; set; }
-    public string? Url { get; set; }
+    public string? WebsiteUrl { get; set; }
     public string? TwitterUrl { get; set; }
     public string? LinkedInUrl { get; set; }
     public BusinessUserEntity? User { get; init; }

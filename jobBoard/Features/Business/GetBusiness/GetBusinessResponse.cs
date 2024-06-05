@@ -6,7 +6,7 @@ public record GetBusinessResponse(
     string? LogoUrl,
     string? Description,
     string? Location,
-    string? Url,
+    string? WebsiteUrl,
     string? TwitterUrl,
     string? LinkedInUrl,
     string? Size
