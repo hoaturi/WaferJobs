@@ -11,8 +11,8 @@ public class SignupCommandValidator : AbstractValidator<SignUpCommand>
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .MinimumLength(6)
-            .WithMessage("Password must be at least 6 characters");
+            .MinimumLength(8)
+            .WithMessage("Password must be at least 8 characters");
 
         RuleFor(x => x.Role)
             .NotEmpty()
