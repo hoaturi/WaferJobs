@@ -20,6 +20,7 @@ public class JobPostEntity : BaseEntity
     public int? MaxSalary { get; set; }
     public string? Currency { get; set; }
     public string? CompanyLogoUrl { get; set; }
+    public string? CompanyWebsiteUrl { get; set; }
     public required bool IsRemote { get; set; }
     public required bool IsFeatured { get; set; }
     public List<string>? Tags { get; set; }

@@ -17,6 +17,7 @@ public record GetJobPostResponse(
     string? ApplyUrl,
     Guid? BusinessId,
     string? CompanyLogoUrl,
+    string? CompanyWebsiteUrl,
     List<string>? Tags,
     DateTime PublishedAt
 );

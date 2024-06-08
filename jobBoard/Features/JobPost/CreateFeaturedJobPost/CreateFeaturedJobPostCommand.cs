@@ -14,6 +14,7 @@ public record CreateFeaturedJobPostCommand(
     string ApplyUrl,
     bool IsRemote,
     string? CompanyLogoUrl,
+    string? CompanyWebsiteUrl,
     string? City,
     int? MinSalary,
     int? MaxSalary,

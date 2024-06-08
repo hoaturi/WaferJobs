@@ -1,21 +1,30 @@
-﻿using JobBoard.Common.Attributes;
+﻿using JobBoard.Common.Constants;
 using JobBoard.Common.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 
 [Tags("Job Post")]
 [ApiController]
-[Route("api/jobs")]
+[Route("api/jobs/new")]
 public class CreateFeaturedJobPostController(ISender sender) : ControllerBase
 {
     [HttpPost]
-    [ConditionalAuthorization]
-    public async Task<IActionResult> CreateJobPost(CreateFeaturedJobPostCommand command)
+    [Authorize(nameof(UserRoles.Business))]
+    public async Task<IActionResult> CreateJobPost([FromBody] CreateFeaturedJobPostCommand command)
     {
         var result = await sender.Send(command);
 
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
+    }
+
+    [HttpPost("guest")]
+    public async Task<IActionResult> CreateGuestJobPost([FromBody] CreateFeaturedJobPostCommand command)
+    {
+        var result = await sender.Send(command);
+
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
 }

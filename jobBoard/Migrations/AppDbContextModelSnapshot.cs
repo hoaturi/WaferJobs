@@ -113,19 +113,19 @@ namespace JobBoard.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bd5b33d8-7e22-415c-ba12-4410567aa48b"),
+                            Id = new Guid("246e81d9-9dd1-466a-b3f9-44f28738d115"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("71eb2644-23a2-4b6b-beb0-519cbca2cdf9"),
+                            Id = new Guid("0935bf72-22d1-4079-9bb0-cee1d82d4ec3"),
                             Name = "JobSeeker",
                             NormalizedName = "JOBSEEKER"
                         },
                         new
                         {
-                            Id = new Guid("81146792-4235-4080-a186-0913966acccf"),
+                            Id = new Guid("c9f05561-efe1-4b3d-8f42-f76ba203b2de"),
                             Name = "Business",
                             NormalizedName = "BUSINESS"
                         });
@@ -406,6 +406,10 @@ namespace JobBoard.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CompanyWebsiteUrl")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("integer");

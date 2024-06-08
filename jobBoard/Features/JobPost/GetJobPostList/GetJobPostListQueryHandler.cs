@@ -72,6 +72,7 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
                 null,
                 j.BusinessId,
                 j.CompanyLogoUrl,
+                j.CompanyWebsiteUrl,
                 j.Tags,
                 j.PublishedAt
             ))

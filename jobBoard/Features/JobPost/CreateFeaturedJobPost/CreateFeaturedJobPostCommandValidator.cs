@@ -16,7 +16,8 @@ public class CreateFeaturedJobPostCommandValidator : AbstractValidator<CreateFea
         RuleFor(x => x.CompanyName).NotEmpty().MaximumLength(50);
         RuleFor(x => x.CompanyEmail).NotEmpty().EmailAddress();
         RuleFor(x => x.CompanyLogoUrl).MaximumLength(2000);
-        RuleFor(x => x.IsRemote).NotEmpty();
+        RuleFor(x => x.CompanyWebsiteUrl).MaximumLength(2000);
+        RuleFor(x => x.IsRemote).NotNull();
         RuleFor(x => x.MinSalary).GreaterThanOrEqualTo(0);
         RuleFor(x => x.MaxSalary)
             .GreaterThanOrEqualTo(0)

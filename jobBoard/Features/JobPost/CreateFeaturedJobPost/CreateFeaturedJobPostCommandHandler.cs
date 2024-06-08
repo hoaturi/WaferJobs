@@ -29,7 +29,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
         var stripeCustomerId = await GetOrCreateStripeCustomerId(command, business);
 
-        var session = await paymentService.CreateCheckoutSession(stripeCustomerId);
+        var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
 
         await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
 
@@ -78,6 +78,7 @@ public class CreateFeaturedJobPostCommandHandler(
             Description = command.Description,
             CompanyName = command.CompanyName,
             CompanyLogoUrl = command.CompanyLogoUrl,
+            CompanyWebsiteUrl = command.CompanyWebsiteUrl,
             ApplyUrl = command.ApplyUrl,
             IsRemote = command.IsRemote,
             City = command.City,
