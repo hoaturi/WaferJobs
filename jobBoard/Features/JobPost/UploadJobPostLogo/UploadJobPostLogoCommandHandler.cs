@@ -6,8 +6,8 @@ namespace JobBoard.Features.JobPost.UploadJobPostLogo;
 
 public class
     UploadJobPostLogoCommandHandler(
-        IFileUploadService fileUploadService,
-        ILogger<UploadJobPostLogoCommandHandler> logger) : IRequestHandler<UploadJobPostLogoCommand,
+        IFileUploadService fileUploadService
+    ) : IRequestHandler<UploadJobPostLogoCommand,
     Result<UploadJobPostLogoResponse, Error>>
 {
     public async Task<Result<UploadJobPostLogoResponse, Error>> Handle(UploadJobPostLogoCommand command,
