@@ -46,7 +46,8 @@ public class PaymentService : IPaymentService
         }
     }
 
-    public async Task<Session> CreateCheckoutSession(string customerId)
+
+    public async Task<Session> CreateCheckoutSession(string customerId, Guid jobPostId)
     {
         var sessionOptions = new SessionCreateOptions
         {
@@ -60,7 +61,7 @@ public class PaymentService : IPaymentService
                 }
             ],
             Mode = "payment",
-            SuccessUrl = _stripeOptions.SuccessUrl,
+            SuccessUrl = _stripeOptions.SuccessUrl + "/" + jobPostId,
             CancelUrl = _stripeOptions.CancelUrl
         };
 
