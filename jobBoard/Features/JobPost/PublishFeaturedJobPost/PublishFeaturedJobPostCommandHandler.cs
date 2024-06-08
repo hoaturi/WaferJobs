@@ -35,7 +35,7 @@ public class PublishFeaturedJobPostCommandHandler(
         }
 
         jobPostPayment.JobPostEntity!.IsPublished = true;
-        jobPostPayment.JobPostEntity.PublishedAt = DateTime.Now;
+        jobPostPayment.JobPostEntity.PublishedAt = DateTime.UtcNow;
         jobPostPayment.EventId = request.StripeEventId;
         jobPostPayment.IsProcessed = true;
 

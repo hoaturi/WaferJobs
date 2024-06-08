@@ -1,8 +1,6 @@
 ﻿using JobBoard.Common.Attributes;
-using JobBoard.Common.Constants;
 using JobBoard.Common.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard.Features.JobPost.UploadJobPostLogo;
@@ -13,7 +11,6 @@ namespace JobBoard.Features.JobPost.UploadJobPostLogo;
 public class UploadJobPostLogoController(ISender sender) : ControllerBase
 {
     [HttpPost("new/logo")]
-    [Authorize(nameof(UserRoles.Business))]
     // Limit the size of the uploaded file to 1MB
     [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024)]
     public async Task<IActionResult> UploadLogo([FromForm] [ValidateImageFile] IFormFile file)
@@ -22,6 +19,6 @@ public class UploadJobPostLogoController(ISender sender) : ControllerBase
 
         var result = await sender.Send(command);
 
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok();
+        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }
 }
