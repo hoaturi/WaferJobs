@@ -15,7 +15,8 @@ public class BusinessEntity : BaseEntity
     public string? StripeCustomerId { get; set; }
     public string? WebsiteUrl { get; set; }
     public string? TwitterUrl { get; set; }
-    public string? LinkedInUrl { get; set; }
+    public string? LinkedinUrl { get; set; }
+
     public BusinessUserEntity? User { get; init; }
     public List<JobPostEntity>? JobPosts { get; init; }
     public BusinessSizeEntity? BusinessSize { get; init; }

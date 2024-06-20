@@ -8,10 +8,10 @@ namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 
 [Tags("Job Post")]
 [ApiController]
-[Route("api/jobs/new")]
+[Route("api/jobs")]
 public class CreateFeaturedJobPostController(ISender sender) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("/new")]
     [Authorize(nameof(UserRoles.Business))]
     public async Task<IActionResult> CreateJobPost([FromBody] CreateFeaturedJobPostCommand command)
     {

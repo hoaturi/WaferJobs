@@ -15,7 +15,7 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
         builder.Property(b => b.StripeCustomerId).HasMaxLength(50);
         builder.Property(b => b.WebsiteUrl).HasMaxLength(500);
         builder.Property(b => b.TwitterUrl).HasMaxLength(500);
-        builder.Property(b => b.LinkedInUrl).HasMaxLength(500);
+        builder.Property(b => b.LinkedinUrl).HasMaxLength(500);
         builder.Property(b => b.UserId).IsRequired();
 
         builder

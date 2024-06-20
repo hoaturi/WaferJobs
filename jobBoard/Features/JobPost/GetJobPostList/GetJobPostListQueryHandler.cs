@@ -16,7 +16,8 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
     public async Task<Result<GetJobPostListResponse, Error>> Handle(GetJobPostListQuery query,
         CancellationToken cancellationToken)
     {
-        var jobPostsQuery = appDbContext.JobPosts.AsNoTracking();
+        var jobPostListQuery = appDbContext.JobPosts.AsNoTracking().Where(j => j.IsPublished && !j.IsDeleted);
+
 
         if (query.Keyword is not null)
         {
@@ -30,29 +31,25 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
                 .Or(j => EF.Functions.ILike(j.CompanyName, $"%{keyword}%"))
                 .Or(j => j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))));
 
-            jobPostsQuery = jobPostsQuery.Where(predicate);
+            jobPostListQuery = jobPostListQuery.Where(predicate);
         }
 
         if (query.Country is not null)
-            jobPostsQuery = jobPostsQuery.Where(j => query.Country == j.Country.Slug);
+            jobPostListQuery = jobPostListQuery.Where(j => query.Country == j.Country.Slug);
 
         if (query.Remote is not null)
-            jobPostsQuery = jobPostsQuery.Where(j => j.IsRemote);
+            jobPostListQuery = jobPostListQuery.Where(j => j.IsRemote);
 
         if (query.Categories is not null && query.Categories.Count != 0)
-            jobPostsQuery = jobPostsQuery.Where(j => query.Categories.Contains(j.Category.Slug));
+            jobPostListQuery = jobPostListQuery.Where(j => query.Categories.Contains(j.Category.Slug));
 
         if (query.EmploymentTypes is not null && query.EmploymentTypes.Count != 0)
-            jobPostsQuery = jobPostsQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Slug));
+            jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Slug));
 
-        jobPostsQuery = jobPostsQuery.Where(j => j.IsPublished && !j.IsDeleted)
-            .Include(j => j.Category)
-            .Include(j => j.Country)
-            .Include(j => j.EmploymentType)
-            .OrderByDescending(j => j.IsFeatured)
-            .ThenByDescending(j => j.PublishedAt);
 
-        var jobPostList = await jobPostsQuery
+        jobPostListQuery = jobPostListQuery.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
+
+        var jobPostList = await jobPostListQuery
             .Skip((query.Page - 1) * PageSize)
             .Take(PageSize)
             .Select(j => new GetJobPostResponse(
@@ -78,7 +75,7 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             ))
             .ToListAsync(cancellationToken);
 
-        var totalJobPostCount = await jobPostsQuery.CountAsync(cancellationToken);
+        var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
 
         return new GetJobPostListResponse(jobPostList, totalJobPostCount);
     }

@@ -8,6 +8,6 @@ public record GetBusinessResponse(
     string? Location,
     string? WebsiteUrl,
     string? TwitterUrl,
-    string? LinkedInUrl,
+    string? LinkedinUrl,
     string? Size
 );

@@ -14,6 +14,6 @@ public class SignUpController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(command);
 
-        return !result.IsSuccess ? this.HandleError(result.Error!) : Ok();
+        return result.IsSuccess ? Ok() : this.HandleError(result.Error!);
     }
 }

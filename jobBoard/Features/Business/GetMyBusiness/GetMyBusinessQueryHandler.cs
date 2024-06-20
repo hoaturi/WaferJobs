@@ -32,7 +32,7 @@ public class GetMyBusinessQueryHandler(
                     b.Location,
                     b.WebsiteUrl,
                     b.TwitterUrl,
-                    b.LinkedInUrl,
+                    b.LinkedinUrl,
                     b.BusinessSize != null ? b.BusinessSize.Name : null
                 ))
                 .FirstOrDefaultAsync(cancellationToken)

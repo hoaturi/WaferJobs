@@ -20,12 +20,7 @@ public class PublishFeaturedJobPostCommandHandler(
             .FirstOrDefaultAsync(jpp => jpp.CheckoutSessionId == request.SessionId,
                 cancellationToken);
 
-        if (jobPostPayment is null)
-        {
-            logger.LogError("Job post payment with session id: {SessionId} not found", request.SessionId);
-            throw new JobPostPaymentNotFoundException();
-        }
-
+        if (jobPostPayment is null) throw new JobPostPaymentNotFoundException(request.SessionId);
 
         if (jobPostPayment.IsProcessed)
         {

@@ -17,9 +17,6 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
         var jobPost = await appDbContext
             .JobPosts.AsNoTracking()
             .Where(j => j.Id == command.Id && j.IsPublished)
-            .Include(j => j.Category)
-            .Include(j => j.Country)
-            .Include(j => j.EmploymentType)
             .Select(j => new GetJobPostResponse(
                 j.Id,
                 j.Category.Label,
@@ -41,7 +38,7 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
                 j.Tags,
                 j.PublishedAt
             ))
-            .FirstOrDefaultAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
 
         return jobPost is null
             ? JobPostErrors.JobPostNotFound(command.Id)

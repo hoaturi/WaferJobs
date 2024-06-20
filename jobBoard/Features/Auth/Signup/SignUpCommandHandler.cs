@@ -3,7 +3,6 @@ using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
-using JobBoard.Domain.JobSeeker;
 using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -40,17 +39,10 @@ public class SignUpCommandHandler(
             logger.LogError("Failed to add user with email {Email} to role {Role}.", command.Email,
                 command.Role);
 
-        switch (command.Role)
-        {
-            case nameof(UserRoles.Business):
-                await CreateBusiness(command, newUser, cancellationToken);
-                break;
-            case nameof(UserRoles.JobSeeker):
-                await CreateJobSeeker(command, newUser, cancellationToken);
-                break;
-        }
+        if (command.Role == nameof(UserRoles.Business))
+            await CreateBusiness(command, newUser, cancellationToken);
 
-        logger.LogInformation("Successfully created {UserRole} user with id {UserId}", newUser.Id, command.Role);
+        logger.LogInformation("Successfully created {UserRole} user with id {UserId}", command.Role, newUser.Id);
 
         scope.Complete();
 
@@ -65,15 +57,5 @@ public class SignUpCommandHandler(
         var saveChangesResult = await appDbContext.SaveChangesAsync(cancellationToken);
         if (saveChangesResult == 0)
             logger.LogError("Failed to create business entity for user with email {Email}", command.Email);
-    }
-
-    private async Task CreateJobSeeker(SignUpCommand command,
-        ApplicationUserEntity newUserEntity, CancellationToken cancellationToken)
-    {
-        var newJobSeeker = new JobSeekerEntity { UserId = newUserEntity.Id, Name = command.Name! };
-        await appDbContext.JobSeekers.AddAsync(newJobSeeker, cancellationToken);
-        var saveChangesResult = await appDbContext.SaveChangesAsync(cancellationToken);
-        if (saveChangesResult == 0)
-            logger.LogError("Failed to create job seeker entity for user with email {Email}", command.Email);
     }
 }

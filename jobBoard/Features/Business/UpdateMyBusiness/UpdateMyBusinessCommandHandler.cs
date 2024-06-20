@@ -14,7 +14,7 @@ public class UpdateMyBusinessCommandHandler(
 ) : IRequestHandler<UpdateMyBusinessCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(
-        UpdateMyBusinessCommand query,
+        UpdateMyBusinessCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -30,13 +30,14 @@ public class UpdateMyBusinessCommandHandler(
             throw new BusinessNotFoundForUserException(currentUserId);
         }
 
-        business.Name = query.Name;
-        business.Description = query.Description;
-        business.Location = query.Location;
-        business.BusinessSizeId = query.BusinessSizeId;
-        business.WebsiteUrl = query.Url;
-        business.TwitterUrl = query.TwitterUrl;
-        business.LinkedInUrl = query.LinkedInUrl;
+
+        business.Name = command.Name;
+        business.Description = command.Description;
+        business.Location = command.Location;
+        business.BusinessSizeId = command.BusinessSizeId;
+        business.WebsiteUrl = command.WebsiteUrl;
+        business.TwitterUrl = command.TwitterUrl;
+        business.LinkedinUrl = command.LinkedInUrl;
 
         await appDbContext.SaveChangesAsync(cancellationToken);
 

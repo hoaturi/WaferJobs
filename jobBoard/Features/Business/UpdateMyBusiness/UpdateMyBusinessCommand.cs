@@ -8,7 +8,7 @@ public record UpdateMyBusinessCommand(
     int? BusinessSizeId,
     string? Description,
     string? Location,
-    string? Url,
+    string? WebsiteUrl,
     string? TwitterUrl,
     string? LinkedInUrl
 ) : IRequest<Result<Unit, Error>>;

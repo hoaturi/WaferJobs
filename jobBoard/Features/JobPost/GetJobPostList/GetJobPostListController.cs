@@ -23,6 +23,6 @@ public class GetJobPostListController(ISender sender) : ControllerBase
             new GetJobPostListQuery(keyword, country, remote, categories, employmentTypes, page)
         );
 
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
 }
