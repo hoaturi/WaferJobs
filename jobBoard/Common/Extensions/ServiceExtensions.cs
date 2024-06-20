@@ -121,12 +121,11 @@ public static class ServiceExtensions
         services
             .AddIdentityCore<ApplicationUserEntity>(option =>
             {
-                option.Password.RequireDigit = true;
-                option.Password.RequiredLength = 6;
+                option.Password.RequireDigit = false;
+                option.Password.RequiredLength = 8;
                 option.Password.RequireNonAlphanumeric = false;
                 option.Password.RequireUppercase = false;
                 option.Password.RequireLowercase = false;
-
                 option.User.RequireUniqueEmail = true;
 
                 option.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
