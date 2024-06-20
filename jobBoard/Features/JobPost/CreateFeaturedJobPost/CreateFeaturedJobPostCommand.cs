@@ -1,4 +1,5 @@
 using JobBoard.Common.Models;
+using JobBoard.Features.Payment;
 using MediatR;
 
 namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
@@ -20,4 +21,4 @@ public record CreateFeaturedJobPostCommand(
     int? MaxSalary,
     string? Currency,
     List<string>? Tags
-) : IRequest<Result<CreateFeaturedJobPostResponse, Error>>;
+) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;

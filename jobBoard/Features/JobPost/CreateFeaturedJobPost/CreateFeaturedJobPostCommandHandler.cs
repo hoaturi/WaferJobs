@@ -2,6 +2,7 @@ using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.JobPost;
+using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ public class CreateFeaturedJobPostCommandHandler(
     IPaymentService paymentService,
     AppDbContext appDbContext,
     ILogger<CreateFeaturedJobPostCommandHandler> logger)
-    : IRequestHandler<CreateFeaturedJobPostCommand, Result<CreateFeaturedJobPostResponse, Error>>
+    : IRequestHandler<CreateFeaturedJobPostCommand, Result<CreateJobPostCheckoutSessionResponse, Error>>
 {
-    public async Task<Result<CreateFeaturedJobPostResponse, Error>> Handle(
+    public async Task<Result<CreateJobPostCheckoutSessionResponse, Error>> Handle(
         CreateFeaturedJobPostCommand command,
         CancellationToken cancellationToken)
     {
@@ -35,7 +36,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
         await appDbContext.SaveChangesAsync(cancellationToken);
 
-        return new CreateFeaturedJobPostResponse(session.Url);
+        return new CreateJobPostCheckoutSessionResponse(session.Url);
     }
 
     private async Task<BusinessEntity?> GetBusinessByUserId(Guid? userId, CancellationToken cancellationToken)
@@ -61,7 +62,8 @@ public class CreateFeaturedJobPostCommandHandler(
 
     private async Task CreateJobPostPayment(Guid jobPostId, string sessionId, CancellationToken cancellationToken)
     {
-        var payment = new JobPostPaymentEntity { JobPostId = jobPostId, CheckoutSessionId = sessionId };
+        var payment = new JobPostPaymentEntity
+            { JobPostId = jobPostId, CheckoutSessionId = sessionId };
 
         await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
