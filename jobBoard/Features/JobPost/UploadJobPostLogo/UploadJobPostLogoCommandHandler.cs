@@ -1,5 +1,6 @@
 ﻿using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
+using JobBoard.Features.Business.UpdateMyBusinessLogo;
 using MediatR;
 
 namespace JobBoard.Features.JobPost.UploadJobPostLogo;
@@ -8,9 +9,9 @@ public class
     UploadJobPostLogoCommandHandler(
         IFileUploadService fileUploadService
     ) : IRequestHandler<UploadJobPostLogoCommand,
-    Result<UploadJobPostLogoResponse, Error>>
+    Result<UpdateBusinessLogoResponse, Error>>
 {
-    public async Task<Result<UploadJobPostLogoResponse, Error>> Handle(UploadJobPostLogoCommand command,
+    public async Task<Result<UpdateBusinessLogoResponse, Error>> Handle(UploadJobPostLogoCommand command,
         CancellationToken cancellationToken)
     {
         var originalFileExtension = Path.GetExtension(command.File.FileName);
@@ -20,6 +21,6 @@ public class
             fileName,
             command.File.OpenReadStream());
 
-        return new UploadJobPostLogoResponse(uploadedLogoUrl);
+        return new UpdateBusinessLogoResponse(uploadedLogoUrl);
     }
 }
