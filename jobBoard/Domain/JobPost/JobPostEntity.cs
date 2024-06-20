@@ -26,11 +26,10 @@ public class JobPostEntity : BaseEntity
     public List<string>? Tags { get; set; }
     public bool IsPublished { get; set; }
     public DateTime PublishedAt { get; set; }
-    public bool IsDeleted { get; set; } = false;
-
+    public bool IsDeleted { get; set; }
     public BusinessEntity? Business { get; set; }
     public CategoryEntity Category { get; set; } = null!;
     public CountryEntity Country { get; set; } = null!;
     public EmploymentTypeEntity EmploymentType { get; set; } = null!;
-    public JobPostPaymentEntity? Payment { get; set; }
+    public List<JobPostPaymentEntity>? Payments { get; set; }
 }

@@ -15,8 +15,8 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
 
         builder
             .HasOne(jpp => jpp.JobPostEntity)
-            .WithOne(jp => jp.Payment)
-            .HasForeignKey<JobPostPaymentEntity>(jpp => jpp.JobPostId)
+            .WithMany(jp => jp.Payments)
+            .HasForeignKey(jpp => jpp.JobPostId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
     }
