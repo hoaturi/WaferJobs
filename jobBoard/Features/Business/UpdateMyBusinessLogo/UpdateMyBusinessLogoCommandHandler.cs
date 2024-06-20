@@ -5,17 +5,17 @@ using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.UploadMyBusinessLogo;
+namespace JobBoard.Features.Business.UpdateMyBusinessLogo;
 
-public class UploadMyBusinessLogoCommandHandler(
+public class UpdateMyBusinessLogoCommandHandler(
     AppDbContext appDbContext,
     ICurrentUserService currentUserService,
     IFileUploadService fileUploadService,
-    ILogger<UploadMyBusinessLogoCommandHandler> logger)
-    : IRequestHandler<UploadMyBusinessLogoCommand, Result<Unit, Error>>
+    ILogger<UpdateMyBusinessLogoCommandHandler> logger)
+    : IRequestHandler<UpdateMyBusinessLogoCommand, Result<UpdateBusinessLogoResponse, Error>>
 {
-    public async Task<Result<Unit, Error>> Handle(
-        UploadMyBusinessLogoCommand command,
+    public async Task<Result<UpdateBusinessLogoResponse, Error>> Handle(
+        UpdateMyBusinessLogoCommand command,
         CancellationToken cancellationToken)
     {
         var currentUserId = currentUserService.GetUserId();
@@ -41,6 +41,6 @@ public class UploadMyBusinessLogoCommandHandler(
 
         await appDbContext.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return new UpdateBusinessLogoResponse(uploadedLogoUrl);
     }
 }

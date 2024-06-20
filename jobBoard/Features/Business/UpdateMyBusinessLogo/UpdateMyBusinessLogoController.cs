@@ -5,12 +5,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Business.UploadMyBusinessLogo;
+namespace JobBoard.Features.Business.UpdateMyBusinessLogo;
 
 [Tags("Business")]
 [ApiController]
 [Route("api/businesses")]
-public class UploadMyBusinessLogoController(ISender sender) : ControllerBase
+public class UpdateMyBusinessLogoController(ISender sender) : ControllerBase
 {
     [HttpPost("me/logo")]
     [Authorize(nameof(UserRoles.Business))]
@@ -18,10 +18,10 @@ public class UploadMyBusinessLogoController(ISender sender) : ControllerBase
     [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024)]
     public async Task<IActionResult> UploadLogo([FromForm] [ValidateImageFile] IFormFile file)
     {
-        var command = new UploadMyBusinessLogoCommand(file);
+        var command = new UpdateMyBusinessLogoCommand(file);
 
         var result = await sender.Send(command);
 
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok();
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
 }
