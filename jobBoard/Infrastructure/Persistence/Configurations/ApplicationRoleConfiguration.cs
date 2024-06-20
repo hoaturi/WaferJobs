@@ -15,7 +15,6 @@ public class ApplicationRoleConfiguration : IEntityTypeConfiguration<Application
 
         var roles = roleJson.DeserializeWithCaseInsensitivity<List<ApplicationRoleEntity>>();
 
-        foreach (var role in roles) role.Id = Guid.NewGuid();
 
         builder.HasData(roles);
     }

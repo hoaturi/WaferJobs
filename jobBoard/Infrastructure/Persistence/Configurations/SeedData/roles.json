@@ -1,5 +1,17 @@
 [
-  { "name": "Admin", "normalizedName": "ADMIN" },
-  { "name": "JobSeeker", "normalizedName": "JOBSEEKER" },
-  { "name": "Business", "normalizedName": "BUSINESS" }
+  {
+    "id": "3b7bde7a-a54c-400f-ac80-d9ef11acde40",
+    "name": "Admin",
+    "normalizedName": "ADMIN"
+  },
+  {
+    "id": "c0b85d2c-fecf-4ade-ba89-fc183715e8b5",
+    "name": "JobSeeker",
+    "normalizedName": "JOBSEEKER"
+  },
+  {
+    "id": "833bf160-c419-4449-95c7-2c762c0abd98",
+    "name": "Business",
+    "normalizedName": "BUSINESS"
+  }
 ]
