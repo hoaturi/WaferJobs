@@ -16,6 +16,10 @@ public class ErrorCodes
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFoundError = new("JP001");
+    public static readonly ErrorCodes JobPostAlreadyDeletedError = new("JP002");
+    public static readonly ErrorCodes UnauthorizedJobPostAccessError = new("JP003");
+    public static readonly ErrorCodes JobPostAlreadyPublishedError = new("JP004");
+
 
     // Validation Errors
     public static readonly ErrorCodes ValidationFailedError = new("VA001");
