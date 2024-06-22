@@ -16,9 +16,16 @@ public class DeleteMyJobPostCommandHandler(
     {
         var currentUserId = currentUserService.GetUserId();
 
-        var jobPost =
-            await appDbContext.JobPosts.SingleAsync(j =>
-                j.Id == command.Id && j.Business!.UserId == currentUserId, cancellationToken);
+        var jobPost = await appDbContext.JobPosts
+            .Include(j => j.Business)
+            .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
+
+
+        if (jobPost is null) throw new JobPostNotFoundException(command.Id);
+
+        if (jobPost.Business!.UserId != currentUserId)
+            throw new UnauthorizedJobPostAccessException(command.Id, currentUserId);
+
 
         if (jobPost.IsDeleted)
             throw new JobPostAlreadyDeletedException(command.Id);
