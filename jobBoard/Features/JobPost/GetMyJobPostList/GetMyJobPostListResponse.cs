@@ -11,5 +11,7 @@ public record GetMyJobPost(
     string? City,
     bool IsPublished,
     bool RequiresPayment,
-    DateTime PublishedAt,
+    DateTime? FeaturedStartDate,
+    DateTime? FeaturedEndDate,
+    DateTime? PublishedAt,
     DateTime CreatedAt);

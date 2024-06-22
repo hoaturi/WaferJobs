@@ -113,19 +113,19 @@ namespace JobBoard.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("246e81d9-9dd1-466a-b3f9-44f28738d115"),
+                            Id = new Guid("3b7bde7a-a54c-400f-ac80-d9ef11acde40"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("0935bf72-22d1-4079-9bb0-cee1d82d4ec3"),
+                            Id = new Guid("c0b85d2c-fecf-4ade-ba89-fc183715e8b5"),
                             Name = "JobSeeker",
                             NormalizedName = "JOBSEEKER"
                         },
                         new
                         {
-                            Id = new Guid("c9f05561-efe1-4b3d-8f42-f76ba203b2de"),
+                            Id = new Guid("833bf160-c419-4449-95c7-2c762c0abd98"),
                             Name = "Business",
                             NormalizedName = "BUSINESS"
                         });
@@ -221,7 +221,7 @@ namespace JobBoard.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)");
 
-                    b.Property<string>("LinkedInUrl")
+                    b.Property<string>("LinkedinUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -429,6 +429,12 @@ namespace JobBoard.Migrations
                     b.Property<int>("EmploymentTypeId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("FeaturedEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FeaturedStartDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -447,7 +453,7 @@ namespace JobBoard.Migrations
                     b.Property<int?>("MinSalary")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("PublishedAt")
+                    b.Property<DateTime?>("PublishedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<List<string>>("Tags")
@@ -525,8 +531,7 @@ namespace JobBoard.Migrations
                     b.HasIndex("CheckoutSessionId")
                         .IsUnique();
 
-                    b.HasIndex("JobPostId")
-                        .IsUnique();
+                    b.HasIndex("JobPostId");
 
                     b.ToTable("JobPostPayments");
                 });
@@ -2589,12 +2594,12 @@ namespace JobBoard.Migrations
 
             modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostPaymentEntity", b =>
                 {
-                    b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", "JobPostEntity")
-                        .WithOne("Payment")
-                        .HasForeignKey("JobBoard.Domain.JobPost.JobPostPaymentEntity", "JobPostId")
+                    b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", "JobPost")
+                        .WithMany("Payments")
+                        .HasForeignKey("JobPostId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.Navigation("JobPostEntity");
+                    b.Navigation("JobPost");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobSeeker.JobSeekerEntity", b =>
@@ -2666,7 +2671,7 @@ namespace JobBoard.Migrations
 
             modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostEntity", b =>
                 {
-                    b.Navigation("Payment");
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Business.BusinessUserEntity", b =>

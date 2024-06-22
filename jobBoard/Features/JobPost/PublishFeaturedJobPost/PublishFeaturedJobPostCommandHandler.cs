@@ -16,26 +16,31 @@ public class PublishFeaturedJobPostCommandHandler(
         CancellationToken cancellationToken)
     {
         var jobPostPayment = await appDbContext.JobPostPayments
-            .Include(jpp => jpp.JobPostEntity)
+            .Include(jpp => jpp.JobPost)
             .FirstOrDefaultAsync(jpp => jpp.CheckoutSessionId == request.SessionId,
                 cancellationToken);
 
         if (jobPostPayment is null) throw new JobPostPaymentNotFoundException(request.SessionId);
 
+        if (jobPostPayment.JobPost is null) throw new JobPostNotFoundException(jobPostPayment.JobPostId);
+
         if (jobPostPayment.IsProcessed)
         {
             logger.LogWarning("Job post with id: {JobPostId} has already been processed",
-                jobPostPayment.JobPostEntity!.Id);
+                jobPostPayment.JobPost!.Id);
             return Unit.Value;
         }
 
-        jobPostPayment.JobPostEntity!.IsPublished = true;
-        jobPostPayment.JobPostEntity.PublishedAt = DateTime.UtcNow;
+        jobPostPayment.JobPost.IsPublished = true;
+        jobPostPayment.JobPost.PublishedAt = DateTime.UtcNow;
+        jobPostPayment.JobPost.FeaturedStartDate = DateTime.UtcNow;
+        jobPostPayment.JobPost.FeaturedEndDate = DateTime.UtcNow.AddDays(35);
+
         jobPostPayment.EventId = request.StripeEventId;
         jobPostPayment.IsProcessed = true;
 
         await appDbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Published job post with id: {JobPostId}", jobPostPayment.JobPostEntity!.Id);
+        logger.LogInformation("Published job post with id: {JobPostId}", jobPostPayment.JobPost!.Id);
 
         return Unit.Value;
     }

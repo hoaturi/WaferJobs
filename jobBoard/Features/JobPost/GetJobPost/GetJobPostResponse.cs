@@ -19,5 +19,7 @@ public record GetJobPostResponse(
     string? CompanyLogoUrl,
     string? CompanyWebsiteUrl,
     List<string>? Tags,
+    DateTime FeaturedStartDate,
+    DateTime FeaturedEndDate,
     DateTime PublishedAt
 );

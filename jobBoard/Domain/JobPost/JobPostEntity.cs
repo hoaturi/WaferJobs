@@ -21,11 +21,13 @@ public class JobPostEntity : BaseEntity
     public string? Currency { get; set; }
     public string? CompanyLogoUrl { get; set; }
     public string? CompanyWebsiteUrl { get; set; }
-    public required bool IsRemote { get; set; }
-    public required bool IsFeatured { get; set; }
+    public bool IsRemote { get; set; }
+    public bool IsFeatured { get; set; }
+    public DateTime? FeaturedStartDate { get; set; }
+    public DateTime? FeaturedEndDate { get; set; }
     public List<string>? Tags { get; set; }
     public bool IsPublished { get; set; }
-    public DateTime PublishedAt { get; set; }
+    public DateTime? PublishedAt { get; set; }
     public bool IsDeleted { get; set; }
     public BusinessEntity? Business { get; set; }
     public CategoryEntity Category { get; set; } = null!;

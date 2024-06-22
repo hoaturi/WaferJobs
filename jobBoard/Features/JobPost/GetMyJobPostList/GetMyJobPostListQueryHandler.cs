@@ -27,9 +27,11 @@ public class
         jobPostListQuery = query.Status switch
         {
             "active" => jobPostListQuery.Where(j => j.IsPublished == true),
-            "inactive" => jobPostListQuery.Where(j => j.IsPublished == false),
+            "inactive" => jobPostListQuery.Where(j =>
+                !j.IsPublished && j.Payments != null && j.Payments.Count != 0 && j.Payments.Any(p => p.IsProcessed)),
             "requires_payment" => jobPostListQuery.Where(j =>
-                j.IsPublished == false && j.IsFeatured && j.Payments != null && j.Payments.All(p => !p.IsProcessed)),
+                j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
+                j.Payments.All(p => !p.IsProcessed)),
             _ => jobPostListQuery.Where(j => j.Business!.UserId == currentUserId && j.IsDeleted == false)
         };
 
@@ -46,7 +48,10 @@ public class
                 j.Country.Label,
                 j.City,
                 j.IsPublished,
-                !j.IsPublished && j.IsFeatured && j.Payments != null && j.Payments.All(p => p.IsProcessed),
+                j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
+                j.Payments.All(p => !p.IsProcessed),
+                j.FeaturedStartDate,
+                j.FeaturedEndDate,
                 j.PublishedAt,
                 j.CreatedAt))
             .ToListAsync(cancellationToken);

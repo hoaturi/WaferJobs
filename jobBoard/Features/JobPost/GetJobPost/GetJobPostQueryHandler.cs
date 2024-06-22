@@ -36,9 +36,11 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
                 j.Tags,
-                j.PublishedAt
+                j.FeaturedStartDate.GetValueOrDefault(),
+                j.FeaturedEndDate.GetValueOrDefault(),
+                j.PublishedAt.GetValueOrDefault()
             ))
-            .SingleOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
 
         return jobPost is null
             ? JobPostErrors.JobPostNotFound(command.Id)
