@@ -37,7 +37,7 @@ public class CreateJobPostCheckoutSessionCommandHandler(
         var isPaymentRequired = jobPost is { IsFeatured: true, IsPublished: false, Payments: not null } &&
                                 jobPost.Payments.All(p => !p.IsProcessed);
 
-        if (isPaymentRequired) throw new JobPostAlreadyPublishedException(jobPost.Id);
+        if (!isPaymentRequired) throw new JobPostAlreadyPublishedException(jobPost.Id);
 
         if (jobPost.Business.StripeCustomerId is null)
             await paymentService.CreateStripeCustomer(
@@ -53,6 +53,8 @@ public class CreateJobPostCheckoutSessionCommandHandler(
 
         await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
+
+        await appDbContext.SaveChangesAsync(cancellationToken);
 
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }

@@ -11,7 +11,7 @@ namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 [Route("api/jobs")]
 public class CreateFeaturedJobPostController(ISender sender) : ControllerBase
 {
-    [HttpPost("/new")]
+    [HttpPost("new")]
     [Authorize(nameof(UserRoles.Business))]
     public async Task<IActionResult> CreateJobPost([FromBody] CreateFeaturedJobPostCommand command)
     {
