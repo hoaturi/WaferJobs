@@ -10,5 +10,5 @@ public class JobPostPaymentEntity : BaseEntity
     public string? EventId { get; set; }
     public bool IsProcessed { get; set; }
 
-    public JobPostEntity? JobPostEntity { get; init; }
+    public JobPostEntity? JobPost { get; init; }
 }

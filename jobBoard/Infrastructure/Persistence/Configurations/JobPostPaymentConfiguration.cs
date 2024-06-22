@@ -14,7 +14,7 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
         builder.HasIndex(jpp => jpp.CheckoutSessionId).IsUnique();
 
         builder
-            .HasOne(jpp => jpp.JobPostEntity)
+            .HasOne(jpp => jpp.JobPost)
             .WithMany(jp => jp.Payments)
             .HasForeignKey(jpp => jpp.JobPostId)
             .IsRequired(false)
