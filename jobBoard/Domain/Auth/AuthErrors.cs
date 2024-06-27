@@ -27,4 +27,7 @@ public static class AuthErrors
 
     public static readonly Error InvalidRefreshToken =
         new(ErrorCodes.InvalidTokenError, HttpStatusCode.Unauthorized, "Invalid refresh token");
+
+    public static readonly Error InvalidCurrentPassword =
+        new(ErrorCodes.InvalidCurrentPasswordError, HttpStatusCode.BadRequest, "Invalid current password");
 }
