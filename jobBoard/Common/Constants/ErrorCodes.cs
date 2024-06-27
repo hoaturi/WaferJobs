@@ -7,12 +7,13 @@ public class ErrorCodes
     public static readonly ErrorCodes InvalidCredentialsError = new("AU002");
     public static readonly ErrorCodes UserNotFoundError = new("AU003");
     public static readonly ErrorCodes InvalidTokenError = new("AU004");
+    public static readonly ErrorCodes InvalidCurrentPasswordError = new("AU005");
 
     // Business Errors
     public static readonly ErrorCodes BusinessNotFoundError = new("BU001");
     public static readonly ErrorCodes InvalidBusinessSizeError = new("BU002");
     public static readonly ErrorCodes BusinessAlreadyExistsError = new("BU003");
-    public static readonly ErrorCodes AssociatedBusinessNotFoundError = new("BU004");
+    public static readonly ErrorCodes BusinessNotFoundForUserError = new("BU004");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFoundError = new("JP001");
