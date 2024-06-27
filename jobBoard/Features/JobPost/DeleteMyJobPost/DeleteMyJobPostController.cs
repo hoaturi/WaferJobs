@@ -1,5 +1,7 @@
-﻿using JobBoard.Common.Extensions;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Common.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard.Features.JobPost.DeleteMyJobPost;
@@ -9,11 +11,12 @@ namespace JobBoard.Features.JobPost.DeleteMyJobPost;
 [Route("api/jobs")]
 public class DeleteMyJobPostController(ISender sender) : ControllerBase
 {
+    [Authorize(nameof(UserRoles.Business))]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteMyJobPost(Guid id)
     {
         var result = await sender.Send(new DeleteMyJobPostCommand(id));
 
-        return result.IsSuccess ? Ok() : this.HandleError(result.Error);
+        return result.IsSuccess ? NoContent() : this.HandleError(result.Error);
     }
 }

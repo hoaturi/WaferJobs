@@ -1,5 +1,7 @@
-﻿using JobBoard.Common.Extensions;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Common.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard.Features.JobPost.GetMyJobPostList;
@@ -9,6 +11,7 @@ namespace JobBoard.Features.JobPost.GetMyJobPostList;
 [Route("api/jobs")]
 public class GetMyJobPostListController(ISender sender) : ControllerBase
 {
+    [Authorize(nameof(UserRoles.Business))]
     [HttpGet("me")]
     public async Task<IActionResult> GetMyJobPostList(
         [FromQuery(Name = "status")] string? status,

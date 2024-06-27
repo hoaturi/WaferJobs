@@ -51,7 +51,7 @@ public class CreateFeaturedJobPostCommandHandler(
     {
         if (business?.StripeCustomerId is not null) return business.StripeCustomerId;
 
-        var email = business?.UserId is not null ? currentUser.GetUserEmail() : command.CompanyEmail;
+        var email = business is not null ? currentUser.GetUserEmail() : command.CompanyEmail;
         var name = business?.Name ?? command.CompanyName;
         var stripeCustomerId = await paymentService.CreateStripeCustomer(email, name, business?.Id);
 
@@ -69,7 +69,7 @@ public class CreateFeaturedJobPostCommandHandler(
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
     }
 
-    private static JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity? business)
+    private JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity? business)
     {
         var jobPost = new JobPostEntity
         {
@@ -79,6 +79,7 @@ public class CreateFeaturedJobPostCommandHandler(
             Title = command.Title,
             Description = command.Description,
             CompanyName = command.CompanyName,
+            CompanyEmail = business is not null ? currentUser.GetUserEmail() : command.CompanyEmail,
             CompanyLogoUrl = command.CompanyLogoUrl,
             CompanyWebsiteUrl = command.CompanyWebsiteUrl,
             ApplyUrl = command.ApplyUrl,
@@ -90,7 +91,8 @@ public class CreateFeaturedJobPostCommandHandler(
             BusinessId = business?.Id,
             Tags = command.Tags,
             IsFeatured = true,
-            IsPublished = false
+            IsPublished = false,
+            PublishedAt = null
         };
 
         return jobPost;

@@ -10,6 +10,7 @@ public record GetMyJobPost(
     string Country,
     string? City,
     bool IsPublished,
+    bool IsFeatured,
     bool RequiresPayment,
     DateTime? FeaturedStartDate,
     DateTime? FeaturedEndDate,

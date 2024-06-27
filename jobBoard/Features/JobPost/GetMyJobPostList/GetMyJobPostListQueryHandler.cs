@@ -26,9 +26,8 @@ public class
 
         jobPostListQuery = query.Status switch
         {
-            "active" => jobPostListQuery.Where(j => j.IsPublished == true),
-            "inactive" => jobPostListQuery.Where(j =>
-                !j.IsPublished && j.Payments != null && j.Payments.Count != 0 && j.Payments.Any(p => p.IsProcessed)),
+            "featured" => jobPostListQuery.Where(j => j.IsPublished && j.IsFeatured),
+            "published" => jobPostListQuery.Where(j => j.IsPublished && !j.IsFeatured),
             "requires_payment" => jobPostListQuery.Where(j =>
                 j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed)),
@@ -48,6 +47,7 @@ public class
                 j.Country.Label,
                 j.City,
                 j.IsPublished,
+                j.IsFeatured,
                 j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed),
                 j.FeaturedStartDate,
