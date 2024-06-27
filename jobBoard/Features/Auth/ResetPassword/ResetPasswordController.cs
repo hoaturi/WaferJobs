@@ -13,10 +13,10 @@ public class ResetPasswordController(ISender sender) : ControllerBase
     public async Task<IActionResult> ResetPassword(
         [FromQuery] Guid userId,
         [FromQuery] string token,
-        [FromBody] ResetPasswordRequest request
+        [FromBody] ResetPasswordRequestDto requestDto
     )
     {
-        var command = new ResetPasswordCommand(userId, token, request.Password, request.ConfirmPassword);
+        var command = new ResetPasswordCommand(userId, token, requestDto.Password, requestDto.ConfirmPassword);
 
         var result = await sender.Send(command);
 
