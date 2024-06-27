@@ -14,6 +14,7 @@ public class JobPostEntity : BaseEntity
     public required string Title { get; set; }
     public required string Description { get; set; }
     public required string CompanyName { get; set; }
+    public required string CompanyEmail { get; set; }
     public required string ApplyUrl { get; set; }
     public string? City { get; set; }
     public int? MinSalary { get; set; }

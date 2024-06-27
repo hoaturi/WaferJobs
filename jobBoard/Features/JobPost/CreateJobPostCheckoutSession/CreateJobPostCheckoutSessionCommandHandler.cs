@@ -17,12 +17,14 @@ public class CreateJobPostCheckoutSessionCommandHandler(
     : IRequestHandler<CreateJobPostCheckoutSessionCommand,
         Result<CreateJobPostCheckoutSessionResponse, Error>>
 {
-    public async Task<Result<CreateJobPostCheckoutSessionResponse, Error>> Handle(CreateJobPostCheckoutSessionCommand command,
+    public async Task<Result<CreateJobPostCheckoutSessionResponse, Error>> Handle(
+        CreateJobPostCheckoutSessionCommand command,
         CancellationToken cancellationToken)
     {
         var userId = currentUserService.GetUserId();
 
         var jobPost = await appDbContext.JobPosts
+            .AsNoTracking()
             .Include(j => j.Business)
             .Include(j => j.Payments)
             .Where(j => j.IsFeatured)
@@ -34,14 +36,9 @@ public class CreateJobPostCheckoutSessionCommandHandler(
 
         if (jobPost.Business.UserId != userId) throw new UnauthorizedJobPostAccessException(jobPost.Id, userId);
 
-        var isPaymentRequired = jobPost is { IsFeatured: true, IsPublished: false, Payments: not null } &&
-                                jobPost.Payments.All(p => !p.IsProcessed);
-
-        if (!isPaymentRequired) throw new JobPostAlreadyPublishedException(jobPost.Id);
-
         if (jobPost.Business.StripeCustomerId is null)
             await paymentService.CreateStripeCustomer(
-                currentUserService.GetUserEmail(),
+                jobPost.CompanyEmail,
                 jobPost.Business.Name,
                 jobPost.BusinessId
             );
