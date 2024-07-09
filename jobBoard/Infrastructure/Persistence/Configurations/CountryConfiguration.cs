@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.JobPostEntities;
+using JobBoard.Domain.JobPost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +12,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<CountryEntity>
         builder.Property(c => c.Label).IsRequired().HasMaxLength(50);
         builder.Property(c => c.Code).IsRequired().HasMaxLength(2);
         builder.Property(c => c.Slug).IsRequired().HasMaxLength(50);
+
         builder.HasIndex(c => c.Slug);
 
         var countryJson = File.ReadAllText(
@@ -19,8 +20,6 @@ public class CountryConfiguration : IEntityTypeConfiguration<CountryEntity>
         );
 
         var countries = countryJson.DeserializeWithCaseInsensitivity<List<CountryEntity>>();
-
-        foreach (var country in countries) country.Id = countries.IndexOf(country) + 1;
 
         builder.HasData(countries);
     }
