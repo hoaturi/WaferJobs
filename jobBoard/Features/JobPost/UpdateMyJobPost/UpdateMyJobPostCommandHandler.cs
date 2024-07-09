@@ -45,24 +45,24 @@ public class UpdateMyJobPostCommandHandler(
     private async Task UpdateJobPost(UpdateMyJobPostCommand command, JobPostEntity jobPost,
         CancellationToken cancellationToken)
     {
-        jobPost.CategoryId = command.CategoryId;
-        jobPost.CountryId = command.CountryId;
-        jobPost.EmploymentTypeId = command.EmploymentTypeId;
-        jobPost.Description = command.Description;
-        jobPost.Title = command.Title;
-        jobPost.CompanyName = command.CompanyName;
-        jobPost.ApplyUrl = command.ApplyUrl;
-        jobPost.IsRemote = command.IsRemote;
-        jobPost.CompanyLogoUrl = command.CompanyLogoUrl;
-        jobPost.CompanyWebsiteUrl = command.CompanyWebsiteUrl;
-        jobPost.MinSalary = command.MinSalary;
-        jobPost.MaxSalary = command.MaxSalary;
-        jobPost.Currency = command.Currency;
-        jobPost.Tags = command.Tags;
+        jobPost.CategoryId = command.Dto.CategoryId;
+        jobPost.CountryId = command.Dto.CountryId;
+        jobPost.EmploymentTypeId = command.Dto.EmploymentTypeId;
+        jobPost.Description = command.Dto.Description;
+        jobPost.Title = command.Dto.Title;
+        jobPost.CompanyName = command.Dto.CompanyName;
+        jobPost.ApplyUrl = command.Dto.ApplyUrl;
+        jobPost.IsRemote = command.Dto.IsRemote;
+        jobPost.CompanyLogoUrl = command.Dto.CompanyLogoUrl;
+        jobPost.CompanyWebsiteUrl = command.Dto.CompanyWebsiteUrl;
+        jobPost.MinSalary = command.Dto.MinSalary;
+        jobPost.MaxSalary = command.Dto.MaxSalary;
+        jobPost.Currency = command.Dto.Currency;
+        jobPost.Tags = command.Dto.Tags;
 
-        if (!string.IsNullOrWhiteSpace(command.City))
+        if (!string.IsNullOrWhiteSpace(command.Dto.City))
         {
-            var cityId = await locationService.GetOrCreateCityIdAsync(command.City, cancellationToken);
+            var cityId = await locationService.GetOrCreateCityIdAsync(command.Dto.City, cancellationToken);
             jobPost.CityId = cityId;
         }
         else

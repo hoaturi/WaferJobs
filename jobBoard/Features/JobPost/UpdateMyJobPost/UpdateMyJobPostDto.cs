@@ -7,6 +7,7 @@ public record UpdateMyJobPostDto(
     string Description,
     string Title,
     string CompanyName,
+    string CompanyEmail,
     string ApplyUrl,
     bool IsRemote,
     string? CompanyLogoUrl,

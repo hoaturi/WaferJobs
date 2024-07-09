@@ -17,21 +17,7 @@ public class UpdateMyJobPostController(ISender sender) : ControllerBase
     {
         var command = new UpdateMyJobPostCommand(
             id,
-            dto.CategoryId,
-            dto.CountryId,
-            dto.EmploymentTypeId,
-            dto.Description,
-            dto.Title,
-            dto.CompanyName,
-            dto.ApplyUrl,
-            dto.IsRemote,
-            dto.CompanyLogoUrl,
-            dto.CompanyWebsiteUrl,
-            dto.City,
-            dto.MinSalary,
-            dto.MaxSalary,
-            dto.Currency,
-            dto.Tags
+            dto
         );
 
         var result = await sender.Send(command);

@@ -6,30 +6,31 @@ public class UpdateMyJobPostCommandValidator : AbstractValidator<UpdateMyJobPost
 {
     public UpdateMyJobPostCommandValidator()
     {
-        RuleFor(x => x.CategoryId).NotEmpty();
-        RuleFor(x => x.CountryId).NotEmpty();
-        RuleFor(x => x.EmploymentTypeId).NotEmpty();
-        RuleFor(x => x.Title).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Description).NotEmpty().MaximumLength(10000);
-        RuleFor(x => x.City).MaximumLength(50);
-        RuleFor(x => x.ApplyUrl).MaximumLength(2000);
-        RuleFor(x => x.CompanyName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.CompanyLogoUrl).MaximumLength(2000);
-        RuleFor(x => x.CompanyWebsiteUrl).MaximumLength(2000);
-        RuleFor(x => x.IsRemote).NotNull();
-        RuleFor(x => x.MinSalary).GreaterThanOrEqualTo(0);
-        RuleFor(x => x.MaxSalary)
+        RuleFor(x => x.Dto.CategoryId).NotEmpty();
+        RuleFor(x => x.Dto.CountryId).NotEmpty();
+        RuleFor(x => x.Dto.EmploymentTypeId).NotEmpty();
+        RuleFor(x => x.Dto.Title).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Dto.Description).NotEmpty().MaximumLength(10000);
+        RuleFor(x => x.Dto.City).MaximumLength(50);
+        RuleFor(x => x.Dto.ApplyUrl).MaximumLength(2000);
+        RuleFor(x => x.Dto.CompanyName).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Dto.CompanyEmail).NotEmpty().EmailAddress().MaximumLength(100);
+        RuleFor(x => x.Dto.CompanyLogoUrl).MaximumLength(2000);
+        RuleFor(x => x.Dto.CompanyWebsiteUrl).MaximumLength(2000);
+        RuleFor(x => x.Dto.IsRemote).NotNull();
+        RuleFor(x => x.Dto.MinSalary).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.Dto.MaxSalary)
             .GreaterThanOrEqualTo(0)
             .Must(
                 (command, maxSalary) =>
                 {
-                    if (command.MinSalary.HasValue && maxSalary.HasValue)
-                        return maxSalary > command.MinSalary;
+                    if (command.Dto.MinSalary.HasValue && maxSalary.HasValue)
+                        return maxSalary > command.Dto.MinSalary;
                     return true;
                 }
             )
             .WithMessage("MaxSalary must be greater than MinSalary");
-        RuleFor(x => x.Currency).Length(3);
-        RuleFor(x => x.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
+        RuleFor(x => x.Dto.Currency).Length(3);
+        RuleFor(x => x.Dto.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
     }
 }
