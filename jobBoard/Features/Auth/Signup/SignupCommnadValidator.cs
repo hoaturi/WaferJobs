@@ -7,6 +7,8 @@ public class SignupCommandValidator : AbstractValidator<SignUpCommand>
 {
     public SignupCommandValidator()
     {
+        RuleFor(x => x.Name).MaximumLength(50);
+
         RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Invalid email address");
 
         RuleFor(x => x.Password)
