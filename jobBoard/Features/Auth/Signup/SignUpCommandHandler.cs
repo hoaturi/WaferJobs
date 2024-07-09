@@ -23,21 +23,12 @@ public class SignUpCommandHandler(
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
         var existingUser = await userManager.FindByEmailAsync(command.Email);
-        if (existingUser is not null)
-        {
-            logger.LogWarning("User with email {Email} already exists", command.Email);
-            return AuthErrors.UserAlreadyExists;
-        }
+        if (existingUser is not null) return AuthErrors.UserAlreadyExists;
 
         var newUser = new ApplicationUserEntity { UserName = command.Email, Email = command.Email };
-        var createUserResult = await userManager.CreateAsync(newUser, command.Password);
-        if (!createUserResult.Succeeded)
-            logger.LogError("Failed to create user with email {Email}.", command.Email);
+        await userManager.CreateAsync(newUser, command.Password);
 
-        var addRoleResult = await userManager.AddToRoleAsync(newUser, command.Role);
-        if (!addRoleResult.Succeeded)
-            logger.LogError("Failed to add user with email {Email} to role {Role}.", command.Email,
-                command.Role);
+        await userManager.AddToRoleAsync(newUser, command.Role);
 
         if (command.Role == nameof(UserRoles.Business))
             await CreateBusiness(command, newUser, cancellationToken);

@@ -17,11 +17,7 @@ public class ResetPasswordCommandHandler(
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
 
-        if (user is null)
-        {
-            logger.LogWarning("Failed to find user with id: {UserId}", command.UserId);
-            return AuthErrors.UserNotFound;
-        }
+        if (user is null) throw new UserNotFoundException(command.UserId);
 
         var resetResult = await userManager.ResetPasswordAsync(user, command.Token, command.Password);
 
