@@ -10,12 +10,12 @@ public record GetMyJobPostResponse(
     bool IsRemote,
     bool IsFeatured,
     string CompanyName,
+    string CompanyEmail,
     string? City,
     int? MinSalary,
     int? MaxSalary,
     string? Currency,
     string? ApplyUrl,
-    Guid? BusinessId,
     string? CompanyLogoUrl,
     string? CompanyWebsiteUrl,
     List<string>? Tags

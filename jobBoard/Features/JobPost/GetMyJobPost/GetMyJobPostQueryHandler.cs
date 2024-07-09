@@ -32,12 +32,12 @@ public class
                 j.IsRemote,
                 j.IsFeatured,
                 j.CompanyName,
+                j.CompanyEmail,
                 j.City != null ? j.City.Label : null,
                 j.MinSalary,
                 j.MaxSalary,
                 j.Currency,
                 j.ApplyUrl,
-                j.BusinessId,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
                 j.Tags,
@@ -45,34 +45,34 @@ public class
             ))
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (jobPost == null) throw new JobPostNotFoundException(query.Id);
+        if (jobPost is null) throw new JobPostNotFoundException(query.Id);
 
         if (jobPost.UserId != userId) throw new UnauthorizedJobPostAccessException(query.Id, userId);
 
         return MapToResponse(jobPost);
     }
 
-    private static GetMyJobPostResponse MapToResponse(GetMyJobPostDto getMyJobPost)
+    private static GetMyJobPostResponse MapToResponse(GetMyJobPostDto dto)
     {
         return new GetMyJobPostResponse(
-            getMyJobPost.Id,
-            getMyJobPost.Category,
-            getMyJobPost.Country,
-            getMyJobPost.EmploymentType,
-            getMyJobPost.Title,
-            getMyJobPost.Description,
-            getMyJobPost.IsRemote,
-            getMyJobPost.IsFeatured,
-            getMyJobPost.CompanyName,
-            getMyJobPost.City,
-            getMyJobPost.MinSalary,
-            getMyJobPost.MaxSalary,
-            getMyJobPost.Currency,
-            getMyJobPost.ApplyUrl,
-            getMyJobPost.BusinessId,
-            getMyJobPost.CompanyLogoUrl,
-            getMyJobPost.CompanyWebsiteUrl,
-            getMyJobPost.Tags
+            dto.Id,
+            dto.Category,
+            dto.Country,
+            dto.EmploymentType,
+            dto.Title,
+            dto.Description,
+            dto.IsRemote,
+            dto.IsFeatured,
+            dto.CompanyName,
+            dto.CompanyEmail,
+            dto.City,
+            dto.MinSalary,
+            dto.MaxSalary,
+            dto.Currency,
+            dto.ApplyUrl,
+            dto.CompanyLogoUrl,
+            dto.CompanyWebsiteUrl,
+            dto.Tags
         );
     }
 }
