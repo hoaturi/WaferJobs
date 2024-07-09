@@ -34,8 +34,9 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             jobPostListQuery = jobPostListQuery.Where(predicate);
         }
 
-        if (query.Country is not null)
-            jobPostListQuery = jobPostListQuery.Where(j => query.Country == j.Country.Slug);
+        if (query.Location is not null)
+            jobPostListQuery = jobPostListQuery.Where(j =>
+                query.Location == j.Country.Slug || (j.City != null && query.Location == j.City.Slug));
 
         if (query.Remote is not null)
             jobPostListQuery = jobPostListQuery.Where(j => j.IsRemote);
@@ -62,7 +63,7 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
                 j.IsRemote,
                 j.IsFeatured,
                 j.CompanyName,
-                j.City,
+                j.City != null ? j.City.Label : null,
                 j.MinSalary,
                 j.MaxSalary,
                 j.Currency,

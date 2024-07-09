@@ -45,7 +45,7 @@ public class
                 j.Category.Label,
                 j.EmploymentType.Label,
                 j.Country.Label,
-                j.City,
+                j.City != null ? j.City.Label : null,
                 j.IsPublished,
                 j.IsFeatured,
                 j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&

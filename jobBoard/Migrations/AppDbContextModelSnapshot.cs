@@ -377,166 +377,42 @@ namespace JobBoard.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostEntity", b =>
+            modelBuilder.Entity("JobBoard.Domain.JobPost.CityEntity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ApplyUrl")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<Guid?>("BusinessId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("City")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("CompanyLogoUrl")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("CompanyWebsiteUrl")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("integer");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Currency")
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("Label")
                         .IsRequired()
-                        .HasMaxLength(10000)
-                        .HasColumnType("character varying(10000)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<int>("EmploymentTypeId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("FeaturedEndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("FeaturedStartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsFeatured")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsRemote")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("MaxSalary")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MinSalary")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("PublishedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<List<string>>("Tags")
-                        .HasColumnType("text[]");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Slug")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CompanyName");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CompanyName"), "GIN");
-                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("CompanyName"), new[] { "gin_trgm_ops" });
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("Description");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Description"), "GIN");
-                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Description"), new[] { "gin_trgm_ops" });
-
-                    b.HasIndex("EmploymentTypeId");
-
-                    b.HasIndex("Tags");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Tags"), "GIN");
-
-                    b.HasIndex("Title");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Title"), "GIN");
-                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Title"), new[] { "gin_trgm_ops" });
-
-                    b.ToTable("JobPosts");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostPaymentEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CheckoutSessionId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("EventId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<bool>("IsProcessed")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("JobPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CheckoutSessionId")
+                    b.HasIndex("Label")
                         .IsUnique();
 
-                    b.HasIndex("JobPostId");
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
-                    b.ToTable("JobPostPayments");
+                    b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("JobBoard.Domain.JobPostEntities.CountryEntity", b =>
+            modelBuilder.Entity("JobBoard.Domain.JobPost.CountryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -576,86 +452,86 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 2,
+                            Code = "AX",
+                            Label = "Åland Islands",
+                            Slug = "aland-islands"
+                        },
+                        new
+                        {
+                            Id = 3,
                             Code = "AL",
                             Label = "Albania",
                             Slug = "albania"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             Code = "DZ",
                             Label = "Algeria",
                             Slug = "algeria"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 5,
                             Code = "AS",
                             Label = "American Samoa",
                             Slug = "american-samoa"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 6,
                             Code = "AD",
                             Label = "Andorra",
                             Slug = "andorra"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 7,
                             Code = "AO",
                             Label = "Angola",
                             Slug = "angola"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 8,
                             Code = "AI",
                             Label = "Anguilla",
                             Slug = "anguilla"
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9,
                             Code = "AQ",
                             Label = "Antarctica",
                             Slug = "antarctica"
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 10,
                             Code = "AG",
                             Label = "Antigua and Barbuda",
                             Slug = "antigua-and-barbuda"
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 11,
                             Code = "AR",
                             Label = "Argentina",
                             Slug = "argentina"
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 12,
                             Code = "AM",
                             Label = "Armenia",
                             Slug = "armenia"
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 13,
                             Code = "AW",
                             Label = "Aruba",
                             Slug = "aruba"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Code = "AP",
-                            Label = "Asia/Pacific Region",
-                            Slug = "asia/pacific-region"
                         },
                         new
                         {
@@ -760,7 +636,7 @@ namespace JobBoard.Migrations
                             Id = 28,
                             Code = "BQ",
                             Label = "Bonaire, Sint Eustatius and Saba",
-                            Slug = "bonaire,-sint-eustatius-and-saba"
+                            Slug = "bonaire-sint-eustatius-and-saba"
                         },
                         new
                         {
@@ -828,30 +704,30 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 38,
+                            Code = "CV",
+                            Label = "Cabo Verde",
+                            Slug = "cabo-verde"
+                        },
+                        new
+                        {
+                            Id = 39,
                             Code = "KH",
                             Label = "Cambodia",
                             Slug = "cambodia"
                         },
                         new
                         {
-                            Id = 39,
+                            Id = 40,
                             Code = "CM",
                             Label = "Cameroon",
                             Slug = "cameroon"
                         },
                         new
                         {
-                            Id = 40,
+                            Id = 41,
                             Code = "CA",
                             Label = "Canada",
                             Slug = "canada"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            Code = "CV",
-                            Label = "Cape Verde",
-                            Slug = "cape-verde"
                         },
                         new
                         {
@@ -900,7 +776,7 @@ namespace JobBoard.Migrations
                             Id = 48,
                             Code = "CC",
                             Label = "Cocos (Keeling) Islands",
-                            Slug = "cocos-(keeling)-islands"
+                            Slug = "cocos-keeling-islands"
                         },
                         new
                         {
@@ -926,23 +802,23 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 52,
-                            Code = "CD",
-                            Label = "Congo, The Democratic Republic of the",
-                            Slug = "congo,-the-democratic-republic-of-the"
-                        },
-                        new
-                        {
-                            Id = 53,
                             Code = "CK",
                             Label = "Cook Islands",
                             Slug = "cook-islands"
                         },
                         new
                         {
-                            Id = 54,
+                            Id = 53,
                             Code = "CR",
                             Label = "Costa Rica",
                             Slug = "costa-rica"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Code = "CI",
+                            Label = "Côte d'Ivoire",
+                            Slug = "cote-divoire"
                         },
                         new
                         {
@@ -963,7 +839,7 @@ namespace JobBoard.Migrations
                             Id = 57,
                             Code = "CW",
                             Label = "Curaçao",
-                            Slug = "curaçao"
+                            Slug = "curacao"
                         },
                         new
                         {
@@ -976,22 +852,22 @@ namespace JobBoard.Migrations
                         {
                             Id = 59,
                             Code = "CZ",
-                            Label = "Czech Republic",
-                            Slug = "czech-republic"
+                            Label = "Czechia",
+                            Slug = "czechia"
                         },
                         new
                         {
                             Id = 60,
-                            Code = "CI",
-                            Label = "Côte d'Ivoire",
-                            Slug = "côte-d'ivoire"
+                            Code = "DK",
+                            Label = "Denmark",
+                            Slug = "denmark"
                         },
                         new
                         {
                             Id = 61,
-                            Code = "DK",
-                            Label = "Denmark",
-                            Slug = "denmark"
+                            Code = "CD",
+                            Label = "Democratic Republic of Congo",
+                            Slug = "democratic-republic-of-congo"
                         },
                         new
                         {
@@ -1059,338 +935,338 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 71,
+                            Code = "SZ",
+                            Label = "Eswatini",
+                            Slug = "eswatini"
+                        },
+                        new
+                        {
+                            Id = 72,
                             Code = "ET",
                             Label = "Ethiopia",
                             Slug = "ethiopia"
                         },
                         new
                         {
-                            Id = 72,
+                            Id = 73,
                             Code = "FK",
-                            Label = "Falkland Islands (Malvinas)",
-                            Slug = "falkland-islands-(malvinas)"
+                            Label = "Falkland Islands",
+                            Slug = "falkland-islands"
                         },
                         new
                         {
-                            Id = 73,
+                            Id = 74,
                             Code = "FO",
                             Label = "Faroe Islands",
                             Slug = "faroe-islands"
                         },
                         new
                         {
-                            Id = 74,
+                            Id = 75,
                             Code = "FJ",
                             Label = "Fiji",
                             Slug = "fiji"
                         },
                         new
                         {
-                            Id = 75,
+                            Id = 76,
                             Code = "FI",
                             Label = "Finland",
                             Slug = "finland"
                         },
                         new
                         {
-                            Id = 76,
+                            Id = 77,
                             Code = "FR",
                             Label = "France",
                             Slug = "france"
                         },
                         new
                         {
-                            Id = 77,
+                            Id = 78,
                             Code = "GF",
                             Label = "French Guiana",
                             Slug = "french-guiana"
                         },
                         new
                         {
-                            Id = 78,
+                            Id = 79,
                             Code = "PF",
                             Label = "French Polynesia",
                             Slug = "french-polynesia"
                         },
                         new
                         {
-                            Id = 79,
+                            Id = 80,
                             Code = "TF",
                             Label = "French Southern Territories",
                             Slug = "french-southern-territories"
                         },
                         new
                         {
-                            Id = 80,
+                            Id = 81,
                             Code = "GA",
                             Label = "Gabon",
                             Slug = "gabon"
                         },
                         new
                         {
-                            Id = 81,
+                            Id = 82,
                             Code = "GM",
                             Label = "Gambia",
                             Slug = "gambia"
                         },
                         new
                         {
-                            Id = 82,
+                            Id = 83,
                             Code = "GE",
                             Label = "Georgia",
                             Slug = "georgia"
                         },
                         new
                         {
-                            Id = 83,
+                            Id = 84,
                             Code = "DE",
                             Label = "Germany",
                             Slug = "germany"
                         },
                         new
                         {
-                            Id = 84,
+                            Id = 85,
                             Code = "GH",
                             Label = "Ghana",
                             Slug = "ghana"
                         },
                         new
                         {
-                            Id = 85,
+                            Id = 86,
                             Code = "GI",
                             Label = "Gibraltar",
                             Slug = "gibraltar"
                         },
                         new
                         {
-                            Id = 86,
+                            Id = 87,
                             Code = "GR",
                             Label = "Greece",
                             Slug = "greece"
                         },
                         new
                         {
-                            Id = 87,
+                            Id = 88,
                             Code = "GL",
                             Label = "Greenland",
                             Slug = "greenland"
                         },
                         new
                         {
-                            Id = 88,
+                            Id = 89,
                             Code = "GD",
                             Label = "Grenada",
                             Slug = "grenada"
                         },
                         new
                         {
-                            Id = 89,
+                            Id = 90,
                             Code = "GP",
                             Label = "Guadeloupe",
                             Slug = "guadeloupe"
                         },
                         new
                         {
-                            Id = 90,
+                            Id = 91,
                             Code = "GU",
                             Label = "Guam",
                             Slug = "guam"
                         },
                         new
                         {
-                            Id = 91,
+                            Id = 92,
                             Code = "GT",
                             Label = "Guatemala",
                             Slug = "guatemala"
                         },
                         new
                         {
-                            Id = 92,
+                            Id = 93,
                             Code = "GG",
                             Label = "Guernsey",
                             Slug = "guernsey"
                         },
                         new
                         {
-                            Id = 93,
+                            Id = 94,
                             Code = "GN",
                             Label = "Guinea",
                             Slug = "guinea"
                         },
                         new
                         {
-                            Id = 94,
+                            Id = 95,
                             Code = "GW",
                             Label = "Guinea-Bissau",
                             Slug = "guinea-bissau"
                         },
                         new
                         {
-                            Id = 95,
+                            Id = 96,
                             Code = "GY",
                             Label = "Guyana",
                             Slug = "guyana"
                         },
                         new
                         {
-                            Id = 96,
+                            Id = 97,
                             Code = "HT",
                             Label = "Haiti",
                             Slug = "haiti"
                         },
                         new
                         {
-                            Id = 97,
+                            Id = 98,
                             Code = "HM",
-                            Label = "Heard Island and Mcdonald Islands",
+                            Label = "Heard Island and McDonald Islands",
                             Slug = "heard-island-and-mcdonald-islands"
                         },
                         new
                         {
-                            Id = 98,
+                            Id = 99,
                             Code = "VA",
-                            Label = "Holy See (Vatican City State)",
-                            Slug = "holy-see-(vatican-city-state)"
+                            Label = "Holy See",
+                            Slug = "holy-see"
                         },
                         new
                         {
-                            Id = 99,
+                            Id = 100,
                             Code = "HN",
                             Label = "Honduras",
                             Slug = "honduras"
                         },
                         new
                         {
-                            Id = 100,
+                            Id = 101,
                             Code = "HK",
                             Label = "Hong Kong",
                             Slug = "hong-kong"
                         },
                         new
                         {
-                            Id = 101,
+                            Id = 102,
                             Code = "HU",
                             Label = "Hungary",
                             Slug = "hungary"
                         },
                         new
                         {
-                            Id = 102,
+                            Id = 103,
                             Code = "IS",
                             Label = "Iceland",
                             Slug = "iceland"
                         },
                         new
                         {
-                            Id = 103,
+                            Id = 104,
                             Code = "IN",
                             Label = "India",
                             Slug = "india"
                         },
                         new
                         {
-                            Id = 104,
+                            Id = 105,
                             Code = "ID",
                             Label = "Indonesia",
                             Slug = "indonesia"
                         },
                         new
                         {
-                            Id = 105,
+                            Id = 106,
                             Code = "IR",
-                            Label = "Iran, Islamic Republic Of",
-                            Slug = "iran,-islamic-republic-of"
+                            Label = "Iran",
+                            Slug = "iran"
                         },
                         new
                         {
-                            Id = 106,
+                            Id = 107,
                             Code = "IQ",
                             Label = "Iraq",
                             Slug = "iraq"
                         },
                         new
                         {
-                            Id = 107,
+                            Id = 108,
                             Code = "IE",
                             Label = "Ireland",
                             Slug = "ireland"
                         },
                         new
                         {
-                            Id = 108,
+                            Id = 109,
                             Code = "IM",
                             Label = "Isle of Man",
                             Slug = "isle-of-man"
                         },
                         new
                         {
-                            Id = 109,
+                            Id = 110,
                             Code = "IL",
                             Label = "Israel",
                             Slug = "israel"
                         },
                         new
                         {
-                            Id = 110,
+                            Id = 111,
                             Code = "IT",
                             Label = "Italy",
                             Slug = "italy"
                         },
                         new
                         {
-                            Id = 111,
+                            Id = 112,
                             Code = "JM",
                             Label = "Jamaica",
                             Slug = "jamaica"
                         },
                         new
                         {
-                            Id = 112,
+                            Id = 113,
                             Code = "JP",
                             Label = "Japan",
                             Slug = "japan"
                         },
                         new
                         {
-                            Id = 113,
+                            Id = 114,
                             Code = "JE",
                             Label = "Jersey",
                             Slug = "jersey"
                         },
                         new
                         {
-                            Id = 114,
+                            Id = 115,
                             Code = "JO",
                             Label = "Jordan",
                             Slug = "jordan"
                         },
                         new
                         {
-                            Id = 115,
+                            Id = 116,
                             Code = "KZ",
                             Label = "Kazakhstan",
                             Slug = "kazakhstan"
                         },
                         new
                         {
-                            Id = 116,
+                            Id = 117,
                             Code = "KE",
                             Label = "Kenya",
                             Slug = "kenya"
                         },
                         new
                         {
-                            Id = 117,
+                            Id = 118,
                             Code = "KI",
                             Label = "Kiribati",
                             Slug = "kiribati"
-                        },
-                        new
-                        {
-                            Id = 118,
-                            Code = "KR",
-                            Label = "Korea, Republic of",
-                            Slug = "korea,-republic-of"
                         },
                         new
                         {
@@ -1445,8 +1321,8 @@ namespace JobBoard.Migrations
                         {
                             Id = 126,
                             Code = "LY",
-                            Label = "Libyan Arab Jamahiriya",
-                            Slug = "libyan-arab-jamahiriya"
+                            Label = "Libya",
+                            Slug = "libya"
                         },
                         new
                         {
@@ -1564,15 +1440,15 @@ namespace JobBoard.Migrations
                         {
                             Id = 143,
                             Code = "FM",
-                            Label = "Micronesia, Federated States of",
-                            Slug = "micronesia,-federated-states-of"
+                            Label = "Micronesia",
+                            Slug = "micronesia"
                         },
                         new
                         {
                             Id = 144,
                             Code = "MD",
-                            Label = "Moldova, Republic of",
-                            Slug = "moldova,-republic-of"
+                            Label = "Moldova",
+                            Slug = "moldova"
                         },
                         new
                         {
@@ -1654,58 +1530,58 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 156,
-                            Code = "AN",
-                            Label = "Netherlands Antilles",
-                            Slug = "netherlands-antilles"
-                        },
-                        new
-                        {
-                            Id = 157,
                             Code = "NC",
                             Label = "New Caledonia",
                             Slug = "new-caledonia"
                         },
                         new
                         {
-                            Id = 158,
+                            Id = 157,
                             Code = "NZ",
                             Label = "New Zealand",
                             Slug = "new-zealand"
                         },
                         new
                         {
-                            Id = 159,
+                            Id = 158,
                             Code = "NI",
                             Label = "Nicaragua",
                             Slug = "nicaragua"
                         },
                         new
                         {
-                            Id = 160,
+                            Id = 159,
                             Code = "NE",
                             Label = "Niger",
                             Slug = "niger"
                         },
                         new
                         {
-                            Id = 161,
+                            Id = 160,
                             Code = "NG",
                             Label = "Nigeria",
                             Slug = "nigeria"
                         },
                         new
                         {
-                            Id = 162,
+                            Id = 161,
                             Code = "NU",
                             Label = "Niue",
                             Slug = "niue"
                         },
                         new
                         {
-                            Id = 163,
+                            Id = 162,
                             Code = "NF",
                             Label = "Norfolk Island",
                             Slug = "norfolk-island"
+                        },
+                        new
+                        {
+                            Id = 163,
+                            Code = "MK",
+                            Label = "North Macedonia",
+                            Slug = "north-macedonia"
                         },
                         new
                         {
@@ -1717,626 +1593,778 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 165,
-                            Code = "MK",
-                            Label = "North Macedonia",
-                            Slug = "north-macedonia"
-                        },
-                        new
-                        {
-                            Id = 166,
                             Code = "MP",
                             Label = "Northern Mariana Islands",
                             Slug = "northern-mariana-islands"
                         },
                         new
                         {
-                            Id = 167,
+                            Id = 166,
                             Code = "NO",
                             Label = "Norway",
                             Slug = "norway"
                         },
                         new
                         {
-                            Id = 168,
+                            Id = 167,
                             Code = "OM",
                             Label = "Oman",
                             Slug = "oman"
                         },
                         new
                         {
-                            Id = 169,
+                            Id = 168,
                             Code = "PK",
                             Label = "Pakistan",
                             Slug = "pakistan"
                         },
                         new
                         {
-                            Id = 170,
+                            Id = 169,
                             Code = "PW",
                             Label = "Palau",
                             Slug = "palau"
                         },
                         new
                         {
-                            Id = 171,
+                            Id = 170,
                             Code = "PS",
-                            Label = "Palestinian Territory, Occupied",
-                            Slug = "palestinian-territory,-occupied"
+                            Label = "Palestine",
+                            Slug = "palestine"
                         },
                         new
                         {
-                            Id = 172,
+                            Id = 171,
                             Code = "PA",
                             Label = "Panama",
                             Slug = "panama"
                         },
                         new
                         {
-                            Id = 173,
+                            Id = 172,
                             Code = "PG",
                             Label = "Papua New Guinea",
                             Slug = "papua-new-guinea"
                         },
                         new
                         {
-                            Id = 174,
+                            Id = 173,
                             Code = "PY",
                             Label = "Paraguay",
                             Slug = "paraguay"
                         },
                         new
                         {
-                            Id = 175,
+                            Id = 174,
                             Code = "PE",
                             Label = "Peru",
                             Slug = "peru"
                         },
                         new
                         {
-                            Id = 176,
+                            Id = 175,
                             Code = "PH",
                             Label = "Philippines",
                             Slug = "philippines"
                         },
                         new
                         {
-                            Id = 177,
+                            Id = 176,
                             Code = "PN",
-                            Label = "Pitcairn Islands",
-                            Slug = "pitcairn-islands"
+                            Label = "Pitcairn",
+                            Slug = "pitcairn"
                         },
                         new
                         {
-                            Id = 178,
+                            Id = 177,
                             Code = "PL",
                             Label = "Poland",
                             Slug = "poland"
                         },
                         new
                         {
-                            Id = 179,
+                            Id = 178,
                             Code = "PT",
                             Label = "Portugal",
                             Slug = "portugal"
                         },
                         new
                         {
-                            Id = 180,
+                            Id = 179,
                             Code = "PR",
                             Label = "Puerto Rico",
                             Slug = "puerto-rico"
                         },
                         new
                         {
-                            Id = 181,
+                            Id = 180,
                             Code = "QA",
                             Label = "Qatar",
                             Slug = "qatar"
                         },
                         new
                         {
-                            Id = 182,
+                            Id = 181,
                             Code = "RE",
-                            Label = "Reunion",
+                            Label = "Réunion",
                             Slug = "reunion"
                         },
                         new
                         {
-                            Id = 183,
+                            Id = 182,
                             Code = "RO",
                             Label = "Romania",
                             Slug = "romania"
                         },
                         new
                         {
-                            Id = 184,
+                            Id = 183,
                             Code = "RU",
-                            Label = "Russian Federation",
-                            Slug = "russian-federation"
+                            Label = "Russia",
+                            Slug = "russia"
                         },
                         new
                         {
-                            Id = 185,
+                            Id = 184,
                             Code = "RW",
                             Label = "Rwanda",
                             Slug = "rwanda"
                         },
                         new
                         {
-                            Id = 186,
+                            Id = 185,
                             Code = "BL",
                             Label = "Saint Barthélemy",
-                            Slug = "saint-barthélemy"
+                            Slug = "saint-barthelemy"
+                        },
+                        new
+                        {
+                            Id = 186,
+                            Code = "SH",
+                            Label = "Saint Helena, Ascension and Tristan da Cunha",
+                            Slug = "saint-helena-ascension-and-tristan-da-cunha"
                         },
                         new
                         {
                             Id = 187,
-                            Code = "SH",
-                            Label = "Saint Helena",
-                            Slug = "saint-helena"
-                        },
-                        new
-                        {
-                            Id = 188,
                             Code = "KN",
                             Label = "Saint Kitts and Nevis",
                             Slug = "saint-kitts-and-nevis"
                         },
                         new
                         {
-                            Id = 189,
+                            Id = 188,
                             Code = "LC",
                             Label = "Saint Lucia",
                             Slug = "saint-lucia"
                         },
                         new
                         {
+                            Id = 189,
+                            Code = "MF",
+                            Label = "Saint Martin (French part)",
+                            Slug = "saint-martin-french-part"
+                        },
+                        new
+                        {
                             Id = 190,
-                            Code = "MF",
-                            Label = "Saint Martin",
-                            Slug = "saint-martin"
-                        },
-                        new
-                        {
-                            Id = 191,
-                            Code = "MF",
-                            Label = "Saint Martin",
-                            Slug = "saint-martin"
-                        },
-                        new
-                        {
-                            Id = 192,
                             Code = "PM",
                             Label = "Saint Pierre and Miquelon",
                             Slug = "saint-pierre-and-miquelon"
                         },
                         new
                         {
-                            Id = 193,
+                            Id = 191,
                             Code = "VC",
                             Label = "Saint Vincent and the Grenadines",
                             Slug = "saint-vincent-and-the-grenadines"
                         },
                         new
                         {
-                            Id = 194,
+                            Id = 192,
                             Code = "WS",
                             Label = "Samoa",
                             Slug = "samoa"
                         },
                         new
                         {
-                            Id = 195,
+                            Id = 193,
                             Code = "SM",
                             Label = "San Marino",
                             Slug = "san-marino"
                         },
                         new
                         {
-                            Id = 196,
+                            Id = 194,
                             Code = "ST",
                             Label = "Sao Tome and Principe",
                             Slug = "sao-tome-and-principe"
                         },
                         new
                         {
-                            Id = 197,
+                            Id = 195,
                             Code = "SA",
                             Label = "Saudi Arabia",
                             Slug = "saudi-arabia"
                         },
                         new
                         {
-                            Id = 198,
+                            Id = 196,
                             Code = "SN",
                             Label = "Senegal",
                             Slug = "senegal"
                         },
                         new
                         {
-                            Id = 199,
+                            Id = 197,
                             Code = "RS",
                             Label = "Serbia",
                             Slug = "serbia"
                         },
                         new
                         {
-                            Id = 200,
-                            Code = "CS",
-                            Label = "Serbia and Montenegro",
-                            Slug = "serbia-and-montenegro"
-                        },
-                        new
-                        {
-                            Id = 201,
+                            Id = 198,
                             Code = "SC",
                             Label = "Seychelles",
                             Slug = "seychelles"
                         },
                         new
                         {
-                            Id = 202,
+                            Id = 199,
                             Code = "SL",
                             Label = "Sierra Leone",
                             Slug = "sierra-leone"
                         },
                         new
                         {
-                            Id = 203,
+                            Id = 200,
                             Code = "SG",
                             Label = "Singapore",
                             Slug = "singapore"
                         },
                         new
                         {
-                            Id = 204,
+                            Id = 201,
                             Code = "SX",
                             Label = "Sint Maarten",
                             Slug = "sint-maarten"
                         },
                         new
                         {
-                            Id = 205,
+                            Id = 202,
                             Code = "SK",
                             Label = "Slovakia",
                             Slug = "slovakia"
                         },
                         new
                         {
-                            Id = 206,
+                            Id = 203,
                             Code = "SI",
                             Label = "Slovenia",
                             Slug = "slovenia"
                         },
                         new
                         {
-                            Id = 207,
+                            Id = 204,
                             Code = "SB",
                             Label = "Solomon Islands",
                             Slug = "solomon-islands"
                         },
                         new
                         {
-                            Id = 208,
+                            Id = 205,
                             Code = "SO",
                             Label = "Somalia",
                             Slug = "somalia"
                         },
                         new
                         {
-                            Id = 209,
+                            Id = 206,
                             Code = "ZA",
                             Label = "South Africa",
                             Slug = "south-africa"
                         },
                         new
                         {
-                            Id = 210,
+                            Id = 207,
                             Code = "GS",
                             Label = "South Georgia and the South Sandwich Islands",
                             Slug = "south-georgia-and-the-south-sandwich-islands"
                         },
                         new
                         {
-                            Id = 211,
+                            Id = 208,
+                            Code = "KR",
+                            Label = "South Korea",
+                            Slug = "South korea"
+                        },
+                        new
+                        {
+                            Id = 209,
                             Code = "SS",
                             Label = "South Sudan",
                             Slug = "south-sudan"
                         },
                         new
                         {
-                            Id = 212,
+                            Id = 210,
                             Code = "ES",
                             Label = "Spain",
                             Slug = "spain"
                         },
                         new
                         {
-                            Id = 213,
+                            Id = 211,
                             Code = "LK",
                             Label = "Sri Lanka",
                             Slug = "sri-lanka"
                         },
                         new
                         {
-                            Id = 214,
+                            Id = 212,
                             Code = "SD",
                             Label = "Sudan",
                             Slug = "sudan"
                         },
                         new
                         {
-                            Id = 215,
+                            Id = 213,
                             Code = "SR",
                             Label = "Surilabel",
                             Slug = "surilabel"
                         },
                         new
                         {
-                            Id = 216,
+                            Id = 214,
                             Code = "SJ",
                             Label = "Svalbard and Jan Mayen",
                             Slug = "svalbard-and-jan-mayen"
                         },
                         new
                         {
-                            Id = 217,
-                            Code = "SZ",
-                            Label = "Swaziland",
-                            Slug = "swaziland"
-                        },
-                        new
-                        {
-                            Id = 218,
+                            Id = 215,
                             Code = "SE",
                             Label = "Sweden",
                             Slug = "sweden"
                         },
                         new
                         {
-                            Id = 219,
+                            Id = 216,
                             Code = "CH",
                             Label = "Switzerland",
                             Slug = "switzerland"
                         },
                         new
                         {
-                            Id = 220,
+                            Id = 217,
                             Code = "SY",
-                            Label = "Syrian Arab Republic",
-                            Slug = "syrian-arab-republic"
+                            Label = "Syria",
+                            Slug = "syria"
                         },
                         new
                         {
-                            Id = 221,
+                            Id = 218,
                             Code = "TW",
                             Label = "Taiwan",
                             Slug = "taiwan"
                         },
                         new
                         {
-                            Id = 222,
+                            Id = 219,
                             Code = "TJ",
                             Label = "Tajikistan",
                             Slug = "tajikistan"
                         },
                         new
                         {
-                            Id = 223,
+                            Id = 220,
                             Code = "TZ",
-                            Label = "Tanzania, United Republic of",
-                            Slug = "tanzania,-united-republic-of"
+                            Label = "Tanzania",
+                            Slug = "tanzania"
                         },
                         new
                         {
-                            Id = 224,
+                            Id = 221,
                             Code = "TH",
                             Label = "Thailand",
                             Slug = "thailand"
                         },
                         new
                         {
-                            Id = 225,
+                            Id = 222,
                             Code = "TL",
                             Label = "Timor-Leste",
                             Slug = "timor-leste"
                         },
                         new
                         {
-                            Id = 226,
+                            Id = 223,
                             Code = "TG",
                             Label = "Togo",
                             Slug = "togo"
                         },
                         new
                         {
-                            Id = 227,
+                            Id = 224,
                             Code = "TK",
                             Label = "Tokelau",
                             Slug = "tokelau"
                         },
                         new
                         {
-                            Id = 228,
+                            Id = 225,
                             Code = "TO",
                             Label = "Tonga",
                             Slug = "tonga"
                         },
                         new
                         {
-                            Id = 229,
+                            Id = 226,
                             Code = "TT",
                             Label = "Trinidad and Tobago",
                             Slug = "trinidad-and-tobago"
                         },
                         new
                         {
-                            Id = 230,
+                            Id = 227,
                             Code = "TN",
                             Label = "Tunisia",
                             Slug = "tunisia"
                         },
                         new
                         {
-                            Id = 231,
+                            Id = 228,
                             Code = "TR",
                             Label = "Turkey",
                             Slug = "turkey"
                         },
                         new
                         {
-                            Id = 232,
+                            Id = 229,
                             Code = "TM",
                             Label = "Turkmenistan",
                             Slug = "turkmenistan"
                         },
                         new
                         {
-                            Id = 233,
+                            Id = 230,
                             Code = "TC",
                             Label = "Turks and Caicos Islands",
                             Slug = "turks-and-caicos-islands"
                         },
                         new
                         {
-                            Id = 234,
+                            Id = 231,
                             Code = "TV",
                             Label = "Tuvalu",
                             Slug = "tuvalu"
                         },
                         new
                         {
-                            Id = 235,
+                            Id = 232,
                             Code = "UG",
                             Label = "Uganda",
                             Slug = "uganda"
                         },
                         new
                         {
-                            Id = 236,
+                            Id = 233,
                             Code = "UA",
                             Label = "Ukraine",
                             Slug = "ukraine"
                         },
                         new
                         {
-                            Id = 237,
+                            Id = 234,
                             Code = "AE",
                             Label = "United Arab Emirates",
                             Slug = "united-arab-emirates"
                         },
                         new
                         {
-                            Id = 238,
+                            Id = 235,
                             Code = "GB",
                             Label = "United Kingdom",
-                            Slug = "united-kingdom"
+                            Slug = "uk"
                         },
                         new
                         {
-                            Id = 239,
+                            Id = 236,
                             Code = "US",
-                            Label = "United States",
-                            Slug = "united-states"
+                            Label = "United States of America",
+                            Slug = "usa"
                         },
                         new
                         {
-                            Id = 240,
+                            Id = 237,
                             Code = "UM",
                             Label = "United States Minor Outlying Islands",
                             Slug = "united-states-minor-outlying-islands"
                         },
                         new
                         {
-                            Id = 241,
+                            Id = 238,
                             Code = "UY",
                             Label = "Uruguay",
                             Slug = "uruguay"
                         },
                         new
                         {
-                            Id = 242,
+                            Id = 239,
                             Code = "UZ",
                             Label = "Uzbekistan",
                             Slug = "uzbekistan"
                         },
                         new
                         {
-                            Id = 243,
+                            Id = 240,
                             Code = "VU",
                             Label = "Vanuatu",
                             Slug = "vanuatu"
                         },
                         new
                         {
-                            Id = 244,
+                            Id = 241,
                             Code = "VE",
                             Label = "Venezuela",
                             Slug = "venezuela"
                         },
                         new
                         {
-                            Id = 245,
+                            Id = 242,
                             Code = "VN",
                             Label = "Vietnam",
                             Slug = "vietnam"
                         },
                         new
                         {
-                            Id = 246,
+                            Id = 243,
                             Code = "VG",
-                            Label = "Virgin Islands, British",
-                            Slug = "virgin-islands,-british"
+                            Label = "Virgin Islands (British)",
+                            Slug = "virgin-islands-british"
                         },
                         new
                         {
-                            Id = 247,
+                            Id = 244,
                             Code = "VI",
-                            Label = "Virgin Islands, U.S.",
-                            Slug = "virgin-islands,-u.s."
+                            Label = "Virgin Islands (U.S.)",
+                            Slug = "virgin-islands-us"
                         },
                         new
                         {
-                            Id = 248,
+                            Id = 245,
                             Code = "WF",
                             Label = "Wallis and Futuna",
                             Slug = "wallis-and-futuna"
                         },
                         new
                         {
-                            Id = 249,
+                            Id = 246,
                             Code = "EH",
                             Label = "Western Sahara",
                             Slug = "western-sahara"
                         },
                         new
                         {
-                            Id = 250,
+                            Id = 247,
                             Code = "YE",
                             Label = "Yemen",
                             Slug = "yemen"
                         },
                         new
                         {
-                            Id = 251,
+                            Id = 248,
                             Code = "ZM",
                             Label = "Zambia",
                             Slug = "zambia"
                         },
                         new
                         {
-                            Id = 252,
+                            Id = 249,
                             Code = "ZW",
                             Label = "Zimbabwe",
                             Slug = "zimbabwe"
-                        },
-                        new
-                        {
-                            Id = 253,
-                            Code = "AX",
-                            Label = "Åland Islands",
-                            Slug = "åland-islands"
                         });
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ApplyUrl")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid?>("BusinessId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CityEntityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CompanyEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyLogoUrl")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CompanyWebsiteUrl")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int?>("CountryEntityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.Property<int>("EmploymentTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("FeaturedEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FeaturedStartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRemote")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("MaxSalary")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MinSalary")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<List<string>>("Tags")
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CityEntityId");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("CompanyName");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CompanyName"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("CompanyName"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("CountryEntityId");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("Description");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Description"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Description"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("EmploymentTypeId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("IsPublished");
+
+                    b.HasIndex("PublishedAt");
+
+                    b.HasIndex("Tags");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Tags"), "GIN");
+
+                    b.HasIndex("Title");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Title"), "GIN");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Title"), new[] { "gin_trgm_ops" });
+
+                    b.ToTable("JobPosts");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostPaymentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CheckoutSessionId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EventId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("JobPostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CheckoutSessionId")
+                        .IsUnique();
+
+                    b.HasIndex("JobPostId");
+
+                    b.ToTable("JobPostPayments");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobPostEntities.EmploymentTypeEntity", b =>
@@ -2571,10 +2599,23 @@ namespace JobBoard.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobBoard.Domain.JobPostEntities.CountryEntity", "Country")
+                    b.HasOne("JobBoard.Domain.JobPost.CityEntity", null)
+                        .WithMany("JobPosts")
+                        .HasForeignKey("CityEntityId");
+
+                    b.HasOne("JobBoard.Domain.JobPost.CityEntity", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("JobBoard.Domain.JobPost.CountryEntity", null)
+                        .WithMany("JobPosts")
+                        .HasForeignKey("CountryEntityId");
+
+                    b.HasOne("JobBoard.Domain.JobPost.CountryEntity", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.JobPostEntities.EmploymentTypeEntity", "EmploymentType")
@@ -2586,6 +2627,8 @@ namespace JobBoard.Migrations
                     b.Navigation("Business");
 
                     b.Navigation("Category");
+
+                    b.Navigation("City");
 
                     b.Navigation("Country");
 
@@ -2665,6 +2708,16 @@ namespace JobBoard.Migrations
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Business.BusinessEntity", b =>
+                {
+                    b.Navigation("JobPosts");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.CityEntity", b =>
+                {
+                    b.Navigation("JobPosts");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.CountryEntity", b =>
                 {
                     b.Navigation("JobPosts");
                 });

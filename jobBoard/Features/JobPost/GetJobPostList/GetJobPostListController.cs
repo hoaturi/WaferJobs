@@ -12,7 +12,7 @@ public class GetJobPostListController(ISender sender) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetJobPostList(
         [FromQuery(Name = "keyword")] string? keyword,
-        [FromQuery(Name = "country")] string? country,
+        [FromQuery(Name = "location")] string? location,
         [FromQuery(Name = "remote")] string? remote,
         [FromQuery(Name = "category")] List<string>? categories,
         [FromQuery(Name = "employmentType")] List<string>? employmentTypes,
@@ -20,7 +20,7 @@ public class GetJobPostListController(ISender sender) : ControllerBase
     )
     {
         var result = await sender.Send(
-            new GetJobPostListQuery(keyword, country, remote, categories, employmentTypes, page)
+            new GetJobPostListQuery(keyword, location, remote, categories, employmentTypes, page)
         );
 
         return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);

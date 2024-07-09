@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<BusinessSizeEntity> BusinessSizes { get; init; }
     public DbSet<JobPostEntity> JobPosts { get; init; }
     public DbSet<CountryEntity> Countries { get; init; }
+    public DbSet<CityEntity> Cities { get; init; }
     public DbSet<CategoryEntity> Categories { get; init; }
     public DbSet<EmploymentTypeEntity> EmploymentTypes { get; init; }
     public DbSet<JobPostPaymentEntity> JobPostPayments { get; init; }

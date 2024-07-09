@@ -1,9 +1,17 @@
-﻿namespace JobBoard.Domain.JobPostEntities;
+﻿using MessagePack;
 
+namespace JobBoard.Domain.JobPost;
+
+[MessagePackObject]
 public class CountryEntity
 {
-    public int Id { get; set; }
-    public required string Label { get; init; }
-    public required string Code { get; init; }
-    public required string Slug { get; init; }
+    [Key(0)] public int Id { get; set; }
+
+    [Key(1)] public required string Label { get; init; }
+
+    [Key(2)] public required string Code { get; init; }
+
+    [Key(3)] public required string Slug { get; init; }
+
+    public ICollection<JobPostEntity>? JobPosts { get; set; }
 }

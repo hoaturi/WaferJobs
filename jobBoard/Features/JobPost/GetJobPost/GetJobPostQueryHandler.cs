@@ -27,7 +27,7 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
                 j.IsRemote,
                 j.IsFeatured,
                 j.CompanyName,
-                j.City,
+                j.City != null ? j.City.Label : null,
                 j.MinSalary,
                 j.MaxSalary,
                 j.Currency,

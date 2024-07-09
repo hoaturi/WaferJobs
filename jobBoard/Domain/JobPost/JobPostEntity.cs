@@ -9,6 +9,7 @@ public class JobPostEntity : BaseEntity
     public Guid Id { get; set; }
     public Guid? BusinessId { get; set; }
     public int CategoryId { get; set; }
+    public int? CityId { get; set; }
     public int CountryId { get; set; }
     public int EmploymentTypeId { get; set; }
     public required string Title { get; set; }
@@ -16,7 +17,6 @@ public class JobPostEntity : BaseEntity
     public required string CompanyName { get; set; }
     public required string CompanyEmail { get; set; }
     public required string ApplyUrl { get; set; }
-    public string? City { get; set; }
     public int? MinSalary { get; set; }
     public int? MaxSalary { get; set; }
     public string? Currency { get; set; }
@@ -33,6 +33,7 @@ public class JobPostEntity : BaseEntity
     public BusinessEntity? Business { get; set; }
     public CategoryEntity Category { get; set; } = null!;
     public CountryEntity Country { get; set; } = null!;
+    public CityEntity? City { get; set; }
     public EmploymentTypeEntity EmploymentType { get; set; } = null!;
-    public List<JobPostPaymentEntity>? Payments { get; set; }
+    public ICollection<JobPostPaymentEntity>? Payments { get; set; }
 }

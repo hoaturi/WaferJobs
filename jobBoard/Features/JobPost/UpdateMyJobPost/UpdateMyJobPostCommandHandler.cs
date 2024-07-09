@@ -1,4 +1,5 @@
-﻿using JobBoard.Common.Interfaces;
+﻿using System.Transactions;
+using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.JobPost;
@@ -10,9 +11,10 @@ namespace JobBoard.Features.JobPost.UpdateMyJobPost;
 
 public class UpdateMyJobPostCommandHandler(
     ICurrentUserService currentUser,
+    ILocationService locationService,
     AppDbContext appDbContext,
-    ILogger<UpdateMyJobPostCommandHandler> logger
-) : IRequestHandler<UpdateMyJobPostCommand, Result<Unit, Error>>
+    ILogger<UpdateMyJobPostCommandHandler> logger)
+    : IRequestHandler<UpdateMyJobPostCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(UpdateMyJobPostCommand command, CancellationToken cancellationToken)
     {
@@ -29,7 +31,12 @@ public class UpdateMyJobPostCommandHandler(
 
         if (jobPost.Business.UserId != userId) throw new UnauthorizedJobPostAccessException(command.Id, userId);
 
-        await UpdateJobPost(command, jobPost, cancellationToken);
+        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+            await UpdateJobPost(command, jobPost, cancellationToken);
+            scope.Complete();
+        }
+
         logger.LogInformation("Job post with id: {Id} was updated by user with id: {UserId}", command.Id, userId);
 
         return Unit.Value;
@@ -48,11 +55,20 @@ public class UpdateMyJobPostCommandHandler(
         jobPost.IsRemote = command.IsRemote;
         jobPost.CompanyLogoUrl = command.CompanyLogoUrl;
         jobPost.CompanyWebsiteUrl = command.CompanyWebsiteUrl;
-        jobPost.City = command.City;
         jobPost.MinSalary = command.MinSalary;
         jobPost.MaxSalary = command.MaxSalary;
         jobPost.Currency = command.Currency;
         jobPost.Tags = command.Tags;
+
+        if (!string.IsNullOrWhiteSpace(command.City))
+        {
+            var cityId = await locationService.GetOrCreateCityIdAsync(command.City, cancellationToken);
+            jobPost.CityId = cityId;
+        }
+        else
+        {
+            jobPost.CityId = null;
+        }
 
         await appDbContext.SaveChangesAsync(cancellationToken);
     }
