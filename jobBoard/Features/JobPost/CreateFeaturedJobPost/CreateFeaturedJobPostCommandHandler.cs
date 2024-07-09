@@ -1,5 +1,6 @@
 using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
+using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
@@ -12,6 +13,7 @@ namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 public class CreateFeaturedJobPostCommandHandler(
     ICurrentUserService currentUser,
     IPaymentService paymentService,
+    ILocationService locationService,
     AppDbContext appDbContext,
     ILogger<CreateFeaturedJobPostCommandHandler> logger)
     : IRequestHandler<CreateFeaturedJobPostCommand, Result<CreateJobPostCheckoutSessionResponse, Error>>
@@ -20,15 +22,16 @@ public class CreateFeaturedJobPostCommandHandler(
         CreateFeaturedJobPostCommand command,
         CancellationToken cancellationToken)
     {
-        var currentUserId = currentUser.TryGetUserId();
+        var currentUserId = currentUser.GetUserId();
         var business = await GetBusinessByUserId(currentUserId, cancellationToken);
 
-        var jobPost = MapToEntity(command, business);
+        var cityId = await locationService.GetOrCreateCityIdAsync(command.City, cancellationToken);
+        var jobPost = MapToEntity(command, business, cityId);
         await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
         logger.LogInformation("Creating job post: {jobPostId}", jobPost.Id);
 
-        var stripeCustomerId = await GetOrCreateStripeCustomerId(command, business);
+        var stripeCustomerId = await GetOrCreateStripeCustomerId(business, command.CompanyEmail);
 
         var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
 
@@ -39,23 +42,24 @@ public class CreateFeaturedJobPostCommandHandler(
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }
 
-    private async Task<BusinessEntity?> GetBusinessByUserId(Guid? userId, CancellationToken cancellationToken)
+    private async Task<BusinessEntity> GetBusinessByUserId(Guid userId, CancellationToken cancellationToken)
     {
-        return userId is not null
-            ? await appDbContext.Businesses.FirstOrDefaultAsync(b => b.UserId == userId, cancellationToken)
-            : null;
+        var business = await appDbContext.Businesses
+            .FirstOrDefaultAsync(b => b.UserId == userId, cancellationToken);
+
+        if (business is null) throw new BusinessNotFoundForUserException(userId);
+
+        return business;
     }
 
-    private async Task<string> GetOrCreateStripeCustomerId(CreateFeaturedJobPostCommand command,
-        BusinessEntity? business)
+
+    private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, string email)
     {
-        if (business?.StripeCustomerId is not null) return business.StripeCustomerId;
+        if (business.StripeCustomerId is not null) return business.StripeCustomerId;
 
-        var email = business is not null ? currentUser.GetUserEmail() : command.CompanyEmail;
-        var name = business?.Name ?? command.CompanyName;
-        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, name, business?.Id);
+        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, business.Name, business.Id);
 
-        if (business is not null) business.StripeCustomerId = stripeCustomerId;
+        business.StripeCustomerId = stripeCustomerId;
 
         return stripeCustomerId;
     }
@@ -69,26 +73,26 @@ public class CreateFeaturedJobPostCommandHandler(
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
     }
 
-    private JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity? business)
+    private static JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity business, int? cityId)
     {
         var jobPost = new JobPostEntity
         {
             CategoryId = command.CategoryId,
             CountryId = command.CountryId,
+            CityId = cityId,
             EmploymentTypeId = command.EmploymentTypeId,
             Title = command.Title,
             Description = command.Description,
             CompanyName = command.CompanyName,
-            CompanyEmail = business is not null ? currentUser.GetUserEmail() : command.CompanyEmail,
+            CompanyEmail = command.CompanyEmail,
             CompanyLogoUrl = command.CompanyLogoUrl,
             CompanyWebsiteUrl = command.CompanyWebsiteUrl,
             ApplyUrl = command.ApplyUrl,
             IsRemote = command.IsRemote,
-            City = command.City,
             MinSalary = command.MinSalary,
             MaxSalary = command.MaxSalary,
             Currency = command.Currency,
-            BusinessId = business?.Id,
+            BusinessId = business.Id,
             Tags = command.Tags,
             IsFeatured = true,
             IsPublished = false,

@@ -22,7 +22,11 @@ public class ChangePasswordCommandHandler(
 
         var changeResult = await userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
 
-        if (!changeResult.Errors.Any()) return Unit.Value;
+        if (!changeResult.Errors.Any())
+        {
+            logger.LogInformation("User {UserId} changed their password", userId);
+            return Unit.Value;
+        }
 
         var passwordUpdateError = changeResult.Errors.First();
 

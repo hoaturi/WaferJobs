@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 
-namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
+namespace JobBoard.Features.JobPost.CreateFeaturedJobPostGuest;
 
-public class CreateFeaturedJobPostCommandValidator<T> : AbstractValidator<T>
-    where T : CreateFeaturedJobPostCommand
+public class
+    CreateFeaturedJobPostGuestCommandValidator : AbstractValidator<CreateFeaturedJobPostGuestCommand>
 {
-    public CreateFeaturedJobPostCommandValidator()
+    public CreateFeaturedJobPostGuestCommandValidator()
     {
         RuleFor(x => x.CategoryId).NotEmpty();
         RuleFor(x => x.CountryId).NotEmpty();
@@ -33,5 +33,14 @@ public class CreateFeaturedJobPostCommandValidator<T> : AbstractValidator<T>
             .WithMessage("MaxSalary must be greater than MinSalary");
         RuleFor(x => x.Currency).Length(3);
         RuleFor(x => x.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
+        When(x => x.SignupPayload is not null, () =>
+        {
+            RuleFor(x => x.SignupPayload!.Name).NotEmpty().MaximumLength(50);
+            RuleFor(x => x.SignupPayload!.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.SignupPayload!.Password)
+                .NotEmpty()
+                .MinimumLength(8)
+                .WithMessage("Password must be at least 8 characters");
+        });
     }
 }

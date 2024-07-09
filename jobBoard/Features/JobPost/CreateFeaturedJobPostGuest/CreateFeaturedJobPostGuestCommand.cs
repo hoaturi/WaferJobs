@@ -1,10 +1,10 @@
-using JobBoard.Common.Models;
+﻿using JobBoard.Common.Models;
 using JobBoard.Features.Payment;
 using MediatR;
 
-namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
+namespace JobBoard.Features.JobPost.CreateFeaturedJobPostGuest;
 
-public record CreateFeaturedJobPostCommand(
+public record CreateFeaturedJobPostGuestCommand(
     int CategoryId,
     int CountryId,
     int EmploymentTypeId,
@@ -20,5 +20,11 @@ public record CreateFeaturedJobPostCommand(
     int? MinSalary,
     int? MaxSalary,
     string? Currency,
-    List<string>? Tags
-) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
+    List<string>? Tags,
+    BusinessSignupPayload? SignupPayload) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
+
+public abstract record BusinessSignupPayload(
+    string Name,
+    string Email,
+    string Password
+);
