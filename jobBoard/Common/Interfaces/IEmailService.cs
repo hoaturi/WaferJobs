@@ -4,5 +4,5 @@ namespace JobBoard.Common.Interfaces;
 
 public interface IEmailService
 {
-    Task SendAsync(PasswordResetDto passwordResetDto);
+    Task SendAsync(PasswordResetEmailDto passwordResetEmailDto);
 }

@@ -28,9 +28,7 @@ public class ForgotPasswordCommandHandler(
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        await emailService.SendAsync(new PasswordResetDto(user, resetToken));
-
-        logger.LogInformation("Password reset token sent to user: {UserId}", user.Id);
+        await emailService.SendAsync(new PasswordResetEmailDto(user, resetToken));
 
         return Unit.Value;
     }

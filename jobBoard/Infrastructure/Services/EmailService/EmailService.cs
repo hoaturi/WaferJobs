@@ -16,11 +16,11 @@ public class EmailService(
     private readonly EmailClient _emailClient = new(azureOptions.Value.CommunicationServiceConnectionString);
     private readonly EmailOptions _emailOptions = emailOptions.Value;
 
-    public async Task SendAsync(PasswordResetDto passwordResetDto)
+    public async Task SendAsync(PasswordResetEmailDto passwordResetEmailDto)
     {
-        var encodedToken = HttpUtility.UrlEncode(passwordResetDto.Token);
+        var encodedToken = HttpUtility.UrlEncode(passwordResetEmailDto.Token);
         var passwordResetLink =
-            _emailOptions.GetPasswordResetLink(encodedToken, passwordResetDto.UserEntity.Id.ToString());
+            _emailOptions.GetPasswordResetLink(encodedToken, passwordResetEmailDto.UserEntity.Id.ToString());
 
         var emailContent = GeneratePasswordResetEmailContent(passwordResetLink);
 
@@ -29,12 +29,12 @@ public class EmailService(
             await _emailClient.SendAsync(
                 WaitUntil.Started,
                 _emailOptions.FromAddress,
-                passwordResetDto.UserEntity.Email,
+                passwordResetEmailDto.UserEntity.Email,
                 "Reset Password",
                 emailContent);
 
-            logger.LogInformation("Password reset email sent successfully for user: {UserId}",
-                passwordResetDto.UserEntity.Id);
+            logger.LogInformation("Password reset email sent successfully for user with id: {UserId}",
+                passwordResetEmailDto.UserEntity.Id);
         }
         catch (RequestFailedException ex)
         {
