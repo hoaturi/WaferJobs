@@ -10,9 +10,8 @@ public class GetActiveJobLocationsQueryHandler(ILocationService locationService)
     public async Task<Result<GetActiveJobLocationsResponse, Error>> Handle(GetActiveJobLocationsQuery request,
         CancellationToken cancellationToken)
     {
-        var countries = await locationService.GetCountriesWithActiveJobPostAsync(cancellationToken);
-        var cities = await locationService.GetCitiesWithActiveJobPostAsync(cancellationToken);
+        var locations = await locationService.GetLocationsWithActiveJobPostAsync(cancellationToken);
 
-        return new GetActiveJobLocationsResponse(countries, cities);
+        return new GetActiveJobLocationsResponse(locations);
     }
 }
