@@ -27,12 +27,12 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
         builder.HasIndex(jp => jp.Tags).HasMethod("GIN");
 
         builder.HasOne(jp => jp.City)
-            .WithMany()
+            .WithMany(jp => jp.JobPosts)
             .HasForeignKey(jp => jp.CityId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(jp => jp.Country)
-            .WithMany()
+            .WithMany(jp => jp.JobPosts)
             .HasForeignKey(jp => jp.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
     }

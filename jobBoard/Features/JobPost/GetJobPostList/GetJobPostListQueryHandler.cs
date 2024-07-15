@@ -34,11 +34,14 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             jobPostListQuery = jobPostListQuery.Where(predicate);
         }
 
-        if (query.Location is not null)
-            jobPostListQuery = jobPostListQuery.Where(j =>
-                query.Location == j.Country.Slug || (j.City != null && query.Location == j.City.Slug));
 
-        if (query.Remote is not null)
+        if (query.City is not null)
+            jobPostListQuery = jobPostListQuery.Where(j => j.City != null && j.City.Slug == query.City);
+
+        if (query.Country is not null)
+            jobPostListQuery = jobPostListQuery.Where(j => j.Country.Slug == query.Country);
+
+        if (query.RemoteOnly == "true")
             jobPostListQuery = jobPostListQuery.Where(j => j.IsRemote);
 
         if (query.Categories is not null && query.Categories.Count != 0)
@@ -46,6 +49,12 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
 
         if (query.EmploymentTypes is not null && query.EmploymentTypes.Count != 0)
             jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Slug));
+
+        if (query.PostedDate is not null)
+        {
+            var postedDate = DateTime.UtcNow.AddDays(-query.PostedDate.Value);
+            jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
+        }
 
 
         jobPostListQuery = jobPostListQuery.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
