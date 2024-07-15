@@ -1,17 +1,13 @@
-﻿using System.Collections.Immutable;
-using JobBoard.Common.Interfaces;
+﻿using JobBoard.Common.Interfaces;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
+using MessagePack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
-using static MessagePack.MessagePackSerializer;
 
 namespace JobBoard.Infrastructure.Services.LocationService;
 
-public class LocationService(
-    IDistributedCache cache,
-    AppDbContext dbContext,
-    ILogger<LocationService> logger)
+public class LocationService(IDistributedCache cache, AppDbContext dbContext, ILogger<LocationService> logger)
     : ILocationService
 {
     private const string CountriesCacheKey = "Countries:WithJobPosts";
@@ -48,20 +44,49 @@ public class LocationService(
         return newCity.Id;
     }
 
-    public async Task<ImmutableArray<CityDto>> GetCitiesWithActiveJobPostAsync(
+    public async Task<IReadOnlyList<LocationDto>> GetLocationsWithActiveJobPostAsync(
         CancellationToken cancellationToken)
+    {
+        try
+        {
+            var serializedLocations = await cache.GetAsync(CitiesCacheKey,
+                new CancellationTokenSource(CacheOperationTimeout).Token);
+
+            if (serializedLocations is null || serializedLocations.Length == 0)
+                return await RefreshLocationsCacheAsync(cancellationToken);
+
+            var locations =
+                MessagePackSerializer.Deserialize<List<LocationDto>>(serializedLocations,
+                    cancellationToken: cancellationToken);
+
+            return locations.Count != 0 ? locations : await RefreshLocationsCacheAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogWarning("Cache operation timed out for locations. Falling back to database.");
+            return await GetLocationsFromDatabaseAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error occurred while getting locations.");
+            return new List<LocationDto>();
+        }
+    }
+
+    public async Task<IReadOnlyList<CityDto>> GetCitiesWithActiveJobPostAsync(CancellationToken cancellationToken)
     {
         try
         {
             var serializedCities = await cache.GetAsync(CitiesCacheKey,
                 new CancellationTokenSource(CacheOperationTimeout).Token);
 
-            if (serializedCities is null) return await RefreshCitiesCacheAsync(cancellationToken);
-            var cities = Deserialize<ImmutableArray<CityDto>>(serializedCities,
+            if (serializedCities is null || serializedCities.Length == 0)
+                return await RefreshCitiesCacheAsync(cancellationToken);
+
+            var cities = MessagePackSerializer.Deserialize<List<CityDto>>(serializedCities,
                 cancellationToken: cancellationToken);
 
-            if (cities.Length <= 0) return await RefreshCitiesCacheAsync(cancellationToken);
-            return cities;
+            return cities.Count != 0 ? cities : await RefreshCitiesCacheAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -71,11 +96,11 @@ public class LocationService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while getting cities.");
-            return ImmutableArray<CityDto>.Empty;
+            return new List<CityDto>();
         }
     }
 
-    public async Task<ImmutableArray<CountryDto>> GetCountriesWithActiveJobPostAsync(
+    public async Task<IReadOnlyList<CountryDto>> GetCountriesWithActiveJobPostAsync(
         CancellationToken cancellationToken)
     {
         try
@@ -83,12 +108,13 @@ public class LocationService(
             var serializedCountries = await cache.GetAsync(CountriesCacheKey,
                 new CancellationTokenSource(CacheOperationTimeout).Token);
 
-            if (serializedCountries is null) return await RefreshCountriesCacheAsync(cancellationToken);
-            var countries = Deserialize<ImmutableArray<CountryDto>>(serializedCountries,
+            if (serializedCountries is null || serializedCountries.Length == 0)
+                return await RefreshCountriesCacheAsync(cancellationToken);
+
+            var countries = MessagePackSerializer.Deserialize<List<CountryDto>>(serializedCountries,
                 cancellationToken: cancellationToken);
 
-            if (countries.Length <= 0) return await RefreshCountriesCacheAsync(cancellationToken);
-            return countries;
+            return countries.Count != 0 ? countries : await RefreshCountriesCacheAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -98,19 +124,53 @@ public class LocationService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while getting countries.");
-            return ImmutableArray<CountryDto>.Empty;
+            return new List<CountryDto>();
         }
     }
 
-    private async Task<ImmutableArray<CountryDto>> RefreshCountriesCacheAsync(CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<LocationDto>> RefreshLocationsCacheAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var locations = await GetLocationsFromDatabaseAsync(cancellationToken);
+
+            if (locations.Count != 0)
+            {
+                var serializedLocations =
+                    MessagePackSerializer.Serialize(locations, cancellationToken: cancellationToken);
+                var options = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = CacheExpirationTime
+                };
+                await cache.SetAsync(CitiesCacheKey, serializedLocations, options,
+                    new CancellationTokenSource(CacheOperationTimeout).Token);
+
+                logger.LogInformation("Updated cache with {Count} locations from database", locations.Count);
+            }
+            else
+            {
+                logger.LogWarning("No locations found in database to refresh cache");
+            }
+
+            return locations;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to refresh locations cache.");
+            return new List<LocationDto>();
+        }
+    }
+
+    private async Task<IReadOnlyList<CountryDto>> RefreshCountriesCacheAsync(CancellationToken cancellationToken)
     {
         try
         {
             var countries = await GetCountriesFromDatabaseAsync(cancellationToken);
 
-            if (countries.Length > 0)
+            if (countries.Count != 0)
             {
-                var serializedCountries = Serialize(countries, cancellationToken: cancellationToken);
+                var serializedCountries =
+                    MessagePackSerializer.Serialize(countries, cancellationToken: cancellationToken);
                 var options = new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = CacheExpirationTime
@@ -118,7 +178,7 @@ public class LocationService(
                 await cache.SetAsync(CountriesCacheKey, serializedCountries, options,
                     new CancellationTokenSource(CacheOperationTimeout).Token);
 
-                logger.LogInformation("Updated cache with {Count} countries from database", countries.Length);
+                logger.LogInformation("Updated cache with {Count} countries from database", countries.Count);
             }
             else
             {
@@ -130,19 +190,19 @@ public class LocationService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to refresh countries cache.");
-            return ImmutableArray<CountryDto>.Empty;
+            return new List<CountryDto>();
         }
     }
 
-    private async Task<ImmutableArray<CityDto>> RefreshCitiesCacheAsync(CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<CityDto>> RefreshCitiesCacheAsync(CancellationToken cancellationToken)
     {
         try
         {
             var cities = await GetCitiesFromDatabaseAsync(cancellationToken);
 
-            if (cities.Length > 0)
+            if (cities.Count != 0)
             {
-                var serializedCities = Serialize(cities, cancellationToken: cancellationToken);
+                var serializedCities = MessagePackSerializer.Serialize(cities, cancellationToken: cancellationToken);
                 var options = new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = CacheExpirationTime
@@ -150,7 +210,7 @@ public class LocationService(
                 await cache.SetAsync(CitiesCacheKey, serializedCities, options,
                     new CancellationTokenSource(CacheOperationTimeout).Token);
 
-                logger.LogInformation("Updated cache with {Count} cities from database", cities.Length);
+                logger.LogInformation("Updated cache with {Count} cities from database", cities.Count);
             }
             else
             {
@@ -162,11 +222,38 @@ public class LocationService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to refresh cities cache.");
-            return ImmutableArray<CityDto>.Empty;
+            return new List<CityDto>();
         }
     }
 
-    private async Task<ImmutableArray<CountryDto>> GetCountriesFromDatabaseAsync(CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<LocationDto>> GetLocationsFromDatabaseAsync(CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Fetching distinct locations from database...");
+
+        var locations = await dbContext.JobPosts
+            .AsNoTracking()
+            .Where(j => !j.IsDeleted && j.IsPublished)
+            .Select(j => new
+            {
+                CountryLabel = j.Country.Label,
+                CityLabel = j.City != null ? j.City.Label : null,
+                CountrySlug = j.Country.Slug,
+                CitySlug = j.City != null ? j.City.Slug : null
+            })
+            .Distinct()
+            .Select(l => new LocationDto(
+                l.CityLabel != null ? $"{l.CityLabel}, {l.CountryLabel}" : l.CountryLabel,
+                l.CitySlug,
+                l.CountrySlug
+            ))
+            .ToListAsync(cancellationToken);
+
+        logger.LogInformation("Found {Count} distinct locations in the database", locations.Count);
+
+        return locations;
+    }
+
+    private async Task<IReadOnlyList<CountryDto>> GetCountriesFromDatabaseAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching countries from database...");
 
@@ -182,10 +269,10 @@ public class LocationService(
 
         logger.LogInformation("Found {Count} countries in the database", countries.Count);
 
-        return [..countries];
+        return countries;
     }
 
-    private async Task<ImmutableArray<CityDto>> GetCitiesFromDatabaseAsync(CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<CityDto>> GetCitiesFromDatabaseAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching cities from database...");
 
@@ -201,6 +288,6 @@ public class LocationService(
 
         logger.LogInformation("Found {Count} cities in the database", cities.Count);
 
-        return [..cities];
+        return cities;
     }
 }
