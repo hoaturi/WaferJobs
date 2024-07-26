@@ -1,6 +1,5 @@
 ﻿using JobBoard.Common;
 using JobBoard.Domain.Business;
-using JobBoard.Domain.JobPostEntities;
 
 namespace JobBoard.Domain.JobPost;
 

@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Domain.JobPostEntities;
+﻿namespace JobBoard.Domain.JobPost;
 
 public class EmploymentTypeEntity
 {

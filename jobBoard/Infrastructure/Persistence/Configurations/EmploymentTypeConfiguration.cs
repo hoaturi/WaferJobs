@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.JobPostEntities;
+using JobBoard.Domain.JobPost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
