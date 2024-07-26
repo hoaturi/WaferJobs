@@ -29,8 +29,7 @@ public class SignInController(IOptions<JwtOptions> jwtOptions, ISender sender) :
             new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
                 Path = "/"
             }
