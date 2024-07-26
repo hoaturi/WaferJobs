@@ -6,7 +6,7 @@ namespace JobBoard.Domain.Auth;
 
 public class BusinessNotFoundForUserException(Guid userId)
     : CustomException(
-        ErrorCodes.BusinessNotFoundForUserError,
+        ErrorCodes.BusinessNotFoundForUser,
         HttpStatusCode.NotFound,
         $"User with id: {userId} does not have a business associated with it."
     );

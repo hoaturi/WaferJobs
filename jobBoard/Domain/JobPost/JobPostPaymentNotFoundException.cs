@@ -6,7 +6,7 @@ namespace JobBoard.Domain.JobPost;
 
 public class JobPostPaymentNotFoundException(string sessionId)
     : CustomException(
-        ErrorCodes.JobPostNotFoundError,
+        ErrorCodes.JobPostNotFound,
         HttpStatusCode.NotFound,
         $"Job post payment with session id {sessionId} not found."
     );

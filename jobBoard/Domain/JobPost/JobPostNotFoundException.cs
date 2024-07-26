@@ -5,7 +5,7 @@ using JobBoard.Common.Exceptions;
 namespace JobBoard.Domain.JobPost;
 
 public class JobPostNotFoundException(Guid jobPostId) : CustomException(
-    ErrorCodes.JobPostNotFoundError,
+    ErrorCodes.JobPostNotFound,
     HttpStatusCode.NotFound,
     $"Job post with id {jobPostId} not found."
 );

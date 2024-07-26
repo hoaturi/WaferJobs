@@ -6,7 +6,7 @@ namespace JobBoard.Infrastructure.Services.EmailService;
 
 public class EmailSendFailedException()
     : CustomException(
-        ErrorCodes.EmailSendFailedError,
+        ErrorCodes.EmailSendFailed,
         HttpStatusCode.InternalServerError,
         "Failed to send email."
     );

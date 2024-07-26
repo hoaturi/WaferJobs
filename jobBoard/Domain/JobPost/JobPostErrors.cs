@@ -9,7 +9,7 @@ public static class JobPostErrors
     public static Error JobPostNotFound(Guid id)
     {
         return new Error(
-            ErrorCodes.JobPostNotFoundError,
+            ErrorCodes.JobPostNotFound,
             HttpStatusCode.NotFound,
             $"Job post with id: {id} not found."
         );

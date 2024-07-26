@@ -4,4 +4,4 @@ using JobBoard.Common.Constants;
 namespace JobBoard.Common.Exceptions;
 
 public class InvalidJwtException()
-    : CustomException(ErrorCodes.InvalidTokenError, HttpStatusCode.Unauthorized, "Invalid jwt token");
+    : CustomException(ErrorCodes.InvalidToken, HttpStatusCode.Unauthorized, "Invalid jwt token");

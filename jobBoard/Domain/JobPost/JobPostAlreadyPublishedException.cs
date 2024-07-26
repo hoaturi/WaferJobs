@@ -5,7 +5,7 @@ using JobBoard.Common.Exceptions;
 namespace JobBoard.Domain.JobPost;
 
 public class JobPostAlreadyPublishedException(Guid jobPostId) : CustomException(
-    ErrorCodes.JobPostAlreadyPublishedError,
+    ErrorCodes.JobPostAlreadyPublished,
     HttpStatusCode.BadRequest,
     $"Job post with id {jobPostId} is already published."
 );

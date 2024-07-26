@@ -9,6 +9,6 @@ public class CustomException(
     string message)
     : Exception(message)
 {
-    public ErrorCodes ErrorCode { get; } = errorCode;
-    public HttpStatusCode StatusCode { get; } = httpStatusCode;
+    public string ErrorCode { get; } = errorCode.Code;
+    public int StatusCode { get; } = (int)httpStatusCode;
 }

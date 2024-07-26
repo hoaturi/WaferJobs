@@ -9,7 +9,7 @@ public static class BusinessErrors
     public static Error BusinessNotFound(Guid id)
     {
         return new Error(
-            ErrorCodes.BusinessNotFoundError,
+            ErrorCodes.BusinessNotFound,
             HttpStatusCode.NotFound,
             $"Business profile with id:{id} was not found."
         );

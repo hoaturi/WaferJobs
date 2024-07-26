@@ -6,7 +6,7 @@ namespace JobBoard.Infrastructure.Services.PaymentService;
 
 public class CreateStripeCustomerFailedException()
     : CustomException(
-        ErrorCodes.CreateStripeCustomerFailedError,
+        ErrorCodes.CreateStripeCustomerFailed,
         HttpStatusCode.InternalServerError,
         "Failed to create customer."
     );

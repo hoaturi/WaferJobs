@@ -6,7 +6,7 @@ namespace JobBoard.Infrastructure.Services.FileUploadService;
 
 public class BusinessLogoUploadFailedException()
     : CustomException(
-        ErrorCodes.FileUploadFailedError,
+        ErrorCodes.FileUploadFailed,
         HttpStatusCode.InternalServerError,
         "Failed to upload business logo"
     );

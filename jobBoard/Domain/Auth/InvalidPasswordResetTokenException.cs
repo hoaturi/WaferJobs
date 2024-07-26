@@ -5,7 +5,7 @@ using JobBoard.Common.Exceptions;
 namespace JobBoard.Domain.Auth;
 
 public class InvalidPasswordResetTokenException(Guid userId) : CustomException(
-    ErrorCodes.InvalidTokenError,
+    ErrorCodes.InvalidToken,
     HttpStatusCode.BadRequest,
     $"Password reset token is invalid for user with id: {userId}"
 );

@@ -6,7 +6,7 @@ namespace JobBoard.Infrastructure.Services.PaymentService;
 
 public class CreateSessionFailedException()
     : CustomException(
-        ErrorCodes.CreateSessionFailedError,
+        ErrorCodes.CreateSessionFailed,
         HttpStatusCode.InternalServerError,
         "Failed to create session."
     );

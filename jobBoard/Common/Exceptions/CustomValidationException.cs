@@ -4,7 +4,7 @@ using JobBoard.Common.Constants;
 namespace JobBoard.Common.Exceptions;
 
 public class CustomValidationException(List<ValidationError> errors) : CustomException(
-    ErrorCodes.ValidationFailedError,
+    ErrorCodes.ValidationFailed,
     HttpStatusCode.BadRequest,
     "Validation failed")
 {
