@@ -20,11 +20,10 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
         builder.HasIndex(jp => jp.IsDeleted);
         builder.HasIndex(jp => jp.PublishedAt);
 
-
-        builder.HasIndex(jp => jp.Title).HasMethod("GIN").HasOperators("gin_trgm_ops");
-        builder.HasIndex(jp => jp.Description).HasMethod("GIN").HasOperators("gin_trgm_ops");
-        builder.HasIndex(jp => jp.CompanyName).HasMethod("GIN").HasOperators("gin_trgm_ops");
-        builder.HasIndex(jp => jp.Tags).HasMethod("GIN");
+        builder.HasGeneratedTsVectorColumn(ja => ja.SearchVector, "english",
+                ja => new { ja.Title, ja.Description, ja.CompanyName })
+            .HasIndex("SearchVector")
+            .HasMethod("GIN");
 
         builder.HasOne(jp => jp.City)
             .WithMany(jp => jp.JobPosts)

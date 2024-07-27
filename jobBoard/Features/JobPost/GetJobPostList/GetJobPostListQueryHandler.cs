@@ -1,8 +1,6 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.JobPost;
 using JobBoard.Features.JobPost.GetJobPost;
 using JobBoard.Infrastructure.Persistence;
-using LinqKit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,17 +19,10 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
 
         if (query.Keyword is not null)
         {
-            var predicate = PredicateBuilder.New<JobPostEntity>();
-            var keywords = query.Keyword.Split(' ');
+            var keyword = query.Keyword.ToLower();
 
-            //  ILIKE is Postgresql specific !! 
-            predicate = keywords.Aggregate(predicate, (current, keyword) => current
-                .Or(j => EF.Functions.ILike(j.Title, $"%{keyword}%"))
-                .Or(j => EF.Functions.ILike(j.Description, $"%{keyword}%"))
-                .Or(j => EF.Functions.ILike(j.CompanyName, $"%{keyword}%"))
-                .Or(j => j.Tags != null && j.Tags.Any(t => EF.Functions.ILike(t, $"%{keyword}%"))));
-
-            jobPostListQuery = jobPostListQuery.Where(predicate);
+            jobPostListQuery = jobPostListQuery.Where(
+                jp => jp.SearchVector.Matches(keyword));
         }
 
 
@@ -80,7 +71,7 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
                 j.BusinessId,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.Tags,
+                j.JobPostTags != null ? j.JobPostTags.Select(t => t.Tag.Label).ToList() : null,
                 j.FeaturedStartDate.GetValueOrDefault(),
                 j.FeaturedEndDate.GetValueOrDefault(),
                 j.PublishedAt.GetValueOrDefault()

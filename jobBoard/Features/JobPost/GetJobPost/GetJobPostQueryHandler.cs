@@ -35,7 +35,7 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
                 j.BusinessId,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.Tags,
+                j.JobPostTags != null ? j.JobPostTags.Select(t => t.Tag.Label).ToList() : null,
                 j.FeaturedStartDate.GetValueOrDefault(),
                 j.FeaturedEndDate.GetValueOrDefault(),
                 j.PublishedAt.GetValueOrDefault()
@@ -43,7 +43,7 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
             .FirstOrDefaultAsync(cancellationToken);
 
         return jobPost is null
-            ? JobPostErrors.JobPostNotFound(command.Id)
+            ? JobPostErrors.JobPostNotFound()
             : jobPost;
     }
 }

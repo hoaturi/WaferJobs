@@ -1,6 +1,6 @@
-﻿using JobBoard.Common.Interfaces;
-using JobBoard.Common.Models;
+﻿using JobBoard.Common.Models;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

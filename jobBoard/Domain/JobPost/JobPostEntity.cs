@@ -1,5 +1,7 @@
 ﻿using JobBoard.Common;
 using JobBoard.Domain.Business;
+using JobBoard.Domain.Common;
+using NpgsqlTypes;
 
 namespace JobBoard.Domain.JobPost;
 
@@ -25,7 +27,6 @@ public class JobPostEntity : BaseEntity
     public bool IsFeatured { get; set; }
     public DateTime? FeaturedStartDate { get; set; }
     public DateTime? FeaturedEndDate { get; set; }
-    public List<string>? Tags { get; set; }
     public bool IsPublished { get; set; }
     public DateTime? PublishedAt { get; set; }
     public bool IsDeleted { get; set; }
@@ -35,4 +36,6 @@ public class JobPostEntity : BaseEntity
     public CityEntity? City { get; set; }
     public EmploymentTypeEntity EmploymentType { get; set; } = null!;
     public ICollection<JobPostPaymentEntity>? Payments { get; set; }
+    public ICollection<JobPostTagEntity>? JobPostTags { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

@@ -1,7 +1,7 @@
-﻿using JobBoard.Common.Interfaces;
-using JobBoard.Common.Models;
+﻿using JobBoard.Common.Models;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +40,7 @@ public class
                 j.ApplyUrl,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.Tags,
+                j.JobPostTags != null ? j.JobPostTags.Select(t => t.Tag.Label).ToList() : null,
                 j.Business != null ? j.Business.UserId : null
             ))
             .FirstOrDefaultAsync(cancellationToken);

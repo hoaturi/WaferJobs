@@ -1,6 +1,7 @@
 ﻿using JobBoard.Common;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
+using JobBoard.Domain.Common;
 using JobBoard.Domain.JobAlert;
 using JobBoard.Domain.JobPost;
 using JobBoard.Domain.JobSeeker;
@@ -16,6 +17,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<BusinessEntity> Businesses { get; set; }
     public DbSet<BusinessSizeEntity> BusinessSizes { get; set; }
     public DbSet<JobPostEntity> JobPosts { get; set; }
+    public DbSet<JobPostTagEntity> JobPostTags { get; set; }
+    public DbSet<TagEntity> Tags { get; set; }
     public DbSet<CountryEntity> Countries { get; set; }
     public DbSet<CityEntity> Cities { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
@@ -26,7 +29,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.HasPostgresExtension("pg_trgm");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 
