@@ -14,10 +14,10 @@ public class UpdateJobAlertCommandHandler(
     {
         var updatedCount = await dbContext.JobAlerts.Where(ja => ja.Token == request.Token).ExecuteUpdateAsync(
             setters =>
-                setters.SetProperty(ja => ja.Keyword, request.Keyword)
-                    .SetProperty(ja => ja.CountryId, request.CountryId)
-                    .SetProperty(ja => ja.EmploymentTypeId, request.EmploymentTypeId)
-                    .SetProperty(ja => ja.CategoryId, request.CategoryId)
+                setters.SetProperty(ja => ja.Keyword, request.Dto.Keyword)
+                    .SetProperty(ja => ja.CountryId, request.Dto.CountryId)
+                    .SetProperty(ja => ja.EmploymentTypeId, request.Dto.EmploymentTypeId)
+                    .SetProperty(ja => ja.CategoryId, request.Dto.CategoryId)
             , cancellationToken);
 
         if (updatedCount == 0)

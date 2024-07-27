@@ -7,6 +7,6 @@ public class UpdateJobAlertCommandValidator : AbstractValidator<UpdateJobAlertCo
     public UpdateJobAlertCommandValidator()
     {
         RuleFor(x => x.Token).NotEmpty();
-        RuleFor(x => x.Keyword).MaximumLength(50);
+        RuleFor(x => x.Dto.Keyword).MaximumLength(50);
     }
 }

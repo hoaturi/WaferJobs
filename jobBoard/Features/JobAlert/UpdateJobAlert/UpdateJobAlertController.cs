@@ -9,14 +9,11 @@ namespace JobBoard.Features.JobAlert.UpdateJobAlert;
 public class UpdateJobAlertController(ISender sender) : ControllerBase
 {
     [HttpPut("{token}")]
-    public async Task<IActionResult> UpdateJobAlert(string token, [FromBody] UpdateJobAlertDto dto)
+    public async Task<IActionResult> UpdateJobAlert([FromRoute] string token, [FromBody] UpdateJobAlertDto dto)
     {
         var result = await sender.Send(new UpdateJobAlertCommand(
             token,
-            dto.Keyword,
-            dto.CountryId,
-            dto.EmploymentTypeId,
-            dto.CategoryId
+            dto
         ));
 
         return result.IsSuccess
