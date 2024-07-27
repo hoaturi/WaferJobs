@@ -1,6 +1,7 @@
-﻿using MessagePack;
+﻿using JobBoard.Domain.JobPost;
+using MessagePack;
 
-namespace JobBoard.Domain.JobPost;
+namespace JobBoard.Domain.Common;
 
 [MessagePackObject]
 public class CountryEntity

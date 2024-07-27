@@ -1,6 +1,7 @@
 ﻿using JobBoard.Common;
+using JobBoard.Domain.JobPost;
 
-namespace JobBoard.Domain.JobPost;
+namespace JobBoard.Domain.Common;
 
 public class CityEntity : BaseEntity
 {

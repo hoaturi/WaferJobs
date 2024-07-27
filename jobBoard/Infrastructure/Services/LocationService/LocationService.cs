@@ -1,5 +1,4 @@
-﻿using JobBoard.Common.Interfaces;
-using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.Common;
 using JobBoard.Infrastructure.Persistence;
 using MessagePack;
 using Microsoft.EntityFrameworkCore;

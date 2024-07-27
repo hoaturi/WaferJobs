@@ -1,10 +1,13 @@
-using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
+using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CurrentUserService;
+using JobBoard.Infrastructure.Services.LocationService;
+using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +29,7 @@ public class CreateFeaturedJobPostCommandHandler(
         var business = await GetBusinessByUserId(currentUserId, cancellationToken);
 
         var cityId = await locationService.GetOrCreateCityIdAsync(command.City, cancellationToken);
-        var jobPost = MapToEntity(command, business, cityId);
+        var jobPost = await MapToEntity(command, business, cityId, cancellationToken);
         await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
         logger.LogInformation("Creating job post: {jobPostId}", jobPost.Id);
@@ -52,7 +55,6 @@ public class CreateFeaturedJobPostCommandHandler(
         return business;
     }
 
-
     private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, string email)
     {
         if (business.StripeCustomerId is not null) return business.StripeCustomerId;
@@ -73,7 +75,8 @@ public class CreateFeaturedJobPostCommandHandler(
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
     }
 
-    private static JobPostEntity MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity business, int? cityId)
+    private async Task<JobPostEntity> MapToEntity(CreateFeaturedJobPostCommand command, BusinessEntity business,
+        int? cityId, CancellationToken cancellationToken)
     {
         var jobPost = new JobPostEntity
         {
@@ -93,12 +96,43 @@ public class CreateFeaturedJobPostCommandHandler(
             MaxSalary = command.MaxSalary,
             Currency = command.Currency,
             BusinessId = business.Id,
-            Tags = command.Tags,
             IsFeatured = true,
             IsPublished = false,
             PublishedAt = null
         };
 
+        if (command.Tags is not null && command.Tags.Count != 0)
+            jobPost.JobPostTags = await CreateOrGetExistingTags(command.Tags, cancellationToken);
+
         return jobPost;
+    }
+
+    private async Task<List<JobPostTagEntity>> CreateOrGetExistingTags(IEnumerable<string> tags,
+        CancellationToken cancellationToken)
+    {
+        var jobPostTags = new List<JobPostTagEntity>();
+
+        foreach (var tag in tags)
+        {
+            var normalizedTag = tag.Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(normalizedTag)) continue;
+
+            var existingTag = await appDbContext.Tags
+                .FirstOrDefaultAsync(t => t.Slug == normalizedTag, cancellationToken);
+
+            if (existingTag is null)
+            {
+                existingTag = new TagEntity
+                {
+                    Label = tag.Trim(),
+                    Slug = normalizedTag
+                };
+                await appDbContext.Tags.AddAsync(existingTag, cancellationToken);
+            }
+
+            jobPostTags.Add(new JobPostTagEntity { Tag = existingTag });
+        }
+
+        return jobPostTags;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using JobBoard.Common;
+using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 
 namespace JobBoard.Domain.JobAlert;

@@ -1,4 +1,4 @@
-﻿using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

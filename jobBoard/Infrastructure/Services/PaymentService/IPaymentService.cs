@@ -1,6 +1,6 @@
 ﻿using Stripe.Checkout;
 
-namespace JobBoard.Common.Interfaces;
+namespace JobBoard.Infrastructure.Services.PaymentService;
 
 public interface IPaymentService
 {

@@ -1,7 +1,7 @@
 using JobBoard.Common.Constants;
-using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Services.JwtService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;

@@ -1,6 +1,6 @@
-﻿using JobBoard.Common.Interfaces;
-using JobBoard.Common.Models;
+﻿using JobBoard.Common.Models;
 using JobBoard.Features.Business.UpdateMyBusinessLogo;
+using JobBoard.Infrastructure.Services.FileUploadService;
 using MediatR;
 
 namespace JobBoard.Features.JobPost.UploadJobPostLogo;

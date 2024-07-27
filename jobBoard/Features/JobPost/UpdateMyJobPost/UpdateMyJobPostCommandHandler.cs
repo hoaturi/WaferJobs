@@ -1,9 +1,10 @@
 ﻿using System.Transactions;
-using JobBoard.Common.Interfaces;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CurrentUserService;
+using JobBoard.Infrastructure.Services.LocationService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,7 +59,6 @@ public class UpdateMyJobPostCommandHandler(
         jobPost.MinSalary = command.Dto.MinSalary;
         jobPost.MaxSalary = command.Dto.MaxSalary;
         jobPost.Currency = command.Dto.Currency;
-        jobPost.Tags = command.Dto.Tags;
 
         if (!string.IsNullOrWhiteSpace(command.Dto.City))
         {
@@ -69,6 +69,22 @@ public class UpdateMyJobPostCommandHandler(
         {
             jobPost.CityId = null;
         }
+
+        if (command.Dto.Tags is not null && command.Dto.Tags.Count > 0)
+        {
+            var loweredTags = command.Dto.Tags.Select(t => t.ToLower()).ToList();
+
+            var tags = await appDbContext.Tags
+                .Where(t => loweredTags.Contains(t.Slug.ToLower()))
+                .ToListAsync(cancellationToken);
+
+            jobPost.JobPostTags = tags.Select(t => new JobPostTagEntity { TagId = t.Id }).ToList();
+        }
+        else
+        {
+            jobPost.JobPostTags = null;
+        }
+
 
         await appDbContext.SaveChangesAsync(cancellationToken);
     }

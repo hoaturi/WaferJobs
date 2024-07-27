@@ -1,6 +1,4 @@
-﻿using JobBoard.Infrastructure.Services.LocationService;
-
-namespace JobBoard.Common.Interfaces;
+﻿namespace JobBoard.Infrastructure.Services.LocationService;
 
 public interface ILocationService
 {

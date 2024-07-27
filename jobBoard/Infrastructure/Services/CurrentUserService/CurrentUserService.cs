@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using JobBoard.Common.Exceptions;
-using JobBoard.Common.Interfaces;
 
 namespace JobBoard.Infrastructure.Services.CurrentUserService;
 

@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Common.Interfaces;
+﻿namespace JobBoard.Infrastructure.Services.CurrentUserService;
 
 public interface ICurrentUserService
 {

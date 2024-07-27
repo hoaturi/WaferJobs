@@ -1,6 +1,6 @@
-﻿using JobBoard.Common.Interfaces;
-using JobBoard.Common.Models;
+﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

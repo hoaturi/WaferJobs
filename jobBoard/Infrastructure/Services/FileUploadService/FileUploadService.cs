@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
-using JobBoard.Common.Interfaces;
 using JobBoard.Common.Options;
 using Microsoft.Extensions.Options;
 

@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Common.Interfaces;
+﻿namespace JobBoard.Infrastructure.Services.FileUploadService;
 
 public interface IFileUploadService
 {

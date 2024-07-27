@@ -1,7 +1,7 @@
 ﻿using JobBoard.Common.Constants;
 using JobBoard.Domain.Auth;
 
-namespace JobBoard.Common.Interfaces;
+namespace JobBoard.Infrastructure.Services.JwtService;
 
 public interface IJwtService
 {

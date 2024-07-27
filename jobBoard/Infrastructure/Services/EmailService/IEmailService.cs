@@ -1,6 +1,4 @@
-﻿using JobBoard.Infrastructure.Services.EmailService;
-
-namespace JobBoard.Common.Interfaces;
+﻿namespace JobBoard.Infrastructure.Services.EmailService;
 
 public interface IEmailService
 {

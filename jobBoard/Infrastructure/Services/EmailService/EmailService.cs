@@ -1,7 +1,6 @@
 ﻿using System.Web;
 using Azure;
 using Azure.Communication.Email;
-using JobBoard.Common.Interfaces;
 using JobBoard.Common.Options;
 using Microsoft.Extensions.Options;
 
