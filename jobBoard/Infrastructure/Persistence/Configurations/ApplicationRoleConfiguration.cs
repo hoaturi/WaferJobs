@@ -1,7 +1,7 @@
-﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.Auth;
+﻿using JobBoard.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
@@ -13,8 +13,10 @@ public class ApplicationRoleConfiguration : IEntityTypeConfiguration<Application
             "Infrastructure/Persistence/Configurations/SeedData/roles.json"
         );
 
-        var roles = roleJson.DeserializeWithCaseInsensitivity<List<ApplicationRoleEntity>>();
+        var roles = JsonSerializer.Deserialize<List<ApplicationRoleEntity>>(roleJson);
 
+        if (roles is null || roles.Count == 0)
+            throw new Exception("Roles data is missing or empty");
 
         builder.HasData(roles);
     }

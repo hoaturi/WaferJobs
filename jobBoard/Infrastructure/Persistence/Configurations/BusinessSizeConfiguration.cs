@@ -1,6 +1,6 @@
-﻿using JobBoard.Common.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
@@ -14,7 +14,10 @@ public class BusinessSizeConfiguration : IEntityTypeConfiguration<BusinessSizeEn
             "Infrastructure/Persistence/Configurations/SeedData/businessSizes.json"
         );
 
-        var businessSizes = businessSizeJson.DeserializeWithCaseInsensitivity<List<BusinessSizeEntity>>();
+        var businessSizes = JsonSerializer.Deserialize<List<BusinessSizeEntity>>(businessSizeJson);
+
+        if (businessSizes is null || businessSizes.Count == 0)
+            throw new Exception("Business sizes data is missing or empty");
 
         builder.HasData(businessSizes);
     }

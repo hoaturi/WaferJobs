@@ -1,7 +1,7 @@
-﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.JobPost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
@@ -17,7 +17,10 @@ public class EmploymentTypeConfiguration : IEntityTypeConfiguration<EmploymentTy
             "Infrastructure/Persistence/Configurations/SeedData/employmentTypes.json"
         );
 
-        var employmentTypes = employmentTypeJson.DeserializeWithCaseInsensitivity<List<EmploymentTypeEntity>>();
+        var employmentTypes = JsonSerializer.Deserialize<List<EmploymentTypeEntity>>(employmentTypeJson);
+
+        if (employmentTypes is null || employmentTypes.Count == 0)
+            throw new Exception("Emplyoment types data is missing or empty");
 
         builder.HasData(employmentTypes);
     }

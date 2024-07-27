@@ -1,7 +1,7 @@
-﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.JobPost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
@@ -17,7 +17,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<CategoryEntity>
             "Infrastructure/Persistence/Configurations/SeedData/categories.json"
         );
 
-        var categories = categoryJson.DeserializeWithCaseInsensitivity<List<CategoryEntity>>();
+        var categories = JsonConvert.DeserializeObject<List<CategoryEntity>>(categoryJson);
 
         builder.HasData(categories);
     }

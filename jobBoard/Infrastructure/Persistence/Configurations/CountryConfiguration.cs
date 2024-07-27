@@ -1,7 +1,7 @@
-﻿using JobBoard.Common.Extensions;
-using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
@@ -19,7 +19,10 @@ public class CountryConfiguration : IEntityTypeConfiguration<CountryEntity>
             "Infrastructure/Persistence/Configurations/SeedData/countries.json"
         );
 
-        var countries = countryJson.DeserializeWithCaseInsensitivity<List<CountryEntity>>();
+        var countries = JsonSerializer.Deserialize<List<CountryEntity>>(countryJson);
+
+        if (countries is null || countries.Count == 0)
+            throw new Exception("Countries data is missing or empty");
 
         builder.HasData(countries);
     }
