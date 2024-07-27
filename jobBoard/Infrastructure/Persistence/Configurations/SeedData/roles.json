@@ -1,17 +1,17 @@
 [
   {
-    "id": "3b7bde7a-a54c-400f-ac80-d9ef11acde40",
-    "name": "Admin",
-    "normalizedName": "ADMIN"
+    "Id": "3b7bde7a-a54c-400f-ac80-d9ef11acde40",
+    "Name": "Admin",
+    "NormalizedName": "ADMIN"
   },
   {
-    "id": "c0b85d2c-fecf-4ade-ba89-fc183715e8b5",
-    "name": "JobSeeker",
-    "normalizedName": "JOBSEEKER"
+    "Id": "c0b85d2c-fecf-4ade-ba89-fc183715e8b5",
+    "Name": "JobSeeker",
+    "NormalizedName": "JOBSEEKER"
   },
   {
-    "id": "833bf160-c419-4449-95c7-2c762c0abd98",
-    "name": "Business",
-    "normalizedName": "BUSINESS"
+    "Id": "833bf160-c419-4449-95c7-2c762c0abd98",
+    "Name": "Business",
+    "NormalizedName": "BUSINESS"
   }
 ]

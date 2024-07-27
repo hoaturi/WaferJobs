@@ -1,7 +1,7 @@
-﻿namespace JobBoard;
+﻿namespace JobBoard.Domain.Business;
 
 public class BusinessSizeEntity
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public required string Label { get; set; }
 }

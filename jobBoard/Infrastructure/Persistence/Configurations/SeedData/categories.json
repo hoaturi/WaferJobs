@@ -1,72 +1,72 @@
 [
   {
-    "id": 1,
-    "label": "Engineering",
-    "slug": "engineering"
+    "Id": 1,
+    "Label": "Engineering",
+    "Slug": "engineering"
   },
   {
-    "id": 2,
-    "label": "R&D",
-    "slug": "r&d"
+    "Id": 2,
+    "Label": "R&D",
+    "Slug": "r&d"
   },
   {
-    "id": 3,
-    "label": "Q&A",
-    "slug": "q&a"
+    "Id": 3,
+    "Label": "Q&A",
+    "Slug": "q&a"
   },
   {
-    "id": 4,
-    "label": "Sales",
-    "slug": "sales"
+    "Id": 4,
+    "Label": "Sales",
+    "Slug": "sales"
   },
   {
-    "id": 5,
-    "label": "Marketing",
-    "slug": "marketing"
+    "Id": 5,
+    "Label": "Marketing",
+    "Slug": "marketing"
   },
   {
-    "id": 6,
-    "label": "Human Resources",
-    "slug": "human-resources"
+    "Id": 6,
+    "Label": "Human Resources",
+    "Slug": "human-resources"
   },
   {
-    "id": 7,
-    "label": "Information Technology",
-    "slug": "information-technology"
+    "Id": 7,
+    "Label": "Information Technology",
+    "Slug": "information-technology"
   },
   {
-    "id": 8,
-    "label": "Finance",
-    "slug": "finance"
+    "Id": 8,
+    "Label": "Finance",
+    "Slug": "finance"
   },
   {
-    "id": 9,
-    "label": "Customer Support",
-    "slug": "customer-support"
+    "Id": 9,
+    "Label": "Customer Support",
+    "Slug": "customer-support"
   },
   {
-    "id": 10,
-    "label": "Product Management",
-    "slug": "product-management"
+    "Id": 10,
+    "Label": "Product Management",
+    "Slug": "product-management"
   },
   {
-    "id": 11,
-    "label": "Legal",
-    "slug": "legal"
+    "Id": 11,
+    "Label": "Legal",
+    "Slug": "legal"
   },
   {
-    "id": 12,
-    "label": "Technician",
-    "slug": "technician"
+    "Id": 12,
+    "Label": "Technician",
+    "Slug": "technician"
   },
   {
-    "id": 13,
-    "label": "Operations",
-    "slug": "operations"
+    "Id": 13,
+    "Label": "Operations",
+    "Slug": "operations"
   },
   {
-    "id": 14,
-    "label": "Other",
-    "slug": "other"
+    "Id": 14,
+    "Label": "Other",
+    "Slug": "other"
   }
 ]

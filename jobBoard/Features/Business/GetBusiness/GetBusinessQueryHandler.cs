@@ -28,7 +28,7 @@ public class GetBusinessQueryHandler(
                 b.WebsiteUrl,
                 b.TwitterUrl,
                 b.LinkedinUrl,
-                b.BusinessSize != null ? b.BusinessSize.Name : null
+                b.BusinessSize != null ? b.BusinessSize.Label : null
             ))
             .FirstOrDefaultAsync(cancellationToken);
 

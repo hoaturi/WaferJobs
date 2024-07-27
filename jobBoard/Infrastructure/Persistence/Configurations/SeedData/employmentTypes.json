@@ -1,27 +1,27 @@
 [
   {
-    "id": 1,
-    "label": "Full Time",
-    "slug": "full-time"
+    "Id": 1,
+    "Label": "Full Time",
+    "Slug": "full-time"
   },
   {
-    "id": 2,
-    "label": "Part Time",
-    "slug": "part-time"
+    "Id": 2,
+    "Label": "Part Time",
+    "Slug": "part-time"
   },
   {
-    "id": 3,
-    "label": "Contract",
-    "slug": "contract"
+    "Id": 3,
+    "Label": "Contract",
+    "Slug": "contract"
   },
   {
-    "id": 4,
-    "label": "Internship",
-    "slug": "internship"
+    "Id": 4,
+    "Label": "Internship",
+    "Slug": "internship"
   },
   {
-    "id": 5,
-    "label": "Temporary",
-    "slug": "temporary"
+    "Id": 5,
+    "Label": "Temporary",
+    "Slug": "temporary"
   }
 ]

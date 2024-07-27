@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JobBoard.Domain.Business;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -8,7 +9,7 @@ public class BusinessSizeConfiguration : IEntityTypeConfiguration<BusinessSizeEn
 {
     public void Configure(EntityTypeBuilder<BusinessSizeEntity> builder)
     {
-        builder.Property(b => b.Name).IsRequired().HasMaxLength(20);
+        builder.Property(b => b.Label).IsRequired().HasMaxLength(20);
 
         var businessSizeJson = File.ReadAllText(
             "Infrastructure/Persistence/Configurations/SeedData/businessSizes.json"
