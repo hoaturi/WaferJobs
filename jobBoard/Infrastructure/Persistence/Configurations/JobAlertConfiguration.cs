@@ -8,21 +8,18 @@ public class JobAlertConfiguration : IEntityTypeConfiguration<JobAlertEntity>
 {
     public void Configure(EntityTypeBuilder<JobAlertEntity> builder)
     {
-        builder.Property(ja => ja.EmailAddress)
+        builder.Property(ja => ja.Email)
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.HasIndex(ja => ja.EmailAddress)
+        builder.HasIndex(ja => ja.Email)
+            .IsUnique();
+
+        builder.HasIndex(ja => ja.Token)
             .IsUnique();
 
         builder.Property(ja => ja.Keyword)
             .HasMaxLength(50);
-
-        builder.HasOne(ja => ja.Category)
-            .WithMany()
-            .HasForeignKey(ja => ja.CategoryId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(ja => ja.Country)
             .WithMany()
@@ -30,10 +27,15 @@ public class JobAlertConfiguration : IEntityTypeConfiguration<JobAlertEntity>
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasOne(ja => ja.EmploymentType)
-            .WithMany()
-            .HasForeignKey(ja => ja.EmploymentTypeId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+        builder
+            .HasMany(ja => ja.EmploymentTypes)
+            .WithMany(et => et.JobAlerts)
+            .UsingEntity("JobAlertEmploymentType");
+
+        builder
+            .HasMany(ja => ja.Categories)
+            .WithMany(c => c.JobAlerts)
+            .UsingEntity("JobAlertCategory")
+            ;
     }
 }

@@ -3,5 +3,5 @@
 public record UpdateJobAlertDto(
     string? Keyword,
     int? CountryId,
-    int? EmploymentTypeId,
-    int? CategoryId);
+    List<int>? EmploymentTypeIds,
+    List<int>? CategoryIds);

@@ -7,15 +7,12 @@ namespace JobBoard.Domain.JobAlert;
 public class JobAlertEntity : BaseEntity
 {
     public int Id { get; set; }
-    public required string EmailAddress { get; set; }
+    public required string Email { get; set; }
     public string? Keyword { get; set; }
-    public int? CategoryId { get; set; }
     public int? CountryId { get; set; }
-    public int? EmploymentTypeId { get; set; }
     public required string Token { get; set; }
-
     public DateTime? LastSentAt { get; set; }
-    public CategoryEntity? Category { get; set; }
     public CountryEntity? Country { get; set; }
-    public EmploymentTypeEntity? EmploymentType { get; set; }
+    public ICollection<EmploymentTypeEntity> EmploymentTypes { get; set; } = [];
+    public ICollection<CategoryEntity> Categories { get; set; } = [];
 }

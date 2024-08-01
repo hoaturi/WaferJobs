@@ -14,10 +14,18 @@ public class GetJobAlertQueryHandler(
         CancellationToken cancellationToken)
     {
         var jobAlert = await dbContext.JobAlerts
-            .FirstOrDefaultAsync(ja => ja.Token == query.Token, cancellationToken);
+            .Where(ja => ja.Token == query.Token)
+            .Select(ja => new GetJobAlertResponse(
+                ja.Email,
+                ja.Keyword,
+                ja.CountryId,
+                ja.EmploymentTypes.Select(et => et.Id).ToList(),
+                ja.Categories.Select(c => c.Id).ToList()
+            ))
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (jobAlert is null) return JobAlertError.JobAlertNotFound;
 
-        return new GetJobAlertResponse(jobAlert.EmailAddress);
+        return jobAlert;
     }
 }
