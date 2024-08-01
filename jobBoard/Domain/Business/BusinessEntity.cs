@@ -17,7 +17,7 @@ public class BusinessEntity : BaseEntity
     public string? TwitterUrl { get; set; }
     public string? LinkedinUrl { get; set; }
 
-    public BusinessUserEntity? User { get; init; }
+    public BusinessUserEntity User { get; init; } = null!;
     public List<JobPostEntity>? JobPosts { get; init; }
     public BusinessSizeEntity? BusinessSize { get; init; }
 }
