@@ -2,5 +2,7 @@
 
 public interface IEmailService
 {
-    Task SendAsync(PasswordResetEmailDto passwordResetEmailDto);
+    Task SendPasswordResetAsync(PasswordResetEmailDto passwordResetEmailDto);
+
+    Task SendJobAlertAsync(JobAlertEmailDto jobAlertEmailDto);
 }

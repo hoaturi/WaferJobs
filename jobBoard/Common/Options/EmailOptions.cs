@@ -1,14 +1,12 @@
-﻿namespace JobBoard.Common.Options;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JobBoard.Common.Options;
 
 public class EmailOptions
 {
     public const string Key = "Email";
-    public required string FromAddress { get; init; }
 
-    public required string BaseUrl { get; init; }
-
-    public string GetPasswordResetLink(string token, string userId)
-    {
-        return $"http://{BaseUrl}/auth/reset-password?token={token}&userId={userId}";
-    }
+    [Required] public required string SenderEmail { get; init; }
+    [Required] public required string SenderName { get; init; }
+    [Required] public required string BaseUrl { get; init; }
 }

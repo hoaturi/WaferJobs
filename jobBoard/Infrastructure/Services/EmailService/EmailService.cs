@@ -1,54 +1,89 @@
 ﻿using System.Web;
-using Azure;
-using Azure.Communication.Email;
 using JobBoard.Common.Options;
 using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace JobBoard.Infrastructure.Services.EmailService;
 
 public class EmailService(
-    IOptions<AzureOptions> azureOptions,
+    ISendGridClient emailClient,
     IOptions<EmailOptions> emailOptions,
+    IOptions<SendGridOptions> sendGridOptions,
     ILogger<EmailService> logger)
     : IEmailService
 {
-    private readonly EmailClient _emailClient = new(azureOptions.Value.CommunicationServiceConnectionString);
     private readonly EmailOptions _emailOptions = emailOptions.Value;
+    private readonly SendGridOptions _sendGridOptions = sendGridOptions.Value;
 
-    public async Task SendAsync(PasswordResetEmailDto passwordResetEmailDto)
+    public async Task SendPasswordResetAsync(PasswordResetEmailDto passwordResetEmailDto)
     {
         var encodedToken = HttpUtility.UrlEncode(passwordResetEmailDto.Token);
-        var passwordResetLink =
-            _emailOptions.GetPasswordResetLink(encodedToken, passwordResetEmailDto.UserEntity.Id.ToString());
 
-        var emailContent = GeneratePasswordResetEmailContent(passwordResetLink);
 
-        try
+        var email = new SendGridMessage
         {
-            await _emailClient.SendAsync(
-                WaitUntil.Started,
-                _emailOptions.FromAddress,
-                passwordResetEmailDto.UserEntity.Email,
-                "Reset Password",
-                emailContent);
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = "d-92fcef9ced2e4c0ca754cafa3e8cdbdd"
+        };
 
-            logger.LogInformation("Password reset email sent successfully for user with id: {UserId}",
-                passwordResetEmailDto.UserEntity.Id);
-        }
-        catch (RequestFailedException ex)
+        var templateData = new
         {
-            logger.LogError("Failed to send password reset email. Error Code: {ErrorCode}", ex.ErrorCode);
-            throw new EmailSendFailedException();
-        }
+            baseUrl = _emailOptions.BaseUrl,
+            token = encodedToken,
+            userId = passwordResetEmailDto.User.Id
+        };
+
+        email.AddTo(new EmailAddress(passwordResetEmailDto.User.Email));
+        email.SetTemplateData(templateData);
+
+        var response = await emailClient.SendEmailAsync(email);
+
+        if (!response.IsSuccessStatusCode)
+            logger.LogWarning("Failed to send password reset email to: {Email}. Status code: {StatusCode}",
+                passwordResetEmailDto.User.Email, response.StatusCode);
+
+        logger.LogInformation("Password reset email sent to: {Email}", passwordResetEmailDto.User.Email);
     }
 
-    private static string GeneratePasswordResetEmailContent(string passwordResetLink)
+    public async Task SendJobAlertAsync(JobAlertEmailDto jobAlertEmailDto)
     {
-        return $"""
-                            <p>Please click the button below to reset your password.</p>
-                            <p><a href='{passwordResetLink}'>Reset Password</a></p>
-                            <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
-                            <p>Thank you,<br>JobBoard Team</p>
-                """;
+        var capitalizedKeyword = jobAlertEmailDto.Keyword is null
+            ? string.Empty
+            : char.ToUpper(jobAlertEmailDto.Keyword[0]) + jobAlertEmailDto.Keyword[1..];
+        var joinedCategories = jobAlertEmailDto.Categories is { Count: > 0 }
+            ? string.Join(", ", jobAlertEmailDto.Categories)
+            : string.Empty;
+        var joinedEmploymentTypes = jobAlertEmailDto.EmploymentTypes is { Count: > 0 }
+            ? string.Join(", ", jobAlertEmailDto.EmploymentTypes)
+            : string.Empty;
+
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.JobAlertTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            keyword = capitalizedKeyword,
+            country = jobAlertEmailDto.Country,
+            categories = joinedCategories,
+            employmentTypes = joinedEmploymentTypes,
+            token = jobAlertEmailDto.Token,
+            filterQuery = jobAlertEmailDto.FilterQuery,
+            totalCount = jobAlertEmailDto.JobPosts.TotalCount,
+            jobPosts = jobAlertEmailDto.JobPosts.JobPosts
+        };
+
+        email.AddTo(new EmailAddress(jobAlertEmailDto.RecipientEmail));
+        email.SetTemplateData(templateData);
+
+        var response = await emailClient.SendEmailAsync(email);
+
+        if (!response.IsSuccessStatusCode)
+            logger.LogWarning("Failed to send job alert email to: {Email}. Status code: {StatusCode}",
+                jobAlertEmailDto.RecipientEmail, response.StatusCode);
     }
 }
