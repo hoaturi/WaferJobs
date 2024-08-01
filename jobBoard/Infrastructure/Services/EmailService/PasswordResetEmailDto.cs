@@ -2,4 +2,4 @@
 
 namespace JobBoard.Infrastructure.Services.EmailService;
 
-public record PasswordResetEmailDto(ApplicationUserEntity UserEntity, string Token);
+public record PasswordResetEmailDto(ApplicationUserEntity User, string Token);
