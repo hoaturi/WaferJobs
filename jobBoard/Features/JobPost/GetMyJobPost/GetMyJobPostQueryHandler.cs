@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.JobPost.GetMyJobPost;
 
-public class
-    GetMyJobPostQueryHandler(
-        ICurrentUserService currentUserService,
-        AppDbContext appDbContext)
-    : IRequestHandler<GetMyJobPostQuery,
-        Result<GetMyJobPostResponse, Error>>
+public class GetMyJobPostQueryHandler(
+    ICurrentUserService currentUserService,
+    AppDbContext appDbContext)
+    : IRequestHandler<GetMyJobPostQuery, Result<GetMyJobPostResponse, Error>>
 {
     public async Task<Result<GetMyJobPostResponse, Error>> Handle(GetMyJobPostQuery query,
         CancellationToken cancellationToken)
@@ -40,7 +38,7 @@ public class
                 j.ApplyUrl,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.JobPostTags != null ? j.JobPostTags.Select(t => t.Tag.Label).ToList() : null,
+                j.Tags.Select(t => t.Label).ToList(),
                 j.Business != null ? j.Business.UserId : null
             ))
             .FirstOrDefaultAsync(cancellationToken);

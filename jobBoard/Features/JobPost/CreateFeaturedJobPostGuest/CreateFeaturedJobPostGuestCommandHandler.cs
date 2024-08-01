@@ -137,15 +137,15 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         };
 
         if (command.Tags is not null && command.Tags.Count != 0)
-            jobPost.JobPostTags = await CreateOrGetExistingTags(command.Tags, cancellationToken);
+            jobPost.Tags = await CreateOrGetExistingTags(command.Tags, cancellationToken);
 
         return jobPost;
     }
 
-    private async Task<List<JobPostTagEntity>> CreateOrGetExistingTags(IEnumerable<string> tags,
+    private async Task<List<TagEntity>> CreateOrGetExistingTags(IEnumerable<string> tags,
         CancellationToken cancellationToken)
     {
-        var jobPostTags = new List<JobPostTagEntity>();
+        var jobPostTags = new List<TagEntity>();
 
         foreach (var tag in tags)
         {
@@ -165,7 +165,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
                 await appDbContext.Tags.AddAsync(existingTag, cancellationToken);
             }
 
-            jobPostTags.Add(new JobPostTagEntity { Tag = existingTag });
+            jobPostTags.Add(new TagEntity { Id = existingTag.Id, Label = existingTag.Label, Slug = existingTag.Slug });
         }
 
         return jobPostTags;

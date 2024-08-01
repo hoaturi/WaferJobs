@@ -35,7 +35,7 @@ public class JobPostEntity : BaseEntity
     public CountryEntity Country { get; set; } = null!;
     public CityEntity? City { get; set; }
     public EmploymentTypeEntity EmploymentType { get; set; } = null!;
-    public ICollection<JobPostPaymentEntity>? Payments { get; set; }
-    public ICollection<JobPostTagEntity>? JobPostTags { get; set; }
+    public ICollection<JobPostPaymentEntity> Payments { get; set; } = [];
+    public ICollection<TagEntity> Tags { get; set; } = [];
     public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

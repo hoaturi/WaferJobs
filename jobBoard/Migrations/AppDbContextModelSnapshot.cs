@@ -23,64 +23,34 @@ namespace JobBoard.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("JobBoard.BusinessSizeEntity", b =>
+            modelBuilder.Entity("JobAlertCategory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("CategoriesId")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("JobAlertsId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.HasKey("CategoriesId", "JobAlertsId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("JobAlertsId");
 
-                    b.ToTable("BusinessSizes");
+                    b.ToTable("JobAlertCategory");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "1-10"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "11-50"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "51-200"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "201-500"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "501-1000"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "1001-5000"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "5001-10000"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "10001+"
-                        });
+            modelBuilder.Entity("JobAlertEmploymentType", b =>
+                {
+                    b.Property<int>("EmploymentTypesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("JobAlertsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EmploymentTypesId", "JobAlertsId");
+
+                    b.HasIndex("JobAlertsId");
+
+                    b.ToTable("JobAlertEmploymentType");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Auth.ApplicationRoleEntity", b =>
@@ -263,6 +233,66 @@ namespace JobBoard.Migrations
                         .IsUnique();
 
                     b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.Business.BusinessSizeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BusinessSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "1-10"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Label = "11-50"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Label = "51-200"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Label = "201-500"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Label = "501-1000"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Label = "1001-5000"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Label = "5001-10000"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Label = "10001+"
+                        });
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Common.CityEntity", b =>
@@ -1909,8 +1939,8 @@ namespace JobBoard.Migrations
                         {
                             Id = 226,
                             Code = "TT",
-                            Label = "Trinidad and Tobago",
-                            Slug = "trinidad-and-tobago"
+                            Label = "TrinIdad and Tobago",
+                            Slug = "trinIdad-and-tobago"
                         },
                         new
                         {
@@ -2118,22 +2148,16 @@ namespace JobBoard.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("CountryId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EmailAddress")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<int?>("EmploymentTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Keyword")
                         .HasMaxLength(50)
@@ -2151,14 +2175,13 @@ namespace JobBoard.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CountryId");
 
-                    b.HasIndex("EmailAddress")
+                    b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("EmploymentTypeId");
+                    b.HasIndex("Token")
+                        .IsUnique();
 
                     b.ToTable("JobAlerts");
                 });
@@ -2461,15 +2484,13 @@ namespace JobBoard.Migrations
 
                     b.Property<string>("CheckoutSessionId")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("EventId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsProcessed")
                         .HasColumnType("boolean");
@@ -2482,33 +2503,9 @@ namespace JobBoard.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CheckoutSessionId")
-                        .IsUnique();
-
                     b.HasIndex("JobPostId");
 
                     b.ToTable("JobPostPayments");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostTagEntity", b =>
-                {
-                    b.Property<Guid>("JobPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("JobPostId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("JobPostTags");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobSeeker.JobSeekerEntity", b =>
@@ -2537,6 +2534,21 @@ namespace JobBoard.Migrations
                         .IsUnique();
 
                     b.ToTable("JobSeekers");
+                });
+
+            modelBuilder.Entity("JobPostTag", b =>
+                {
+                    b.Property<Guid>("JobPostsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("JobPostsId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("JobPostTag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -2656,9 +2668,39 @@ namespace JobBoard.Migrations
                     b.HasDiscriminator().HasValue("JobSeekerUserEntity");
                 });
 
+            modelBuilder.Entity("JobAlertCategory", b =>
+                {
+                    b.HasOne("JobBoard.Domain.JobPost.CategoryEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobBoard.Domain.JobAlert.JobAlertEntity", null)
+                        .WithMany()
+                        .HasForeignKey("JobAlertsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JobAlertEmploymentType", b =>
+                {
+                    b.HasOne("JobBoard.Domain.JobPost.EmploymentTypeEntity", null)
+                        .WithMany()
+                        .HasForeignKey("EmploymentTypesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobBoard.Domain.JobAlert.JobAlertEntity", null)
+                        .WithMany()
+                        .HasForeignKey("JobAlertsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("JobBoard.Domain.Business.BusinessEntity", b =>
                 {
-                    b.HasOne("JobBoard.BusinessSizeEntity", "BusinessSize")
+                    b.HasOne("JobBoard.Domain.Business.BusinessSizeEntity", "BusinessSize")
                         .WithMany()
                         .HasForeignKey("BusinessSizeId");
 
@@ -2675,26 +2717,12 @@ namespace JobBoard.Migrations
 
             modelBuilder.Entity("JobBoard.Domain.JobAlert.JobAlertEntity", b =>
                 {
-                    b.HasOne("JobBoard.Domain.JobPost.CategoryEntity", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("JobBoard.Domain.Common.CountryEntity", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("JobBoard.Domain.JobPost.EmploymentTypeEntity", "EmploymentType")
-                        .WithMany()
-                        .HasForeignKey("EmploymentTypeId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Category");
-
                     b.Navigation("Country");
-
-                    b.Navigation("EmploymentType");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostEntity", b =>
@@ -2743,28 +2771,10 @@ namespace JobBoard.Migrations
                     b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", "JobPost")
                         .WithMany("Payments")
                         .HasForeignKey("JobPostId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("JobPost");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostTagEntity", b =>
-                {
-                    b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", "JobPost")
-                        .WithMany("JobPostTags")
-                        .HasForeignKey("JobPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("JobBoard.Domain.Common.TagEntity", "Tag")
-                        .WithMany("JobPostTags")
-                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JobPost");
-
-                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobSeeker.JobSeekerEntity", b =>
@@ -2776,6 +2786,21 @@ namespace JobBoard.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("JobPostTag", b =>
+                {
+                    b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", null)
+                        .WithMany()
+                        .HasForeignKey("JobPostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobBoard.Domain.Common.TagEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -2844,15 +2869,8 @@ namespace JobBoard.Migrations
                     b.Navigation("JobPosts");
                 });
 
-            modelBuilder.Entity("JobBoard.Domain.Common.TagEntity", b =>
-                {
-                    b.Navigation("JobPostTags");
-                });
-
             modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostEntity", b =>
                 {
-                    b.Navigation("JobPostTags");
-
                     b.Navigation("Payments");
                 });
 

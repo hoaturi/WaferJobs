@@ -34,5 +34,9 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
             .WithMany(jp => jp.JobPosts)
             .HasForeignKey(jp => jp.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(jp => jp.Tags)
+            .WithMany(t => t.JobPosts)
+            .UsingEntity("JobPostTag");
     }
 }

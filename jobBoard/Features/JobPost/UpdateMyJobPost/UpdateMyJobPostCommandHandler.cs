@@ -1,6 +1,7 @@
 ﻿using System.Transactions;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
+using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
@@ -78,11 +79,11 @@ public class UpdateMyJobPostCommandHandler(
                 .Where(t => loweredTags.Contains(t.Slug.ToLower()))
                 .ToListAsync(cancellationToken);
 
-            jobPost.JobPostTags = tags.Select(t => new JobPostTagEntity { TagId = t.Id }).ToList();
+            jobPost.Tags = tags;
         }
         else
         {
-            jobPost.JobPostTags = null;
+            jobPost.Tags = new List<TagEntity>();
         }
 
 

@@ -71,7 +71,7 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
                 j.BusinessId,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.JobPostTags != null ? j.JobPostTags.Select(t => t.Tag.Label).ToList() : null,
+                j.Tags.Select(t => t.Label).ToList(),
                 j.FeaturedStartDate.GetValueOrDefault(),
                 j.FeaturedEndDate.GetValueOrDefault(),
                 j.PublishedAt.GetValueOrDefault()
