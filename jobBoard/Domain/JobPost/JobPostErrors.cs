@@ -6,12 +6,12 @@ namespace JobBoard.Domain.JobPost;
 
 public static class JobPostErrors
 {
-    public static Error JobPostNotFound(Guid id)
+    public static Error JobPostNotFound()
     {
         return new Error(
             ErrorCodes.JobPostNotFound,
             HttpStatusCode.NotFound,
-            $"Job post with id: {id} not found."
+            "Job post not found."
         );
     }
 }
