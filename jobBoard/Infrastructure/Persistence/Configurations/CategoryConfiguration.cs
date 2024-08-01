@@ -19,6 +19,8 @@ public class CategoryConfiguration : IEntityTypeConfiguration<CategoryEntity>
 
         var categories = JsonConvert.DeserializeObject<List<CategoryEntity>>(categoryJson);
 
+        if (categories is null) throw new Exception("Categories data is missing or empty");
+
         builder.HasData(categories);
     }
 }
