@@ -1,18 +1,15 @@
-﻿namespace JobBoard.Common.Options;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JobBoard.Common.Options;
 
 public class JwtOptions
 {
     public const string Key = "Jwt";
 
-    public required string Issuer { get; init; }
-
-    public required string Audience { get; init; }
-
-    public required string AccessKey { get; init; }
-
-    public required string RefreshKey { get; init; }
-
-    public required string AccessExpires { get; init; }
-
-    public required string RefreshExpires { get; init; }
+    [Required] public required string Issuer { get; init; }
+    [Required] public required string Audience { get; init; }
+    [Required] public required string AccessKey { get; init; }
+    [Required] public required string RefreshKey { get; init; }
+    [Required] public required string AccessExpires { get; init; }
+    [Required] public required string RefreshExpires { get; init; }
 }
