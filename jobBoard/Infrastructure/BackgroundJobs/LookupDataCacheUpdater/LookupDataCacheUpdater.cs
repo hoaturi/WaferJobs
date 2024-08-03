@@ -1,4 +1,5 @@
-﻿using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
+﻿using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
 using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
 
@@ -8,20 +9,18 @@ public class LookupDataCacheUpdater(
     IJobPostCountService jobPostCountService,
     ILocationService locationService,
     IPopularKeywordsService popularKeywordsService,
-    ILogger<LookupDataCacheUpdater> logger
-) : IRecurringJobBase
+    ILogger<LookupDataCacheUpdater> logger)
+    : IRecurringJobBase
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Starting lookup data cache update.");
+        logger.LogInformation("Starting lookup data cache update");
 
-        await Task.WhenAll(
-            UpdateJobPostCountAsync(cancellationToken),
-            UpdateLocationsAsync(cancellationToken),
-            UpdatePopularKeywordsAsync(cancellationToken)
-        );
+        await UpdateJobPostCountAsync(cancellationToken);
+        await UpdateLocationsAsync(cancellationToken);
+        await UpdatePopularKeywordsAsync(cancellationToken);
 
-        logger.LogInformation("Lookup data cache update completed successfully.");
+        logger.LogInformation("Lookup data cache update completed successfully");
     }
 
     private async Task UpdateJobPostCountAsync(CancellationToken cancellationToken)
@@ -31,11 +30,9 @@ public class LookupDataCacheUpdater(
 
     private async Task UpdateLocationsAsync(CancellationToken cancellationToken)
     {
-        await Task.WhenAll(
-            locationService.GetCountriesWithActiveJobPostAsync(cancellationToken),
-            locationService.GetCitiesWithActiveJobPostAsync(cancellationToken),
-            locationService.GetLocationsWithActiveJobPostAsync(cancellationToken)
-        );
+        await locationService.GetCountriesWithActiveJobPostAsync(cancellationToken);
+        await locationService.GetCitiesWithActiveJobPostAsync(cancellationToken);
+        await locationService.GetLocationsWithActiveJobPostAsync(cancellationToken);
     }
 
     private async Task UpdatePopularKeywordsAsync(CancellationToken cancellationToken)
