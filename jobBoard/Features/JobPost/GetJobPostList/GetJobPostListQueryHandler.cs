@@ -9,8 +9,6 @@ namespace JobBoard.Features.JobPost.GetJobPostList;
 public class GetJobPostListQueryHandler(AppDbContext appDbContext)
     : IRequestHandler<GetJobPostListQuery, Result<GetJobPostListResponse, Error>>
 {
-    private const int PageSize = 20;
-
     public async Task<Result<GetJobPostListResponse, Error>> Handle(GetJobPostListQuery query,
         CancellationToken cancellationToken)
     {
@@ -47,12 +45,18 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
         }
 
+        jobPostListQuery = query.FeaturedOnly switch
+        {
+            "true" => jobPostListQuery.Where(j => j.IsFeatured),
+            "false" => jobPostListQuery.Where(j => !j.IsFeatured),
+            _ => jobPostListQuery
+        };
 
         jobPostListQuery = jobPostListQuery.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
 
         var jobPostList = await jobPostListQuery
-            .Skip((query.Page - 1) * PageSize)
-            .Take(PageSize)
+            .Skip((query.Page - 1) * query.Take)
+            .Take(query.Take)
             .Select(j => new GetJobPostResponse(
                 j.Id,
                 j.Category.Label,

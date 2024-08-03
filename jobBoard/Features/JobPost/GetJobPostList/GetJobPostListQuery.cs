@@ -11,5 +11,7 @@ public record GetJobPostListQuery(
     int? PostedDate,
     List<string>? Categories,
     List<string>? EmploymentTypes,
+    string? FeaturedOnly,
+    int Take,
     int Page
 ) : IRequest<Result<GetJobPostListResponse, Error>>;

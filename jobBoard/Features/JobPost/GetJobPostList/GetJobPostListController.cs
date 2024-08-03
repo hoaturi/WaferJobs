@@ -18,11 +18,14 @@ public class GetJobPostListController(ISender sender) : ControllerBase
         [FromQuery(Name = "postedDate")] int? postedDate,
         [FromQuery(Name = "categories")] List<string>? categories,
         [FromQuery(Name = "employmentTypes")] List<string>? employmentTypes,
+        [FromQuery(Name = "featuredOnly")] string? featuredOnly,
+        [FromQuery(Name = "take")] int take = 20,
         [FromQuery(Name = "page")] int page = 1
     )
     {
         var result = await sender.Send(
-            new GetJobPostListQuery(keyword, city, country, remoteOnly, postedDate, categories, employmentTypes, page)
+            new GetJobPostListQuery(keyword, city, country, remoteOnly, postedDate, categories, employmentTypes,
+                featuredOnly, take, page)
         );
 
         return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
