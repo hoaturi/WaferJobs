@@ -1,5 +1,7 @@
-﻿namespace JobBoard.Features.Lookup.GetPopularKeywords;
+﻿using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
+
+namespace JobBoard.Features.Lookup.GetPopularKeywords;
 
 public record GetPopularKeywordsResponse(
-    List<PopularKeywordDto> Keywords
+    IReadOnlyList<PopularKeywordDto> Keywords
 );
