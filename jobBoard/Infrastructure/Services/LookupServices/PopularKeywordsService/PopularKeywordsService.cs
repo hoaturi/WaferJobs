@@ -52,7 +52,7 @@ public class PopularKeywordsService(AppDbContext dbContext, IDistributedCache ca
     {
         var serializedKeywords = MessagePackSerializer.Serialize(popularKeywords, cancellationToken: cancellationToken);
         await cache.SetAsync(CacheKeys.PopularKeywordsCacheKey, serializedKeywords, cancellationToken);
-        logger.LogInformation("Updated popular keywords cache.");
+        logger.LogInformation("Updated popular keywords cache");
         
     }
 }

@@ -20,7 +20,7 @@ public class JobPostCountService(AppDbContext dbContext, IDistributedCache cache
             .CountAsync(cancellationToken);
 
         await cache.SetStringAsync(CacheKeys.JobCountCacheKey, count.ToString(), cancellationToken);
-        logger.LogInformation("Update job post count cache with {Count} job posts", count);
+        logger.LogInformation("Updated job post count cache with {Count} job posts", count);
 
         return count;
     }
