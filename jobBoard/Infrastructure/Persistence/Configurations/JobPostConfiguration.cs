@@ -31,8 +31,18 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(jp => jp.Country)
-            .WithMany(jp => jp.JobPosts)
+            .WithMany(c => c.JobPosts)
             .HasForeignKey(jp => jp.CountryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(jp => jp.Category)
+            .WithMany(c => c.JobPosts)
+            .HasForeignKey(jp => jp.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(jp => jp.EmploymentType)
+            .WithMany(et => et.JobPosts)
+            .HasForeignKey(jp => jp.EmploymentTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(jp => jp.Tags)

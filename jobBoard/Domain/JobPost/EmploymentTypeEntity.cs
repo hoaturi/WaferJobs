@@ -7,5 +7,6 @@ public class EmploymentTypeEntity
     public int Id { get; set; }
     public required string Label { get; set; }
     public required string Slug { get; set; }
+    public ICollection<JobPostEntity> JobPosts { get; set; } = [];
     public ICollection<JobAlertEntity> JobAlerts { get; set; } = [];
 }
