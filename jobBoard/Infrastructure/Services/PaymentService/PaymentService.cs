@@ -1,4 +1,4 @@
-﻿using JobBoard.Common.Options;
+﻿using JobBoard.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;

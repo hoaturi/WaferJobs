@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JobBoard.Common.Options;
+namespace JobBoard.Infrastructure.Options;
 
 public record DbConnectionOptions
 {
     public const string Key = "ConnectionStrings";
-    [Required] public required string JobBoardApiDb { get; init; }
+    [Required] public required string WaferJobsDb { get; init; }
 }

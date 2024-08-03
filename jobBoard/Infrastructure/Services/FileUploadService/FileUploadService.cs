@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
-using JobBoard.Common.Options;
+using JobBoard.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 
 namespace JobBoard.Infrastructure.Services.FileUploadService;

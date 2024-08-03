@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Common.Options;
+﻿namespace JobBoard.Infrastructure.Options;
 
 public class AzureOptions
 {

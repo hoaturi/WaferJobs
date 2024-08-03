@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Extensions;
-using JobBoard.Common.Options;
+using JobBoard.Infrastructure.Options;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

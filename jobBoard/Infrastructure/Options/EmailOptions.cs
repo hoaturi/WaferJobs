@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JobBoard.Common.Options;
+namespace JobBoard.Infrastructure.Options;
 
 public class EmailOptions
 {

@@ -5,9 +5,9 @@ using JobBoard.Common.Behaviors;
 using JobBoard.Common.Constants;
 using JobBoard.Common.Exceptions;
 using JobBoard.Common.Middlewares;
-using JobBoard.Common.Options;
 using JobBoard.Common.Security;
 using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Persistence.Utils;
 using JobBoard.Infrastructure.Services.CurrentUserService;
@@ -90,7 +90,7 @@ public static class ServiceExtensions
     private static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
         var dbOptions = configuration.GetSection(DbConnectionOptions.Key).Get<DbConnectionOptions>()!;
-        services.AddDbContext<AppDbContext>(option => option.UseNpgsql(dbOptions.JobBoardApiDb));
+        services.AddDbContext<AppDbContext>(option => option.UseNpgsql(dbOptions.WaferJobsDb));
         return services;
     }
 
@@ -154,7 +154,7 @@ public static class ServiceExtensions
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(dbOptions.JobBoardApiDb)));
+            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(dbOptions.WaferJobsDb)));
 
         services.AddHangfireServer();
         return services;
@@ -181,6 +181,7 @@ public static class ServiceExtensions
         services.AddScoped<EntityConstraintChecker>();
         return services;
     }
+    
 
     private static IServiceCollection AddMediatrAndBehaviors(this IServiceCollection services)
     {
@@ -229,6 +230,9 @@ public static class ServiceExtensions
             .ValidateDataAnnotations();
 
         services.AddOptionsWithValidateOnStart<SendGridOptions>().Bind(configuration.GetSection(SendGridOptions.Key))
+            .ValidateDataAnnotations();
+
+        services.AddOptionsWithValidateOnStart<CurrencyOptions>().Bind(configuration.GetSection(CurrencyOptions.Key))
             .ValidateDataAnnotations();
 
         return services;

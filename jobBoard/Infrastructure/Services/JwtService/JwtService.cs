@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using JobBoard.Common.Constants;
-using JobBoard.Common.Options;
 using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
