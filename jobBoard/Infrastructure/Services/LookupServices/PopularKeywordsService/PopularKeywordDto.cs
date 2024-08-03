@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 
-namespace JobBoard.Features.Lookup.GetPopularKeywords;
+namespace JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
 
 [MessagePackObject]
 public record PopularKeywordDto(

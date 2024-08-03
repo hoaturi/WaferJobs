@@ -1,9 +1,45 @@
-﻿namespace JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
+﻿using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
+using JobBoard.Infrastructure.Services.LookupServices.LocationService;
+using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
 
-public class LookupDataCacheUpdater : IRecurringJobBase
+namespace JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
+
+public class LookupDataCacheUpdater(
+    IJobPostCountService jobPostCountService,
+    ILocationService locationService,
+    IPopularKeywordsService popularKeywordsService,
+    ILogger<LookupDataCacheUpdater> logger
+) : IRecurringJobBase
 {
-    public Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Starting lookup data cache update.");
+
+        await Task.WhenAll(
+            UpdateJobPostCountAsync(cancellationToken),
+            UpdateLocationsAsync(cancellationToken),
+            UpdatePopularKeywordsAsync(cancellationToken)
+        );
+
+        logger.LogInformation("Lookup data cache update completed successfully.");
+    }
+
+    private async Task UpdateJobPostCountAsync(CancellationToken cancellationToken)
+    {
+        await jobPostCountService.GetJobPostCountAsync(cancellationToken);
+    }
+
+    private async Task UpdateLocationsAsync(CancellationToken cancellationToken)
+    {
+        await Task.WhenAll(
+            locationService.GetCountriesWithActiveJobPostAsync(cancellationToken),
+            locationService.GetCitiesWithActiveJobPostAsync(cancellationToken),
+            locationService.GetLocationsWithActiveJobPostAsync(cancellationToken)
+        );
+    }
+
+    private async Task UpdatePopularKeywordsAsync(CancellationToken cancellationToken)
+    {
+        await popularKeywordsService.GetPopularKeywordsAsync(cancellationToken);
     }
 }

@@ -41,8 +41,4 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Infrastructure\Services\LookupServices\" />
-    </ItemGroup>
-
 </Project>
