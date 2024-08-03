@@ -1,4 +1,4 @@
-﻿using JobBoard.Infrastructure.Services.LocationService;
+﻿using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 
 namespace JobBoard.Features.Lookup.GetActiveJobLocations;
 

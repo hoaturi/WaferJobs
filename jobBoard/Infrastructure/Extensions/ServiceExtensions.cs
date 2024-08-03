@@ -14,7 +14,7 @@ using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.FileUploadService;
 using JobBoard.Infrastructure.Services.JwtService;
-using JobBoard.Infrastructure.Services.LocationService;
+using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

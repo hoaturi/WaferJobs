@@ -6,7 +6,7 @@ using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
-using JobBoard.Infrastructure.Services.LocationService;
+using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

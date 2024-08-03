@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 
-namespace JobBoard.Infrastructure.Services.LocationService;
+namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
 
 [MessagePackObject]
 public record CountryDto(

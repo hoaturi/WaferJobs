@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Infrastructure.Services.LocationService;
+﻿namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
 
 public interface ILocationService
 {

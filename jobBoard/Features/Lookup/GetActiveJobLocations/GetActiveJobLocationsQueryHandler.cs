@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Infrastructure.Services.LocationService;
+using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using MediatR;
 
 namespace JobBoard.Features.Lookup.GetActiveJobLocations;
