@@ -1,4 +1,5 @@
-﻿using JobBoard.Domain.Common;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Domain.Common;
 using JobBoard.Infrastructure.Persistence;
 using MessagePack;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,6 @@ namespace JobBoard.Infrastructure.Services.LocationService;
 public class LocationService(IDistributedCache cache, AppDbContext dbContext, ILogger<LocationService> logger)
     : ILocationService
 {
-    private const string CountriesCacheKey = "Countries:WithJobPosts";
-    private const string CitiesCacheKey = "Cities:WithJobPosts";
     private static readonly TimeSpan CacheExpirationTime = TimeSpan.FromHours(1);
     private static readonly TimeSpan CacheOperationTimeout = TimeSpan.FromSeconds(5);
 
@@ -48,7 +47,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
     {
         try
         {
-            var serializedLocations = await cache.GetAsync(CitiesCacheKey,
+            var serializedLocations = await cache.GetAsync(CacheKeys.LocationsCacheKey,
                 new CancellationTokenSource(CacheOperationTimeout).Token);
 
             if (serializedLocations is null || serializedLocations.Length == 0)
@@ -76,7 +75,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
     {
         try
         {
-            var serializedCities = await cache.GetAsync(CitiesCacheKey,
+            var serializedCities = await cache.GetAsync(CacheKeys.CitiesCacheKey,
                 new CancellationTokenSource(CacheOperationTimeout).Token);
 
             if (serializedCities is null || serializedCities.Length == 0)
@@ -104,7 +103,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
     {
         try
         {
-            var serializedCountries = await cache.GetAsync(CountriesCacheKey,
+            var serializedCountries = await cache.GetAsync(CacheKeys.CountriesCacheKey,
                 new CancellationTokenSource(CacheOperationTimeout).Token);
 
             if (serializedCountries is null || serializedCountries.Length == 0)
@@ -141,7 +140,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
                 {
                     AbsoluteExpirationRelativeToNow = CacheExpirationTime
                 };
-                await cache.SetAsync(CitiesCacheKey, serializedLocations, options,
+                await cache.SetAsync(CacheKeys.LocationsCacheKey, serializedLocations, options,
                     new CancellationTokenSource(CacheOperationTimeout).Token);
 
                 logger.LogInformation("Updated cache with {Count} locations from database", locations.Count);
@@ -174,7 +173,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
                 {
                     AbsoluteExpirationRelativeToNow = CacheExpirationTime
                 };
-                await cache.SetAsync(CountriesCacheKey, serializedCountries, options,
+                await cache.SetAsync(CacheKeys.CountriesCacheKey, serializedCountries, options,
                     new CancellationTokenSource(CacheOperationTimeout).Token);
 
                 logger.LogInformation("Updated cache with {Count} countries from database", countries.Count);
@@ -206,7 +205,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
                 {
                     AbsoluteExpirationRelativeToNow = CacheExpirationTime
                 };
-                await cache.SetAsync(CitiesCacheKey, serializedCities, options,
+                await cache.SetAsync(CacheKeys.CitiesCacheKey, serializedCities, options,
                     new CancellationTokenSource(CacheOperationTimeout).Token);
 
                 logger.LogInformation("Updated cache with {Count} cities from database", cities.Count);
