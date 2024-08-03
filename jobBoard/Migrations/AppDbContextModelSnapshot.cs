@@ -2113,9 +2113,6 @@ namespace JobBoard.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -2125,9 +2122,6 @@ namespace JobBoard.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -2220,78 +2214,84 @@ namespace JobBoard.Migrations
                         new
                         {
                             Id = 2,
-                            Label = "R&D",
-                            Slug = "r&d"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Label = "Q&A",
-                            Slug = "q&a"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Label = "Sales",
-                            Slug = "sales"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Label = "Marketing",
-                            Slug = "marketing"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Label = "Human Resources",
-                            Slug = "human-resources"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Label = "Information Technology",
-                            Slug = "information-technology"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Label = "Finance",
-                            Slug = "finance"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Label = "Customer Support",
-                            Slug = "customer-support"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Label = "Product Management",
-                            Slug = "product-management"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Label = "Legal",
-                            Slug = "legal"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Label = "Technician",
-                            Slug = "technician"
-                        },
-                        new
-                        {
-                            Id = 13,
                             Label = "Operations",
                             Slug = "operations"
                         },
                         new
                         {
+                            Id = 3,
+                            Label = "Technician",
+                            Slug = "technician"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Label = "IT",
+                            Slug = "it"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Label = "Software",
+                            Slug = "software"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Label = "Finance",
+                            Slug = "finance"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Label = "HR",
+                            Slug = "hr"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Label = "Legal",
+                            Slug = "legal"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Label = "Research",
+                            Slug = "research"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Label = "Sales",
+                            Slug = "sales"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Label = "Marketing",
+                            Slug = "marketing"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Label = "Product",
+                            Slug = "product"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Label = "Quality",
+                            Slug = "quality"
+                        },
+                        new
+                        {
                             Id = 14,
+                            Label = "Facilities",
+                            Slug = "facilities"
+                        },
+                        new
+                        {
+                            Id = 15,
                             Label = "Other",
                             Slug = "other"
                         });
@@ -2484,13 +2484,15 @@ namespace JobBoard.Migrations
 
                     b.Property<string>("CheckoutSessionId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("EventId")
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<bool>("IsProcessed")
                         .HasColumnType("boolean");
@@ -2502,6 +2504,9 @@ namespace JobBoard.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CheckoutSessionId")
+                        .IsUnique();
 
                     b.HasIndex("JobPostId");
 
@@ -2733,9 +2738,9 @@ namespace JobBoard.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JobBoard.Domain.JobPost.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("JobPosts")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.Common.CityEntity", "City")
@@ -2750,9 +2755,9 @@ namespace JobBoard.Migrations
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.JobPost.EmploymentTypeEntity", "EmploymentType")
-                        .WithMany()
+                        .WithMany("JobPosts")
                         .HasForeignKey("EmploymentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2771,8 +2776,7 @@ namespace JobBoard.Migrations
                     b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", "JobPost")
                         .WithMany("Payments")
                         .HasForeignKey("JobPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("JobPost");
                 });
@@ -2865,6 +2869,16 @@ namespace JobBoard.Migrations
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Common.CountryEntity", b =>
+                {
+                    b.Navigation("JobPosts");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.CategoryEntity", b =>
+                {
+                    b.Navigation("JobPosts");
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.JobPost.EmploymentTypeEntity", b =>
                 {
                     b.Navigation("JobPosts");
                 });

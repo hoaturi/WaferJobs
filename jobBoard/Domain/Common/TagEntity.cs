@@ -1,9 +1,8 @@
-﻿using JobBoard.Common;
-using JobBoard.Domain.JobPost;
+﻿using JobBoard.Domain.JobPost;
 
 namespace JobBoard.Domain.Common;
 
-public class TagEntity : BaseEntity
+public class TagEntity
 {
     public int Id { get; set; }
     public required string Label { get; set; }
