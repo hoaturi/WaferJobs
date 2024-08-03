@@ -1,72 +1,77 @@
 [
   {
-    "Id": 1,
-    "Label": "Engineering",
-    "Slug": "engineering"
+    "id": 1,
+    "label": "Engineering",
+    "slug": "engineering"
   },
   {
-    "Id": 2,
-    "Label": "R&D",
-    "Slug": "r&d"
+    "id": 2,
+    "label": "Operations",
+    "slug": "operations"
   },
   {
-    "Id": 3,
-    "Label": "Q&A",
-    "Slug": "q&a"
+    "id": 3,
+    "label": "Technician",
+    "slug": "technician"
   },
   {
-    "Id": 4,
-    "Label": "Sales",
-    "Slug": "sales"
+    "id": 4,
+    "label": "IT",
+    "slug": "it"
   },
   {
-    "Id": 5,
-    "Label": "Marketing",
-    "Slug": "marketing"
+    "id": 5,
+    "label": "Software",
+    "slug": "software"
   },
   {
-    "Id": 6,
-    "Label": "Human Resources",
-    "Slug": "human-resources"
+    "id": 6,
+    "label": "Finance",
+    "slug": "finance"
   },
   {
-    "Id": 7,
-    "Label": "Information Technology",
-    "Slug": "information-technology"
+    "id": 7,
+    "label": "HR",
+    "slug": "hr"
   },
   {
-    "Id": 8,
-    "Label": "Finance",
-    "Slug": "finance"
+    "id": 8,
+    "label": "Legal",
+    "slug": "legal"
   },
   {
-    "Id": 9,
-    "Label": "Customer Support",
-    "Slug": "customer-support"
+    "id": 9,
+    "label": "Research",
+    "slug": "research"
   },
   {
-    "Id": 10,
-    "Label": "Product Management",
-    "Slug": "product-management"
+    "id": 10,
+    "label": "Sales",
+    "slug": "sales"
   },
   {
-    "Id": 11,
-    "Label": "Legal",
-    "Slug": "legal"
+    "id": 11,
+    "label": "Marketing",
+    "slug": "marketing"
   },
   {
-    "Id": 12,
-    "Label": "Technician",
-    "Slug": "technician"
+    "id": 12,
+    "label": "Product",
+    "slug": "product"
   },
   {
-    "Id": 13,
-    "Label": "Operations",
-    "Slug": "operations"
+    "id": 13,
+    "label": "Quality",
+    "slug": "quality"
   },
   {
-    "Id": 14,
-    "Label": "Other",
-    "Slug": "other"
+    "id": 14,
+    "label": "Facilities",
+    "slug": "facilities"
+  },
+  {
+    "id": 15,
+    "label": "Other",
+    "slug": "other"
   }
 ]
