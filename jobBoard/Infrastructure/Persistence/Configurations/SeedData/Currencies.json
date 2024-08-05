@@ -1,0 +1,62 @@
+﻿[
+  {
+    "Id": 1,
+    "Label": "US Dollar",
+    "Code": "USD",
+    "Symbol": "$"
+  },
+  {
+    "Id": 2,
+    "Label": "Euro",
+    "Code": "EUR",
+    "Symbol": "€"
+  },
+  {
+    "Id": 3,
+    "Label": "Japanese Yen",
+    "Code": "JPY",
+    "Symbol": "¥"
+  },
+  {
+    "Id": 4,
+    "Label": "South Korean Won",
+    "Code": "KRW",
+    "Symbol": "₩"
+  },
+  {
+    "Id": 5,
+    "Label": "New Taiwan Dollar",
+    "Code": "TWD",
+    "Symbol": "NT$"
+  },
+  {
+    "Id": 6,
+    "Label": "Chinese Yuan",
+    "Code": "CNY",
+    "Symbol": "¥"
+  },
+  {
+    "Id": 7,
+    "Label": "Singapore Dollar",
+    "Code": "SGD",
+    "Symbol": "S$"
+  },
+  {
+    "Id": 8,
+    "Label": "Israeli New Shekel",
+    "Code": "ILS",
+    "Symbol": "₪"
+  },
+  {
+    "Id": 9,
+    "Label": "Indian Rupee",
+    "Code": "INR",
+    "Symbol": "₹"
+  },
+  {
+    "Id": 10,
+    "Label": "British Pound",
+    "Code": "GBP",
+    "Symbol": "£"
+  }
+]

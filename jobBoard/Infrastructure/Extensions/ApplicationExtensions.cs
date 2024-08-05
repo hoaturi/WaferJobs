@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using JobBoard.Common.Middlewares;
+using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 using JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
@@ -31,6 +32,12 @@ public static class ApplicationExtensions
             "LookupDataCacheUpdater",
             x => x.ExecuteAsync(CancellationToken.None),
             Cron.Hourly
+        );
+
+        RecurringJob.AddOrUpdate<CurrencyExchangeRateUpdater>(
+            "CurrencyExchangeRateUpdater",
+            x => x.ExecuteAsync(CancellationToken.None),
+            Cron.Daily
         );
 
         return app;
