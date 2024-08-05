@@ -23,16 +23,8 @@ public class FileUploadService : IFileUploadService
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_azureOptions.BusinessLogoContainer);
         var blobClient = blobContainerClient.GetBlobClient(fileName);
 
-        try
-        {
-            await blobClient.UploadAsync(fileStream, true);
-            _logger.LogInformation("Business logo uploaded successfully: {FileName}", fileName);
-            return blobClient.Uri.AbsoluteUri;
-        }
-        catch (RequestFailedException ex)
-        {
-            _logger.LogError("Failed to upload business logo. Error Code: {ErrorCode}", ex.ErrorCode);
-            throw new BusinessLogoUploadFailedException();
-        }
+        await blobClient.UploadAsync(fileStream, true);
+        _logger.LogInformation("Business logo uploaded successfully: {FileName}", fileName);
+        return blobClient.Uri.AbsoluteUri;
     }
 }

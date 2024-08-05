@@ -18,7 +18,7 @@ public class PaymentService : IPaymentService
         _logger = logger;
     }
 
-    public async Task<string> CreateStripeCustomer(string email, string name, Guid? businessId = null)
+    public async Task<string> CreateStripeCustomer(string email, string name, Guid? businessId)
     {
         var customerOptions = new CustomerCreateOptions
         {
@@ -26,25 +26,14 @@ public class PaymentService : IPaymentService
             Name = name
         };
 
-        try
-        {
-            var customerService = new CustomerService(_stripeClient);
-            var customer = await customerService.CreateAsync(customerOptions);
+        var customerService = new CustomerService(_stripeClient);
+        var customer = await customerService.CreateAsync(customerOptions);
 
-            if (businessId.HasValue)
-                _logger.LogDebug("Created Stripe customer for business: {BusinessId}", businessId);
-            else
-                _logger.LogDebug("Created Stripe customer for anonymous user: {Email}", email);
+        _logger.LogInformation("Stripe customer created. CustomerId: {CustomerId}, Email: {Email}, BusinessId: {BusinessId}", 
+            customer.Id, email, businessId);
 
-            return customer.Id;
-        }
-        catch (StripeException ex)
-        {
-            _logger.LogError(ex, "Failed to create Stripe customer");
-            throw new CreateStripeCustomerFailedException();
-        }
+        return customer.Id;
     }
-
 
     public async Task<Session> CreateCheckoutSession(string customerId, Guid jobPostId)
     {
@@ -64,19 +53,12 @@ public class PaymentService : IPaymentService
             CancelUrl = _stripeOptions.CancelUrl
         };
 
-        try
-        {
-            var sessionService = new SessionService(_stripeClient);
-            var session = await sessionService.CreateAsync(sessionOptions);
+        var sessionService = new SessionService(_stripeClient);
+        var session = await sessionService.CreateAsync(sessionOptions);
 
-            _logger.LogDebug("Created Stripe checkout session: {SessionId}", session.Id);
+        _logger.LogInformation("Stripe checkout session created. SessionId: {SessionId}, CustomerId: {CustomerId}, JobPostId: {JobPostId}", 
+            session.Id, customerId, jobPostId);
 
-            return session;
-        }
-        catch (StripeException ex)
-        {
-            _logger.LogError(ex, "Failed to create Stripe checkout session");
-            throw new CreateSessionFailedException();
-        }
+        return session;
     }
 }
