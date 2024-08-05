@@ -12,9 +12,10 @@ public record UpdateMyJobPostDto(
     bool IsRemote,
     string? CompanyLogoUrl,
     string? CompanyWebsiteUrl,
+    int? ExperienceLevelId,
     string? City,
     int? MinSalary,
     int? MaxSalary,
-    string? Currency,
+    int? CurrencyId,
     List<string>? Tags
 );

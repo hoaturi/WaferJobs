@@ -8,6 +8,7 @@ public record CreateFeaturedJobPostCommand(
     int CategoryId,
     int CountryId,
     int EmploymentTypeId,
+    int ExperienceLevelId,
     string Description,
     string Title,
     string CompanyName,
@@ -19,6 +20,6 @@ public record CreateFeaturedJobPostCommand(
     string? CompanyWebsiteUrl,
     int? MinSalary,
     int? MaxSalary,
-    string? Currency,
+    int? CurrencyId,
     List<string>? Tags
 ) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;

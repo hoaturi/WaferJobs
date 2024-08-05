@@ -8,5 +8,6 @@ public record SubscribeToJobAlertCommand(
     string? Keyword,
     int? CountryId,
     List<int>? EmploymentTypeIds,
-    List<int>? CategoryIds
+    List<int>? CategoryIds,
+    List<int>? ExperienceLevelIds
 ) : IRequest<Result<Unit, Error>>;

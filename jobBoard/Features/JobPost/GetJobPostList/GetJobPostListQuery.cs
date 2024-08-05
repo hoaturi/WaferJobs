@@ -5,13 +5,17 @@ namespace JobBoard.Features.JobPost.GetJobPostList;
 
 public record GetJobPostListQuery(
     string? Keyword,
-    string? City,
-    string? Country,
-    string? RemoteOnly,
+    int? City,
+    int? Country,
+    int? ExperienceLevel,
+    bool? RemoteOnly,
     int? PostedDate,
-    List<string>? Categories,
-    List<string>? EmploymentTypes,
-    string? FeaturedOnly,
+    List<int>? Categories,
+    List<int>? EmploymentTypes,
+    bool? FeaturedOnly,
+    int? Currency,
+    int? MinSalary,
+    int? MaxSalary,
     int Take,
     int Page
 ) : IRequest<Result<GetJobPostListResponse, Error>>;

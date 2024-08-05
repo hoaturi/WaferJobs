@@ -13,6 +13,7 @@ public class JobAlertEntity : BaseEntity
     public required string Token { get; set; }
     public DateTime? LastSentAt { get; set; }
     public CountryEntity? Country { get; set; }
+    public ICollection<ExperienceLevelEntity> ExperienceLevels { get; set; } = [];
     public ICollection<EmploymentTypeEntity> EmploymentTypes { get; set; } = [];
     public ICollection<CategoryEntity> Categories { get; set; } = [];
 }

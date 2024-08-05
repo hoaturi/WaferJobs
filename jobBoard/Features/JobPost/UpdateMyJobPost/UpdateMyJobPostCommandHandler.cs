@@ -1,6 +1,4 @@
-﻿using System.Transactions;
-using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
+﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
@@ -13,8 +11,8 @@ namespace JobBoard.Features.JobPost.UpdateMyJobPost;
 
 public class UpdateMyJobPostCommandHandler(
     ICurrentUserService currentUser,
-    ILocationService locationService,
     AppDbContext appDbContext,
+    ILocationService locationService,
     ILogger<UpdateMyJobPostCommandHandler> logger)
     : IRequestHandler<UpdateMyJobPostCommand, Result<Unit, Error>>
 {
@@ -24,69 +22,83 @@ public class UpdateMyJobPostCommandHandler(
 
         var jobPost = await appDbContext.JobPosts
             .Include(j => j.Business)
-            .Where(j => j.Id == command.Id && !j.IsDeleted)
-            .FirstOrDefaultAsync(cancellationToken);
+            .Include(j => j.City)
+            .Include(j => j.Tags)
+            .FirstAsync(j => j.Id == command.Id && !j.IsDeleted, cancellationToken);
 
-        if (jobPost == null) throw new JobPostNotFoundException(command.Id);
+        if (jobPost.Business?.UserId != userId) throw new UnauthorizedJobPostAccessException(command.Id, userId);
 
-        if (jobPost.Business is null) throw new BusinessNotFoundForUserException(userId);
 
-        if (jobPost.Business.UserId != userId) throw new UnauthorizedJobPostAccessException(command.Id, userId);
+        UpdateJobPostDetailsAsync(jobPost, command.Dto);
+        await UpdateJobPostTagsAsync(jobPost, command.Dto.Tags, cancellationToken);
+        await UpdateJobPostCityAsync(jobPost, command.Dto.City, cancellationToken);
 
-        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-        {
-            await UpdateJobPost(command, jobPost, cancellationToken);
-            scope.Complete();
-        }
 
         logger.LogInformation("Job post with id: {Id} was updated by user with id: {UserId}", command.Id, userId);
 
         return Unit.Value;
     }
 
-    private async Task UpdateJobPost(UpdateMyJobPostCommand command, JobPostEntity jobPost,
+    private static void UpdateJobPostDetailsAsync(JobPostEntity jobPost, UpdateMyJobPostDto dto)
+    {
+        jobPost.CategoryId = dto.CategoryId;
+        jobPost.CountryId = dto.CountryId;
+        jobPost.EmploymentTypeId = dto.EmploymentTypeId;
+        jobPost.Description = dto.Description;
+        jobPost.Title = dto.Title;
+        jobPost.CompanyName = dto.CompanyName;
+        jobPost.ApplyUrl = dto.ApplyUrl;
+        jobPost.IsRemote = dto.IsRemote;
+        jobPost.CompanyLogoUrl = dto.CompanyLogoUrl;
+        jobPost.CompanyWebsiteUrl = dto.CompanyWebsiteUrl;
+        jobPost.ExperienceLevelId = dto.ExperienceLevelId;
+        jobPost.MinSalary = dto.MinSalary;
+        jobPost.MaxSalary = dto.MaxSalary;
+        jobPost.CurrencyId = dto.CurrencyId;
+    }
+
+    private async Task UpdateJobPostCityAsync(JobPostEntity jobPost, string? cityName,
         CancellationToken cancellationToken)
     {
-        jobPost.CategoryId = command.Dto.CategoryId;
-        jobPost.CountryId = command.Dto.CountryId;
-        jobPost.EmploymentTypeId = command.Dto.EmploymentTypeId;
-        jobPost.Description = command.Dto.Description;
-        jobPost.Title = command.Dto.Title;
-        jobPost.CompanyName = command.Dto.CompanyName;
-        jobPost.ApplyUrl = command.Dto.ApplyUrl;
-        jobPost.IsRemote = command.Dto.IsRemote;
-        jobPost.CompanyLogoUrl = command.Dto.CompanyLogoUrl;
-        jobPost.CompanyWebsiteUrl = command.Dto.CompanyWebsiteUrl;
-        jobPost.MinSalary = command.Dto.MinSalary;
-        jobPost.MaxSalary = command.Dto.MaxSalary;
-        jobPost.Currency = command.Dto.Currency;
+        if (jobPost.City?.Label != cityName && !string.IsNullOrWhiteSpace(cityName))
+            jobPost.City = await locationService.GetOrCreateCityAsync(cityName, cancellationToken);
+        else if (string.IsNullOrWhiteSpace(cityName)) jobPost.City = null;
+    }
 
-        if (!string.IsNullOrWhiteSpace(command.Dto.City))
+    private async Task UpdateJobPostTagsAsync(JobPostEntity jobPost, List<string>? tags,
+        CancellationToken cancellationToken)
+    {
+        if (tags is null || tags.Count is 0)
         {
-            var cityId = await locationService.GetOrCreateCityIdAsync(command.Dto.City, cancellationToken);
-            jobPost.CityId = cityId;
-        }
-        else
-        {
-            jobPost.CityId = null;
+            jobPost.Tags.Clear();
+            return;
         }
 
-        if (command.Dto.Tags is not null && command.Dto.Tags.Count > 0)
-        {
-            var loweredTags = command.Dto.Tags.Select(t => t.ToLower()).ToList();
+        var normalizedTags = NormalizeTags(tags);
+        var existingTags = jobPost.Tags.Select(t => t.Slug).ToList();
 
-            var tags = await appDbContext.Tags
-                .Where(t => loweredTags.Contains(t.Slug.ToLower()))
+        if (!normalizedTags.SequenceEqual(existingTags))
+        {
+            jobPost.Tags.Clear();
+
+            var dbTags = await appDbContext.Tags
+                .Where(t => normalizedTags.Contains(t.Slug))
                 .ToListAsync(cancellationToken);
 
-            jobPost.Tags = tags;
-        }
-        else
-        {
-            jobPost.Tags = new List<TagEntity>();
-        }
+            var newTags = normalizedTags.Except(dbTags.Select(t => t.Slug))
+                .Select(newTag => new TagEntity { Label = newTag, Slug = newTag }).ToList();
 
+            dbTags.AddRange(newTags);
+            jobPost.Tags = dbTags;
+        }
+    }
 
-        await appDbContext.SaveChangesAsync(cancellationToken);
+    private static List<string> NormalizeTags(List<string> tags)
+    {
+        return tags
+            .Select(t => t.Trim().ToLowerInvariant().Replace(" ", "-"))
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Distinct()
+            .ToList();
     }
 }

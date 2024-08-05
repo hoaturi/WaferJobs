@@ -1,4 +1,5 @@
 ﻿using JobBoard.Common.Models;
+using JobBoard.Domain.Common;
 using JobBoard.Domain.JobAlert;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
@@ -28,6 +29,7 @@ public class SubscribeToJobAlertCommandHandler(
                 CountryId = command.CountryId,
                 Categories = await GetCategories(command.CategoryIds, cancellationToken),
                 EmploymentTypes = await GetEmploymentTypes(command.EmploymentTypeIds, cancellationToken),
+                ExperienceLevels = await GetExperienceLevels(command.ExperienceLevelIds,cancellationToken),
                 Token = Base64UrlEncoder.Encode(Guid.NewGuid().ToString())
             };
 
@@ -99,6 +101,16 @@ public class SubscribeToJobAlertCommandHandler(
 
         return await dbContext.Categories
             .Where(c => categoryIds.Contains(c.Id))
+            .ToListAsync(cancellationToken);
+    }
+    
+    private async Task<List<ExperienceLevelEntity>> GetExperienceLevels(List<int>? experienceLevelIds, CancellationToken cancellationToken)
+    {
+        if (experienceLevelIds is null || experienceLevelIds.Count == 0)
+            return [];
+
+        return await dbContext.ExperienceLevels
+            .Where(el => experienceLevelIds.Contains(el.Id))
             .ToListAsync(cancellationToken);
     }
 }

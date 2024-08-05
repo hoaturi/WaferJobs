@@ -14,6 +14,7 @@ using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.FileUploadService;
 using JobBoard.Infrastructure.Services.JwtService;
+using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
 using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
 using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
@@ -42,6 +43,7 @@ public static class ServiceExtensions
             .AddHangfire(configuration)
             .AddSendGrid(configuration)
             .AddInfrastructureServices()
+            .AddTypedHttpClient(configuration)
             .AddMediatrAndBehaviors()
             .AddMiddleWares()
             .AddConfigOptions(configuration);
@@ -177,11 +179,19 @@ public static class ServiceExtensions
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IPopularKeywordsService, PopularKeywordsService>();
         services.AddScoped<IJobPostCountService, JobPostCountService>();
+        services.AddScoped<ICurrencyService, CurrencyService>();
 
         services.AddScoped<EntityConstraintChecker>();
         return services;
     }
-    
+
+    private static IServiceCollection AddTypedHttpClient(this IServiceCollection services, IConfiguration configuration)
+    {
+        var currencyOptions = configuration.GetSection(CurrencyOptions.Key).Get<CurrencyOptions>()!;
+        services.AddHttpClient<ICurrencyService, CurrencyService>(
+            c => { c.BaseAddress = new Uri(currencyOptions.BaseUrl); });
+        return services;
+    }
 
     private static IServiceCollection AddMediatrAndBehaviors(this IServiceCollection services)
     {

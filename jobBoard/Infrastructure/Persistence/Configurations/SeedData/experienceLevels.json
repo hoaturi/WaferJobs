@@ -1,0 +1,32 @@
+﻿[
+  {
+    "Id": 1,
+    "Label": "Internship",
+    "Slug": "internship"
+  },
+  {
+    "Id": 2,
+    "Label": "Entry level",
+    "Slug": "entry-level"
+  },
+  {
+    "Id": 3,
+    "Label": "Mid level",
+    "Slug": "mid-level"
+  },
+  {
+    "Id": 4,
+    "Label": "Senior level",
+    "Slug": "senior-level"
+  },
+  {
+    "Id": 5,
+    "Label": "Director",
+    "Slug": "director"
+  },
+  {
+    "Id": 6,
+    "Label": "Executive",
+    "Slug": "executive"
+  }
+]

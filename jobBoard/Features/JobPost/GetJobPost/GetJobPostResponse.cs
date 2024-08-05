@@ -10,6 +10,7 @@ public record GetJobPostResponse(
     bool IsRemote,
     bool IsFeatured,
     string CompanyName,
+    string? ExperienceLevel,
     string? City,
     int? MinSalary,
     int? MaxSalary,

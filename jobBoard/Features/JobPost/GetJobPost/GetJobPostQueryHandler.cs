@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.JobPost.GetJobPost;
 
-public class GetJobPostQueryHandler(AppDbContext appDbContext)
+public class GetJobPostQueryHandler(AppDbContext dbContext)
     : IRequestHandler<GetJobPostQuery, Result<GetJobPostResponse, Error>>
 {
     public async Task<Result<GetJobPostResponse, Error>> Handle(
@@ -14,7 +14,7 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
         CancellationToken cancellationToken
     )
     {
-        var jobPost = await appDbContext
+        var jobPost = await dbContext
             .JobPosts.AsNoTracking()
             .Where(j => j.Id == command.Id && j.IsPublished)
             .Select(j => new GetJobPostResponse(
@@ -27,10 +27,11 @@ public class GetJobPostQueryHandler(AppDbContext appDbContext)
                 j.IsRemote,
                 j.IsFeatured,
                 j.CompanyName,
+                j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
                 j.City != null ? j.City.Label : null,
                 j.MinSalary,
                 j.MaxSalary,
-                j.Currency,
+                j.Currency != null ? j.Currency.Label : null,
                 j.ApplyUrl,
                 j.BusinessId,
                 j.CompanyLogoUrl,

@@ -1,43 +1,64 @@
 ﻿using JobBoard.Common.Models;
+using JobBoard.Domain.JobPost;
 using JobBoard.Features.JobPost.GetJobPost;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.JobPost.GetJobPostList;
 
-public class GetJobPostListQueryHandler(AppDbContext appDbContext)
+public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService currencyService)
     : IRequestHandler<GetJobPostListQuery, Result<GetJobPostListResponse, Error>>
 {
     public async Task<Result<GetJobPostListResponse, Error>> Handle(GetJobPostListQuery query,
         CancellationToken cancellationToken)
     {
-        var jobPostListQuery = appDbContext.JobPosts.AsNoTracking().Where(j => j.IsPublished && !j.IsDeleted);
+        var jobPostListQuery = BuildJobPostListQuery(query);
 
+        if (query.Currency is not null && (query.MinSalary is not null || query.MaxSalary is not null))
+            jobPostListQuery = await ApplyCurrencyFilterAsync(query, jobPostListQuery, cancellationToken);
+
+        var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
+
+        var jobPostList = await jobPostListQuery
+            .OrderByDescending(j => j.IsFeatured)
+            .ThenByDescending(j => j.PublishedAt)
+            .Skip((query.Page - 1) * query.Take)
+            .Take(query.Take)
+            .Select(j => MapToResponse(j))
+            .ToListAsync(cancellationToken);
+
+        return new GetJobPostListResponse(jobPostList, totalJobPostCount);
+    }
+
+    private IQueryable<JobPostEntity> BuildJobPostListQuery(GetJobPostListQuery query)
+    {
+        var jobPostListQuery = dbContext.JobPosts
+            .AsNoTracking()
+            .Where(j => j.IsPublished && !j.IsDeleted);
 
         if (query.Keyword is not null)
-        {
-            var keyword = query.Keyword.ToLower();
-
-            jobPostListQuery = jobPostListQuery.Where(
-                jp => jp.SearchVector.Matches(keyword));
-        }
-
+            jobPostListQuery = jobPostListQuery.Where(jp => jp.SearchVector.Matches(query.Keyword.ToLower()));
 
         if (query.City is not null)
-            jobPostListQuery = jobPostListQuery.Where(j => j.City != null && j.City.Slug == query.City);
+            jobPostListQuery = jobPostListQuery.Where(j => j.City != null && j.City.Id == query.City);
 
         if (query.Country is not null)
-            jobPostListQuery = jobPostListQuery.Where(j => j.Country.Slug == query.Country);
+            jobPostListQuery = jobPostListQuery.Where(j => j.Country.Id == query.Country);
 
-        if (query.RemoteOnly == "true")
+        if (query.ExperienceLevel is not null)
+            jobPostListQuery = jobPostListQuery.Where(j =>
+                j.ExperienceLevel != null && j.ExperienceLevel.Id == query.ExperienceLevel);
+
+        if (query.RemoteOnly is true)
             jobPostListQuery = jobPostListQuery.Where(j => j.IsRemote);
 
-        if (query.Categories is not null && query.Categories.Count != 0)
-            jobPostListQuery = jobPostListQuery.Where(j => query.Categories.Contains(j.Category.Slug));
+        if (query.Categories?.Count > 0)
+            jobPostListQuery = jobPostListQuery.Where(j => query.Categories.Contains(j.Category.Id));
 
-        if (query.EmploymentTypes is not null && query.EmploymentTypes.Count != 0)
-            jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Slug));
+        if (query.EmploymentTypes?.Count > 0)
+            jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Id));
 
         if (query.PostedDate is not null)
         {
@@ -45,45 +66,65 @@ public class GetJobPostListQueryHandler(AppDbContext appDbContext)
             jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
         }
 
-        jobPostListQuery = query.FeaturedOnly switch
+        if (query.FeaturedOnly is true)
+            jobPostListQuery = jobPostListQuery.Where(j => j.IsFeatured);
+
+        return jobPostListQuery;
+    }
+
+    private async Task<IQueryable<JobPostEntity>> ApplyCurrencyFilterAsync(
+        GetJobPostListQuery query,
+        IQueryable<JobPostEntity> jobPostListQuery,
+        CancellationToken cancellationToken)
+    {
+        var currencies = await currencyService.GetExchangeRatesAsync(cancellationToken);
+        var targetCurrency = currencies.FirstOrDefault(c => c.Id == query.Currency);
+
+        if (targetCurrency is null) return jobPostListQuery;
+
+        if (query.MinSalary is not null)
         {
-            "true" => jobPostListQuery.Where(j => j.IsFeatured),
-            "false" => jobPostListQuery.Where(j => !j.IsFeatured),
-            _ => jobPostListQuery
-        };
+            var minSalaryInUsd = query.MinSalary.Value / targetCurrency.Rate;
+            jobPostListQuery = jobPostListQuery.Where(j =>
+                j.Currency != null && j.MinSalary != null &&
+                j.MinSalary.Value / j.Currency.Rate >= minSalaryInUsd);
+        }
 
-        jobPostListQuery = jobPostListQuery.OrderByDescending(j => j.IsFeatured).ThenByDescending(j => j.PublishedAt);
+        if (query.MaxSalary is null) return jobPostListQuery;
 
-        var jobPostList = await jobPostListQuery
-            .Skip((query.Page - 1) * query.Take)
-            .Take(query.Take)
-            .Select(j => new GetJobPostResponse(
-                j.Id,
-                j.Category.Label,
-                j.Country.Label,
-                j.EmploymentType.Label,
-                j.Title,
-                j.Description,
-                j.IsRemote,
-                j.IsFeatured,
-                j.CompanyName,
-                j.City != null ? j.City.Label : null,
-                j.MinSalary,
-                j.MaxSalary,
-                j.Currency,
-                null,
-                j.BusinessId,
-                j.CompanyLogoUrl,
-                j.CompanyWebsiteUrl,
-                j.Tags.Select(t => t.Label).ToList(),
-                j.FeaturedStartDate.GetValueOrDefault(),
-                j.FeaturedEndDate.GetValueOrDefault(),
-                j.PublishedAt.GetValueOrDefault()
-            ))
-            .ToListAsync(cancellationToken);
+        var maxSalaryInUsd = query.MaxSalary.Value / targetCurrency.Rate;
+        jobPostListQuery = jobPostListQuery.Where(j =>
+            j.Currency != null && j.MaxSalary != null &&
+            j.MaxSalary.Value / j.Currency.Rate <= maxSalaryInUsd);
 
-        var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
+        return jobPostListQuery;
+    }
 
-        return new GetJobPostListResponse(jobPostList, totalJobPostCount);
+    private static GetJobPostResponse MapToResponse(JobPostEntity jobPost)
+    {
+        return new GetJobPostResponse(
+            jobPost.Id,
+            jobPost.Category.Label,
+            jobPost.Country.Label,
+            jobPost.EmploymentType.Label,
+            jobPost.Title,
+            jobPost.Description,
+            jobPost.IsRemote,
+            jobPost.IsFeatured,
+            jobPost.CompanyName,
+            jobPost.ExperienceLevel?.Label,
+            jobPost.City?.Label,
+            jobPost.MinSalary,
+            jobPost.MaxSalary,
+            jobPost.Currency?.Code,
+            null,
+            jobPost.BusinessId,
+            jobPost.CompanyLogoUrl,
+            jobPost.CompanyWebsiteUrl,
+            jobPost.Tags.Select(t => t.Label).ToList(),
+            jobPost.FeaturedStartDate.GetValueOrDefault(),
+            jobPost.FeaturedEndDate.GetValueOrDefault(),
+            jobPost.PublishedAt.GetValueOrDefault()
+        );
     }
 }

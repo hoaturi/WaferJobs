@@ -47,6 +47,16 @@ public class UpdateJobAlertCommandHandler(
             jobAlert.Categories = categories;
         }
 
+        if (request.Dto.ExperienceLevelIds is { Count: > 0 })
+        {
+            var experienceLevels = await dbContext.ExperienceLevels
+                .Where(el => request.Dto.ExperienceLevelIds.Contains(el.Id))
+                .ToListAsync(cancellationToken);
+
+            jobAlert.ExperienceLevels.Clear();
+            jobAlert.ExperienceLevels = experienceLevels;
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Job alert with token {Token} successfully updated", request.Token);

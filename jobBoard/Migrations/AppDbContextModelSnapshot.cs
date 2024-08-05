@@ -23,34 +23,49 @@ namespace JobBoard.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("JobAlertCategory", b =>
+            modelBuilder.Entity("JobAlertCategories", b =>
                 {
-                    b.Property<int>("CategoriesId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("JobAlertsId")
+                    b.Property<int>("JobAlertId")
                         .HasColumnType("integer");
 
-                    b.HasKey("CategoriesId", "JobAlertsId");
+                    b.HasKey("CategoryId", "JobAlertId");
 
-                    b.HasIndex("JobAlertsId");
+                    b.HasIndex("JobAlertId");
 
-                    b.ToTable("JobAlertCategory");
+                    b.ToTable("JobAlertCategories");
                 });
 
-            modelBuilder.Entity("JobAlertEmploymentType", b =>
+            modelBuilder.Entity("JobAlertEmploymentTypes", b =>
                 {
-                    b.Property<int>("EmploymentTypesId")
+                    b.Property<int>("EmploymentTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("JobAlertsId")
+                    b.Property<int>("JobAlertId")
                         .HasColumnType("integer");
 
-                    b.HasKey("EmploymentTypesId", "JobAlertsId");
+                    b.HasKey("EmploymentTypeId", "JobAlertId");
 
-                    b.HasIndex("JobAlertsId");
+                    b.HasIndex("JobAlertId");
 
-                    b.ToTable("JobAlertEmploymentType");
+                    b.ToTable("JobAlertEmploymentTypes");
+                });
+
+            modelBuilder.Entity("JobAlertExperienceLevels", b =>
+                {
+                    b.Property<int>("ExperienceLevelId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("JobAlertId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ExperienceLevelId", "JobAlertId");
+
+                    b.HasIndex("JobAlertId");
+
+                    b.ToTable("JobAlertExperienceLevels");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Auth.ApplicationRoleEntity", b =>
@@ -2105,6 +2120,210 @@ namespace JobBoard.Migrations
                         });
                 });
 
+            modelBuilder.Entity("JobBoard.Domain.Common.CurrencyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Currencies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "USD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "US Dollar",
+                            Rate = 0m,
+                            Symbol = "$",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "EUR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Euro",
+                            Rate = 0m,
+                            Symbol = "€",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "JPY",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Japanese Yen",
+                            Rate = 0m,
+                            Symbol = "¥",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "KRW",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "South Korean Won",
+                            Rate = 0m,
+                            Symbol = "₩",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "TWD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "New Taiwan Dollar",
+                            Rate = 0m,
+                            Symbol = "NT$",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "CNY",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Chinese Yuan",
+                            Rate = 0m,
+                            Symbol = "¥",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Code = "SGD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Singapore Dollar",
+                            Rate = 0m,
+                            Symbol = "S$",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "ILS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Israeli New Shekel",
+                            Rate = 0m,
+                            Symbol = "₪",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Code = "INR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "Indian Rupee",
+                            Rate = 0m,
+                            Symbol = "₹",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Code = "GBP",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Label = "British Pound",
+                            Rate = 0m,
+                            Symbol = "£",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("JobBoard.Domain.Common.ExperienceLevelEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug");
+
+                    b.ToTable("ExperienceLevels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "Internship",
+                            Slug = "internship"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Label = "Entry level",
+                            Slug = "entry-level"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Label = "Mid level",
+                            Slug = "mid-level"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Label = "Senior level",
+                            Slug = "senior-level"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Label = "Director",
+                            Slug = "director"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Label = "Executive",
+                            Slug = "executive"
+                        });
+                });
+
             modelBuilder.Entity("JobBoard.Domain.Common.TagEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -2397,9 +2616,8 @@ namespace JobBoard.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Currency")
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)");
+                    b.Property<int?>("CurrencyId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2407,6 +2625,9 @@ namespace JobBoard.Migrations
                         .HasColumnType("character varying(10000)");
 
                     b.Property<int>("EmploymentTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ExperienceLevelId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("FeaturedEndDate")
@@ -2461,11 +2682,21 @@ namespace JobBoard.Migrations
 
                     b.HasIndex("CountryId");
 
+                    b.HasIndex("CurrencyId");
+
                     b.HasIndex("EmploymentTypeId");
+
+                    b.HasIndex("ExperienceLevelId");
 
                     b.HasIndex("IsDeleted");
 
+                    b.HasIndex("IsFeatured");
+
                     b.HasIndex("IsPublished");
+
+                    b.HasIndex("MaxSalary");
+
+                    b.HasIndex("MinSalary");
 
                     b.HasIndex("PublishedAt");
 
@@ -2541,19 +2772,19 @@ namespace JobBoard.Migrations
                     b.ToTable("JobSeekers");
                 });
 
-            modelBuilder.Entity("JobPostTag", b =>
+            modelBuilder.Entity("JobPostTags", b =>
                 {
-                    b.Property<Guid>("JobPostsId")
+                    b.Property<Guid>("JobPostId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("TagsId")
+                    b.Property<int>("TagId")
                         .HasColumnType("integer");
 
-                    b.HasKey("JobPostsId", "TagsId");
+                    b.HasKey("JobPostId", "TagId");
 
-                    b.HasIndex("TagsId");
+                    b.HasIndex("TagId");
 
-                    b.ToTable("JobPostTag");
+                    b.ToTable("JobPostTags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -2673,32 +2904,47 @@ namespace JobBoard.Migrations
                     b.HasDiscriminator().HasValue("JobSeekerUserEntity");
                 });
 
-            modelBuilder.Entity("JobAlertCategory", b =>
+            modelBuilder.Entity("JobAlertCategories", b =>
                 {
                     b.HasOne("JobBoard.Domain.JobPost.CategoryEntity", null)
                         .WithMany()
-                        .HasForeignKey("CategoriesId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.JobAlert.JobAlertEntity", null)
                         .WithMany()
-                        .HasForeignKey("JobAlertsId")
+                        .HasForeignKey("JobAlertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("JobAlertEmploymentType", b =>
+            modelBuilder.Entity("JobAlertEmploymentTypes", b =>
                 {
                     b.HasOne("JobBoard.Domain.JobPost.EmploymentTypeEntity", null)
                         .WithMany()
-                        .HasForeignKey("EmploymentTypesId")
+                        .HasForeignKey("EmploymentTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.JobAlert.JobAlertEntity", null)
                         .WithMany()
-                        .HasForeignKey("JobAlertsId")
+                        .HasForeignKey("JobAlertId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JobAlertExperienceLevels", b =>
+                {
+                    b.HasOne("JobBoard.Domain.Common.ExperienceLevelEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ExperienceLevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobBoard.Domain.JobAlert.JobAlertEntity", null)
+                        .WithMany()
+                        .HasForeignKey("JobAlertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2725,7 +2971,7 @@ namespace JobBoard.Migrations
                     b.HasOne("JobBoard.Domain.Common.CountryEntity", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Country");
                 });
@@ -2738,27 +2984,37 @@ namespace JobBoard.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("JobBoard.Domain.JobPost.CategoryEntity", "Category")
-                        .WithMany("JobPosts")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.Common.CityEntity", "City")
-                        .WithMany("JobPosts")
+                        .WithMany()
                         .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("JobBoard.Domain.Common.CountryEntity", "Country")
-                        .WithMany("JobPosts")
+                        .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("JobBoard.Domain.Common.CurrencyEntity", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("JobBoard.Domain.JobPost.EmploymentTypeEntity", "EmploymentType")
-                        .WithMany("JobPosts")
+                        .WithMany()
                         .HasForeignKey("EmploymentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("JobBoard.Domain.Common.ExperienceLevelEntity", "ExperienceLevel")
+                        .WithMany()
+                        .HasForeignKey("ExperienceLevelId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Business");
 
@@ -2768,7 +3024,11 @@ namespace JobBoard.Migrations
 
                     b.Navigation("Country");
 
+                    b.Navigation("Currency");
+
                     b.Navigation("EmploymentType");
+
+                    b.Navigation("ExperienceLevel");
                 });
 
             modelBuilder.Entity("JobBoard.Domain.JobPost.JobPostPaymentEntity", b =>
@@ -2792,17 +3052,17 @@ namespace JobBoard.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobPostTag", b =>
+            modelBuilder.Entity("JobPostTags", b =>
                 {
                     b.HasOne("JobBoard.Domain.JobPost.JobPostEntity", null)
                         .WithMany()
-                        .HasForeignKey("JobPostsId")
+                        .HasForeignKey("JobPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Domain.Common.TagEntity", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2859,26 +3119,6 @@ namespace JobBoard.Migrations
                 });
 
             modelBuilder.Entity("JobBoard.Domain.Business.BusinessEntity", b =>
-                {
-                    b.Navigation("JobPosts");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.Common.CityEntity", b =>
-                {
-                    b.Navigation("JobPosts");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.Common.CountryEntity", b =>
-                {
-                    b.Navigation("JobPosts");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.JobPost.CategoryEntity", b =>
-                {
-                    b.Navigation("JobPosts");
-                });
-
-            modelBuilder.Entity("JobBoard.Domain.JobPost.EmploymentTypeEntity", b =>
                 {
                     b.Navigation("JobPosts");
                 });

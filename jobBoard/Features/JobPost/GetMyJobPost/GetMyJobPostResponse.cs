@@ -11,6 +11,7 @@ public record GetMyJobPostResponse(
     bool IsFeatured,
     string CompanyName,
     string CompanyEmail,
+    string? ExperienceLevel,
     string? City,
     int? MinSalary,
     int? MaxSalary,

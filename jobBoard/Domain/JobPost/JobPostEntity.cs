@@ -13,6 +13,7 @@ public class JobPostEntity : BaseEntity
     public int? CityId { get; set; }
     public int CountryId { get; set; }
     public int EmploymentTypeId { get; set; }
+    public int? ExperienceLevelId { get; set; }
     public required string Title { get; set; }
     public required string Description { get; set; }
     public required string CompanyName { get; set; }
@@ -20,7 +21,7 @@ public class JobPostEntity : BaseEntity
     public required string ApplyUrl { get; set; }
     public int? MinSalary { get; set; }
     public int? MaxSalary { get; set; }
-    public string? Currency { get; set; }
+    public int? CurrencyId { get; set; }
     public string? CompanyLogoUrl { get; set; }
     public string? CompanyWebsiteUrl { get; set; }
     public bool IsRemote { get; set; }
@@ -31,11 +32,13 @@ public class JobPostEntity : BaseEntity
     public DateTime? PublishedAt { get; set; }
     public bool IsDeleted { get; set; }
     public BusinessEntity? Business { get; set; }
+    public CurrencyEntity? Currency { get; set; }
+    public ExperienceLevelEntity? ExperienceLevel { get; set; }
     public CategoryEntity Category { get; set; } = null!;
     public CountryEntity Country { get; set; } = null!;
     public CityEntity? City { get; set; }
     public EmploymentTypeEntity EmploymentType { get; set; } = null!;
-    public ICollection<JobPostPaymentEntity> Payments { get; set; } = [];
     public ICollection<TagEntity> Tags { get; set; } = [];
+    public ICollection<JobPostPaymentEntity> Payments { get; set; } = [];
     public NpgsqlTsVector SearchVector { get; set; } = null!;
 }

@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using JobBoard.Common.Constants;
+﻿using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
@@ -27,31 +26,42 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        await using var transaction = await appDbContext.Database.BeginTransactionAsync(cancellationToken);
 
-        var businessId = await HandleSignupIfNeeded(command.SignupPayload, cancellationToken);
+        try
+        {
+            var business = await CreateNewUserIfNeeded(command.SignupPayload, cancellationToken);
 
-        var cityId = await locationService.GetOrCreateCityIdAsync(command.City, cancellationToken);
+            var jobPostId = await CreateJobPostEntity(command, business?.Id, cancellationToken);
 
-        var jobPost = await MapToEntity(command, businessId, cityId, cancellationToken);
-        await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
+            var stripeCustomerId =
+                await GetOrCreateStripeCustomerId(command.CompanyEmail, command.CompanyName, business);
+            var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPostId);
 
-        logger.LogInformation("Creating guest job post with ID: {JobPostId}", jobPost.Id);
+            await CreateJobPostPayment(jobPostId, session.Id, cancellationToken);
 
-        var stripeCustomerId = await CreateStripeCustomer(command.CompanyEmail, command.CompanyName);
-        var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
+            await appDbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-        await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
+            if (business is not null)
+                logger.LogInformation(
+                    "New business {BusinessName} signed up and created a featured job post with id: {JobPostId}",
+                    business.Name, jobPostId);
+            else
+                logger.LogInformation("Guest company {CompanyName} created a featured job post with id: {JobPostId}",
+                    command.CompanyName, jobPostId);
 
-        await appDbContext.SaveChangesAsync(cancellationToken);
-
-        scope.Complete();
-
-        return new CreateJobPostCheckoutSessionResponse(session.Url);
+            return new CreateJobPostCheckoutSessionResponse(session.Url);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to create a featured job post for company {CompanyName}", command.CompanyName);
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
-
-    private async Task<Guid?> HandleSignupIfNeeded(BusinessSignupPayload? signupPayload,
+    private async Task<BusinessEntity?> CreateNewUserIfNeeded(BusinessSignupPayload? signupPayload,
         CancellationToken cancellationToken)
     {
         if (signupPayload is null) return null;
@@ -66,35 +76,37 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         };
 
         await userManager.CreateAsync(newUser, signupPayload.Password);
-
         await userManager.AddToRoleAsync(newUser, nameof(UserRoles.Business));
 
-        var businessId = await CreateBusiness(signupPayload, newUser, cancellationToken);
+        var business = await CreateBusinessAsync(signupPayload, newUser, cancellationToken);
 
-        logger.LogInformation("Created Business user with ID: {UserId}", newUser.Id);
+        logger.LogInformation("Created Business user with Id: {UserId}", newUser.Id);
 
-        return businessId;
+        return business;
     }
 
-    private async Task<Guid> CreateBusiness(BusinessSignupPayload command, ApplicationUserEntity newUserEntity,
+    private async Task<BusinessEntity> CreateBusinessAsync(BusinessSignupPayload payload,
+        ApplicationUserEntity userEntity,
         CancellationToken cancellationToken)
     {
         var newBusiness = new BusinessEntity
         {
-            UserId = newUserEntity.Id,
-            Name = command.Name!
+            UserId = userEntity.Id,
+            Name = payload.Name!
         };
 
         await appDbContext.Businesses.AddAsync(newBusiness, cancellationToken);
-
-        logger.LogInformation("Business entity created for user with email: {Email}", command.Email);
-
-        return newBusiness.Id;
+        return newBusiness;
     }
 
-    private async Task<string> CreateStripeCustomer(string email, string companyName)
+    private async Task<string> GetOrCreateStripeCustomerId(string email, string companyName, BusinessEntity? business)
     {
-        return await paymentService.CreateStripeCustomer(email, companyName);
+        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, companyName, business?.Id);
+
+        if (business is not null)
+            business.StripeCustomerId = stripeCustomerId;
+
+        return stripeCustomerId;
     }
 
     private async Task CreateJobPostPayment(Guid jobPostId, string sessionId, CancellationToken cancellationToken)
@@ -106,19 +118,18 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         };
 
         await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
-        logger.LogInformation("Created job post payment with ID: {PaymentId} for job post: {JobPostId}", payment.Id,
-            jobPostId);
     }
 
-    private async Task<JobPostEntity> MapToEntity(CreateFeaturedJobPostGuestCommand command, Guid? businessId,
-        int? cityId, CancellationToken cancellationToken)
+    private async Task<Guid> CreateJobPostEntity(CreateFeaturedJobPostGuestCommand command, Guid? businessId,
+        CancellationToken cancellationToken)
     {
         var jobPost = new JobPostEntity
         {
+            BusinessId = businessId,
             CategoryId = command.CategoryId,
             CountryId = command.CountryId,
-            CityId = cityId,
             EmploymentTypeId = command.EmploymentTypeId,
+            ExperienceLevelId = command.ExperienceLevelId,
             Title = command.Title,
             Description = command.Description,
             CompanyName = command.CompanyName,
@@ -129,45 +140,52 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             IsRemote = command.IsRemote,
             MinSalary = command.MinSalary,
             MaxSalary = command.MaxSalary,
-            Currency = command.Currency,
-            BusinessId = businessId,
+            CurrencyId = command.CurrencyId,
             IsFeatured = true,
             IsPublished = false,
             PublishedAt = null
         };
 
-        if (command.Tags is not null && command.Tags.Count != 0)
-            jobPost.Tags = await CreateOrGetExistingTags(command.Tags, cancellationToken);
+        await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
-        return jobPost;
+        await UpdateJobPostCityAsync(jobPost, command.City, cancellationToken);
+        await UpdateJobPostTagsAsync(jobPost, command.Tags, cancellationToken);
+
+
+        return jobPost.Id;
     }
 
-    private async Task<List<TagEntity>> CreateOrGetExistingTags(IEnumerable<string> tags,
+    private async Task UpdateJobPostCityAsync(JobPostEntity jobPost, string? cityName,
         CancellationToken cancellationToken)
     {
-        var jobPostTags = new List<TagEntity>();
+        if (!string.IsNullOrWhiteSpace(cityName))
+            jobPost.City = await locationService.GetOrCreateCityAsync(cityName, cancellationToken);
+    }
 
-        foreach (var tag in tags)
-        {
-            var normalizedTag = tag.Trim().ToLowerInvariant();
-            if (string.IsNullOrWhiteSpace(normalizedTag)) continue;
+    private async Task UpdateJobPostTagsAsync(JobPostEntity jobPost, List<string>? tags,
+        CancellationToken cancellationToken)
+    {
+        if (tags is null || tags.Count is 0) return;
 
-            var existingTag = await appDbContext.Tags
-                .FirstOrDefaultAsync(t => t.Slug == normalizedTag, cancellationToken);
+        var normalizedTags = NormalizeTags(tags);
 
-            if (existingTag is null)
-            {
-                existingTag = new TagEntity
-                {
-                    Label = tag.Trim(),
-                    Slug = normalizedTag
-                };
-                await appDbContext.Tags.AddAsync(existingTag, cancellationToken);
-            }
+        var dbTags = await appDbContext.Tags
+            .Where(t => normalizedTags.Contains(t.Slug))
+            .ToListAsync(cancellationToken);
 
-            jobPostTags.Add(new TagEntity { Id = existingTag.Id, Label = existingTag.Label, Slug = existingTag.Slug });
-        }
+        var newTags = normalizedTags.Except(dbTags.Select(t => t.Slug))
+            .Select(newTag => new TagEntity { Label = newTag, Slug = newTag }).ToList();
 
-        return jobPostTags;
+        await appDbContext.Tags.AddRangeAsync(newTags, cancellationToken);
+        jobPost.Tags = dbTags.Concat(newTags).ToList();
+    }
+
+    private static List<string> NormalizeTags(List<string> tags)
+    {
+        return tags
+            .Select(t => t.Trim().ToLowerInvariant().Replace(" ", "-"))
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Distinct()
+            .ToList();
     }
 }

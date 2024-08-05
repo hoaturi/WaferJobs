@@ -8,6 +8,7 @@ public record GetMyJobPost(
     string Category,
     string EmploymentType,
     string Country,
+    string? ExperienceLevel,
     string? City,
     bool IsPublished,
     bool IsFeatured,

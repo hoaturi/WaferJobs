@@ -1,4 +1,6 @@
-﻿using JobBoard.Domain.JobAlert;
+﻿using JobBoard.Domain.Common;
+using JobBoard.Domain.JobAlert;
+using JobBoard.Domain.JobPost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -25,17 +27,33 @@ public class JobAlertConfiguration : IEntityTypeConfiguration<JobAlertEntity>
             .WithMany()
             .HasForeignKey(ja => ja.CountryId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasMany(ja => ja.ExperienceLevels)
+            .WithMany()
+            .UsingEntity(
+                "JobAlertExperienceLevels",
+                r => r.HasOne(typeof(ExperienceLevelEntity)).WithMany().HasForeignKey("ExperienceLevelId"),
+                l => l.HasOne(typeof(JobAlertEntity)).WithMany().HasForeignKey("JobAlertId")
+            );
 
         builder
             .HasMany(ja => ja.EmploymentTypes)
-            .WithMany(et => et.JobAlerts)
-            .UsingEntity("JobAlertEmploymentType");
+            .WithMany()
+            .UsingEntity(
+                "JobAlertEmploymentTypes",
+                r => r.HasOne(typeof(EmploymentTypeEntity)).WithMany().HasForeignKey("EmploymentTypeId"),
+                l => l.HasOne(typeof(JobAlertEntity)).WithMany().HasForeignKey("JobAlertId")
+            );
 
         builder
             .HasMany(ja => ja.Categories)
-            .WithMany(c => c.JobAlerts)
-            .UsingEntity("JobAlertCategory")
-            ;
+            .WithMany()
+            .UsingEntity(
+                "JobAlertCategories",
+                r => r.HasOne(typeof(CategoryEntity)).WithMany().HasForeignKey("CategoryId"),
+                l => l.HasOne(typeof(JobAlertEntity)).WithMany().HasForeignKey("JobAlertId")
+            );
     }
 }

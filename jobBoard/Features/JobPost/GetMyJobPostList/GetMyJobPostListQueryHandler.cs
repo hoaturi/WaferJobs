@@ -29,9 +29,9 @@ public class
             "featured" => jobPostListQuery.Where(j => j.IsPublished && j.IsFeatured),
             "published" => jobPostListQuery.Where(j => j.IsPublished && !j.IsFeatured),
             "requires_payment" => jobPostListQuery.Where(j =>
-                j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
+                !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed)),
-            _ => jobPostListQuery.Where(j => j.Business!.UserId == currentUserId && j.IsDeleted == false)
+            _ => jobPostListQuery
         };
 
         jobPostListQuery = jobPostListQuery.OrderByDescending(j => j.CreatedAt);
@@ -45,10 +45,11 @@ public class
                 j.Category.Label,
                 j.EmploymentType.Label,
                 j.Country.Label,
+                j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
                 j.City != null ? j.City.Label : null,
                 j.IsPublished,
                 j.IsFeatured,
-                j.Payments != null && !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
+                !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed),
                 j.FeaturedStartDate,
                 j.FeaturedEndDate,

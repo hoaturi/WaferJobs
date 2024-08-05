@@ -8,6 +8,7 @@ public record CreateFeaturedJobPostGuestCommand(
     int CategoryId,
     int CountryId,
     int EmploymentTypeId,
+    int ExperienceLevelId,
     string Description,
     string Title,
     string CompanyName,
@@ -19,7 +20,7 @@ public record CreateFeaturedJobPostGuestCommand(
     string? CompanyWebsiteUrl,
     int? MinSalary,
     int? MaxSalary,
-    string? Currency,
+    int? CurrencyId,
     List<string>? Tags,
     BusinessSignupPayload? SignupPayload) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
 

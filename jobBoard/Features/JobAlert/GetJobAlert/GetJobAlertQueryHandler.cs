@@ -19,6 +19,7 @@ public class GetJobAlertQueryHandler(
                 ja.Email,
                 ja.Keyword,
                 ja.CountryId,
+                ja.ExperienceLevels.Select(el => el.Id).ToList(),
                 ja.EmploymentTypes.Select(et => et.Id).ToList(),
                 ja.Categories.Select(c => c.Id).ToList()
             ))

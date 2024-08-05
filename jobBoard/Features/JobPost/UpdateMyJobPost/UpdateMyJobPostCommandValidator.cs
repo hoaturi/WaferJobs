@@ -30,7 +30,10 @@ public class UpdateMyJobPostCommandValidator : AbstractValidator<UpdateMyJobPost
                 }
             )
             .WithMessage("MaxSalary must be greater than MinSalary");
-        RuleFor(x => x.Dto.Currency).Length(3);
+        RuleFor(x => x.Dto.CurrencyId)
+            .NotEmpty()
+            .When(x => x.Dto.MinSalary.HasValue || x.Dto.MaxSalary.HasValue)
+            .WithMessage("CurrencyId is required when either MinSalary or MaxSalary is provided");
         RuleFor(x => x.Dto.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
     }
 }

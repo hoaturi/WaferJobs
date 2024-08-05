@@ -31,7 +31,9 @@ public class CreateFeaturedJobPostCommandValidator<T> : AbstractValidator<T>
                 }
             )
             .WithMessage("MaxSalary must be greater than MinSalary");
-        RuleFor(x => x.Currency).Length(3);
         RuleFor(x => x.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
+        RuleFor(x => x)
+            .Must(x => !((x.MinSalary.HasValue || x.MaxSalary.HasValue) && !x.CurrencyId.HasValue))
+            .WithMessage("CurrencyId must be provided when either MinSalary or MaxSalary is specified");
     }
 }
