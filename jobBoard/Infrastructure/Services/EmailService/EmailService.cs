@@ -24,7 +24,7 @@ public class EmailService(
         var email = new SendGridMessage
         {
             From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = "d-92fcef9ced2e4c0ca754cafa3e8cdbdd"
+            TemplateId = _sendGridOptions.PasswordResetTemplateId
         };
 
         var templateData = new
