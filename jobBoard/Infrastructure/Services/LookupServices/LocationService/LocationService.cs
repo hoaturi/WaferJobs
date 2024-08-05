@@ -12,33 +12,21 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
 {
     private static readonly TimeSpan CacheOperationTimeout = TimeSpan.FromSeconds(5);
 
-    public async Task<int?> GetOrCreateCityIdAsync(string? cityName, CancellationToken cancellationToken)
+    public async Task<CityEntity?> GetOrCreateCityAsync(string cityName, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(cityName))
-            return null;
+        if (string.IsNullOrWhiteSpace(cityName)) return null;
 
-        var normalizedCityName = cityName.Trim().ToLowerInvariant();
+        var normalizedCity = cityName.Trim().ToLowerInvariant().Replace(" ", "-");
 
         var city = await dbContext.Cities
-            .FirstOrDefaultAsync(c => c.Label.ToLower() == normalizedCityName, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Slug == normalizedCity, cancellationToken);
 
-        if (city is not null)
-            return city.Id;
+        if (city != null) return city;
 
-        var newCity = new CityEntity
-        {
-            Label = cityName.Trim(),
-            Slug = normalizedCityName.Replace(" ", "-")
-        };
+        city = new CityEntity { Label = cityName, Slug = normalizedCity };
+        dbContext.Cities.Add(city);
 
-        dbContext.Cities.Add(newCity);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        logger.LogInformation("Created new city with ID: {CityId}", newCity.Id);
-
-        await RefreshCitiesCacheAsync(cancellationToken);
-
-        return newCity.Id;
+        return city;
     }
 
     public async Task<IReadOnlyList<LocationDto>> GetLocationsWithActiveJobPostAsync(

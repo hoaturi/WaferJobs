@@ -1,4 +1,6 @@
-﻿namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
+﻿using JobBoard.Domain.Common;
+
+namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
 
 public interface ILocationService
 {
@@ -8,5 +10,5 @@ public interface ILocationService
 
     Task<IReadOnlyList<LocationDto>> GetLocationsWithActiveJobPostAsync(CancellationToken cancellationToken);
 
-    Task<int?> GetOrCreateCityIdAsync(string? cityName, CancellationToken cancellationToken);
+    Task<CityEntity?> GetOrCreateCityAsync(string city, CancellationToken cancellationToken);
 }
