@@ -20,7 +20,7 @@ public class EmploymentTypeConfiguration : IEntityTypeConfiguration<EmploymentTy
         var employmentTypes = JsonSerializer.Deserialize<List<EmploymentTypeEntity>>(employmentTypeJson);
 
         if (employmentTypes is null || employmentTypes.Count == 0)
-            throw new Exception("Emplyoment types data is missing or empty");
+            throw new Exception("Employment types data is missing or empty");
 
         builder.HasData(employmentTypes);
     }

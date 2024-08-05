@@ -6,8 +6,8 @@ public class SubscribeToJobAlertCommandValidator : AbstractValidator<SubscribeTo
 {
     public SubscribeToJobAlertCommandValidator()
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Email).NotEmpty().MaximumLength(254).EmailAddress();
         RuleFor(x => x.Keyword)
-            .MaximumLength(50);
+            .MaximumLength(100);
     }
 }

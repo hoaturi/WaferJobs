@@ -8,22 +8,22 @@ public class UpdateMyBusinessCommandValidator : AbstractValidator<UpdateMyBusine
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(50);
+            .MaximumLength(100);
 
         RuleFor(x => x.Description)
-            .MaximumLength(5000);
+            .MaximumLength(2000);
 
         RuleFor(x => x.Location)
-            .MaximumLength(50);
+            .MaximumLength(100);
 
         RuleFor(x => x.WebsiteUrl)
-            .MaximumLength(500);
+            .MaximumLength(2048);
 
         RuleFor(x => x.TwitterUrl)
-            .MaximumLength(500);
+            .MaximumLength(2048);
 
         RuleFor(x => x.LinkedInUrl)
-            .MaximumLength(500);
+            .MaximumLength(2048);
 
         RuleFor(x => x.BusinessSizeId)
             .GreaterThanOrEqualTo(1);

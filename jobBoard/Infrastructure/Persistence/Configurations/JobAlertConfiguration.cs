@@ -12,6 +12,9 @@ public class JobAlertConfiguration : IEntityTypeConfiguration<JobAlertEntity>
     {
         builder.Property(ja => ja.Email)
             .IsRequired()
+            .HasMaxLength(254);
+
+        builder.Property(ja => ja.Keyword)
             .HasMaxLength(100);
 
         builder.HasIndex(ja => ja.Email)
@@ -19,9 +22,6 @@ public class JobAlertConfiguration : IEntityTypeConfiguration<JobAlertEntity>
 
         builder.HasIndex(ja => ja.Token)
             .IsUnique();
-
-        builder.Property(ja => ja.Keyword)
-            .HasMaxLength(50);
 
         builder.HasOne(ja => ja.Country)
             .WithMany()

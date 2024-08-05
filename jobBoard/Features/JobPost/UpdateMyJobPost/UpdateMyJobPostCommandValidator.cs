@@ -9,14 +9,14 @@ public class UpdateMyJobPostCommandValidator : AbstractValidator<UpdateMyJobPost
         RuleFor(x => x.Dto.CategoryId).NotEmpty();
         RuleFor(x => x.Dto.CountryId).NotEmpty();
         RuleFor(x => x.Dto.EmploymentTypeId).NotEmpty();
-        RuleFor(x => x.Dto.Title).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Dto.Title).NotEmpty().MaximumLength(150);
         RuleFor(x => x.Dto.Description).NotEmpty().MaximumLength(10000);
         RuleFor(x => x.Dto.City).MaximumLength(50);
-        RuleFor(x => x.Dto.ApplyUrl).MaximumLength(2000);
-        RuleFor(x => x.Dto.CompanyName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.Dto.CompanyEmail).NotEmpty().EmailAddress().MaximumLength(100);
-        RuleFor(x => x.Dto.CompanyLogoUrl).MaximumLength(2000);
-        RuleFor(x => x.Dto.CompanyWebsiteUrl).MaximumLength(2000);
+        RuleFor(x => x.Dto.ApplyUrl).MaximumLength(2048);
+        RuleFor(x => x.Dto.CompanyName).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Dto.CompanyEmail).NotEmpty().EmailAddress().MaximumLength(254);
+        RuleFor(x => x.Dto.CompanyLogoUrl).MaximumLength(2048);
+        RuleFor(x => x.Dto.CompanyWebsiteUrl).MaximumLength(2048);
         RuleFor(x => x.Dto.IsRemote).NotNull();
         RuleFor(x => x.Dto.MinSalary).GreaterThanOrEqualTo(0);
         RuleFor(x => x.Dto.MaxSalary)
@@ -30,10 +30,11 @@ public class UpdateMyJobPostCommandValidator : AbstractValidator<UpdateMyJobPost
                 }
             )
             .WithMessage("MaxSalary must be greater than MinSalary");
-        RuleFor(x => x.Dto.CurrencyId)
-            .NotEmpty()
-            .When(x => x.Dto.MinSalary.HasValue || x.Dto.MaxSalary.HasValue)
-            .WithMessage("CurrencyId is required when either MinSalary or MaxSalary is provided");
+
+        RuleFor(x => x)
+            .Must(x => !((x.Dto.MinSalary.HasValue || x.Dto.MaxSalary.HasValue) && !x.Dto.CurrencyId.HasValue))
+            .WithMessage("CurrencyId must be provided when either MinSalary or MaxSalary is specified");
+
         RuleFor(x => x.Dto.Tags).Must(tags => tags?.Count <= 3).WithMessage("Tags must not exceed 3");
     }
 }

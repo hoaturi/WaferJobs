@@ -9,12 +9,13 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
 {
     public void Configure(EntityTypeBuilder<JobPostEntity> builder)
     {
-        builder.Property(jp => jp.Title).IsRequired().HasMaxLength(100);
-        builder.Property(jp => jp.Description).IsRequired().HasMaxLength(10000);
-        builder.Property(jp => jp.ApplyUrl).HasMaxLength(2000);
-        builder.Property(jp => jp.CompanyName).IsRequired().HasMaxLength(50);
-        builder.Property(jp => jp.CompanyLogoUrl).HasMaxLength(2000);
-        builder.Property(jp => jp.CompanyWebsiteUrl).HasMaxLength(2000);
+        builder.Property(jp => jp.Title).HasMaxLength(150);
+        builder.Property(jp => jp.Description).HasMaxLength(10000);
+        builder.Property(jp => jp.ApplyUrl).HasMaxLength(2048);
+        builder.Property(jp => jp.CompanyName).HasMaxLength(100);
+        builder.Property(jp => jp.CompanyEmail).HasMaxLength(254);
+        builder.Property(jp => jp.CompanyLogoUrl).HasMaxLength(2048);
+        builder.Property(jp => jp.CompanyWebsiteUrl).HasMaxLength(2048);
 
         builder.HasIndex(jp => jp.IsPublished);
         builder.HasIndex(jp => jp.IsDeleted);
@@ -23,7 +24,6 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
         builder.HasIndex(jp => jp.IsPublished);
         builder.HasIndex(jp => jp.MinSalary);
         builder.HasIndex(jp => jp.MaxSalary);
-
 
         builder.HasGeneratedTsVectorColumn(ja => ja.SearchVector, "english",
                 ja => new { ja.Title, ja.Description, ja.CompanyName })

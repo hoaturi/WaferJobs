@@ -8,9 +8,8 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
 {
     public void Configure(EntityTypeBuilder<JobPostPaymentEntity> builder)
     {
-        builder.Property(jpp => jpp.JobPostId).IsRequired();
-        builder.Property(jpp => jpp.CheckoutSessionId).IsRequired().HasMaxLength(200);
-        builder.Property(jpp => jpp.EventId).HasMaxLength(200);
+        builder.Property(jpp => jpp.CheckoutSessionId).HasMaxLength(255);
+        builder.Property(jpp => jpp.EventId).HasMaxLength(255);
         builder.HasIndex(jpp => jpp.CheckoutSessionId).IsUnique();
 
         builder
