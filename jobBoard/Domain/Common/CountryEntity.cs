@@ -1,5 +1,4 @@
-﻿using JobBoard.Domain.JobPost;
-using MessagePack;
+﻿using MessagePack;
 
 namespace JobBoard.Domain.Common;
 
@@ -13,6 +12,4 @@ public class CountryEntity
     [Key(2)] public required string Code { get; init; }
 
     [Key(3)] public required string Slug { get; init; }
-
-    public ICollection<JobPostEntity>? JobPosts { get; set; }
 }

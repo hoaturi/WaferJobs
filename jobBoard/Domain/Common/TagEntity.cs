@@ -1,11 +1,8 @@
-﻿using JobBoard.Domain.JobPost;
-
-namespace JobBoard.Domain.Common;
+﻿namespace JobBoard.Domain.Common;
 
 public class TagEntity
 {
     public int Id { get; set; }
     public required string Label { get; set; }
     public required string Slug { get; set; }
-    public ICollection<JobPostEntity> JobPosts { get; set; } = [];
 }
