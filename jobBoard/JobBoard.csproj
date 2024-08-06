@@ -41,8 +41,4 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Compile Remove="Infrastructure\Services\LookupServices\CurrencyService\ExchangeRateDto.cs"/>
-    </ItemGroup>
-
 </Project>

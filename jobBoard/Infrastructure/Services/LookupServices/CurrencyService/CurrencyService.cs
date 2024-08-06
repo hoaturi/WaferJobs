@@ -1,5 +1,4 @@
 ﻿using JobBoard.Common.Constants;
-using JobBoard.Domain.Common;
 using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using MessagePack;
@@ -20,21 +19,23 @@ public class CurrencyService(
 {
     private readonly CurrencyOptions _options = options.Value;
 
-    public async Task<IReadOnlyList<CurrencyEntity>> GetExchangeRatesAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ExchangeRateDto>> GetExchangeRatesAsync(CancellationToken cancellationToken)
     {
         var cachedRates = await cache.GetAsync(CacheKeys.CurrencyExchangeRates, cancellationToken);
 
         if (cachedRates is not null)
-            return MessagePackSerializer.Deserialize<IReadOnlyList<CurrencyEntity>>(cachedRates,
+            return MessagePackSerializer.Deserialize<IReadOnlyList<ExchangeRateDto>>(cachedRates,
                 cancellationToken: cancellationToken);
 
         return await FetchAndCacheExchangeRatesAsync(cancellationToken);
     }
 
-    private async Task<IReadOnlyList<CurrencyEntity>> FetchAndCacheExchangeRatesAsync(
+    private async Task<IReadOnlyList<ExchangeRateDto>> FetchAndCacheExchangeRatesAsync(
         CancellationToken cancellationToken)
     {
-        var currencies = await dbContext.Currencies.ToListAsync(cancellationToken);
+        var currencies = await dbContext.Currencies
+            .ToListAsync(cancellationToken);
+
         var currencyCodes = string.Join(",", currencies.Select(c => c.Code));
         var queryStr = $"latest?base=USD&symbols={currencyCodes}&api_key={_options.ApiKey}";
 
@@ -54,13 +55,16 @@ public class CurrencyService(
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
+            var exchangeRateDtos = currencies.Select(c => new ExchangeRateDto(c.Id, c.Code, c.Rate)).ToList();
+
             var serializedRates =
-                MessagePackSerializer.Serialize(currencies, cancellationToken: cancellationToken);
+                MessagePackSerializer.Serialize(exchangeRateDtos, cancellationToken: cancellationToken);
 
             await cache.SetAsync(CacheKeys.CurrencyExchangeRates, serializedRates, cancellationToken);
 
             logger.LogInformation("Updated currency exchange rates in cache and database");
-            return currencies;
+
+            return exchangeRateDtos;
         }
 
         logger.LogError("Failed to deserialize currency API response");
