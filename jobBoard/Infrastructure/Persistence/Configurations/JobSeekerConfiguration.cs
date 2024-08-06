@@ -10,7 +10,6 @@ public class JobSeekerConfiguration : IEntityTypeConfiguration<JobSeekerEntity>
     {
         builder.Property(j => j.Name).IsRequired().HasMaxLength(50);
 
-
         builder.HasOne(j => j.User)
             .WithOne()
             .HasForeignKey<JobSeekerEntity>(j => j.UserId)
