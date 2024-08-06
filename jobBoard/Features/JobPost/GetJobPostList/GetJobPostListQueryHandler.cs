@@ -26,7 +26,31 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             .ThenByDescending(j => j.PublishedAt)
             .Skip((query.Page - 1) * query.Take)
             .Take(query.Take)
-            .Select(j => MapToResponse(j))
+            .Select(j =>
+                new GetJobPostResponse(
+                    j.Id,
+                    j.Category.Label,
+                    j.Country.Label,
+                    j.EmploymentType.Label,
+                    j.Title,
+                    j.Description,
+                    j.IsRemote,
+                    j.IsFeatured,
+                    j.CompanyName,
+                    j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
+                    j.City != null ? j.City.Label : null,
+                    j.MinSalary,
+                    j.MaxSalary,
+                    j.Currency != null ? j.Currency.Code : null,
+                    null,
+                    j.BusinessId,
+                    j.CompanyLogoUrl,
+                    j.CompanyWebsiteUrl,
+                    j.Tags.Select(t => t.Label).ToList(),
+                    j.FeaturedStartDate.GetValueOrDefault(),
+                    j.FeaturedEndDate.GetValueOrDefault(),
+                    j.PublishedAt.GetValueOrDefault()
+                ))
             .ToListAsync(cancellationToken);
 
         return new GetJobPostListResponse(jobPostList, totalJobPostCount);
@@ -98,33 +122,5 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             j.MaxSalary.Value / j.Currency.Rate <= maxSalaryInUsd);
 
         return jobPostListQuery;
-    }
-
-    private static GetJobPostResponse MapToResponse(JobPostEntity jobPost)
-    {
-        return new GetJobPostResponse(
-            jobPost.Id,
-            jobPost.Category.Label,
-            jobPost.Country.Label,
-            jobPost.EmploymentType.Label,
-            jobPost.Title,
-            jobPost.Description,
-            jobPost.IsRemote,
-            jobPost.IsFeatured,
-            jobPost.CompanyName,
-            jobPost.ExperienceLevel?.Label,
-            jobPost.City?.Label,
-            jobPost.MinSalary,
-            jobPost.MaxSalary,
-            jobPost.Currency?.Code,
-            null,
-            jobPost.BusinessId,
-            jobPost.CompanyLogoUrl,
-            jobPost.CompanyWebsiteUrl,
-            jobPost.Tags.Select(t => t.Label).ToList(),
-            jobPost.FeaturedStartDate.GetValueOrDefault(),
-            jobPost.FeaturedEndDate.GetValueOrDefault(),
-            jobPost.PublishedAt.GetValueOrDefault()
-        );
     }
 }
