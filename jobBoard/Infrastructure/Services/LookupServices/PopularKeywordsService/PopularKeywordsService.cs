@@ -6,7 +6,10 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
 
-public class PopularKeywordsService(AppDbContext dbContext, IDistributedCache cache, ILogger<PopularKeywordsService> logger) : IPopularKeywordsService
+public class PopularKeywordsService(
+    AppDbContext dbContext,
+    IDistributedCache cache,
+    ILogger<PopularKeywordsService> logger) : IPopularKeywordsService
 {
     private static readonly HashSet<string> CommonWords = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -31,16 +34,14 @@ public class PopularKeywordsService(AppDbContext dbContext, IDistributedCache ca
     private async Task<IReadOnlyList<PopularKeywordDto>> FetchAndProcessPopularKeywords(
         CancellationToken cancellationToken)
     {
-        var titles = await dbContext.JobPosts
-            .Select(jp => jp.Title)
+        var tagLabels = await dbContext.JobPosts
+            .SelectMany(jp => jp.Tags.Select(t => t.Label))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        return titles
-            .SelectMany(title => title.Split(' '))
-            .Select(word => word.ToLowerInvariant())
-            .Where(word => word.Length > 1 && !CommonWords.Contains(word))
-            .GroupBy(word => word)
+        return tagLabels
+            .Where(label => !string.IsNullOrWhiteSpace(label) && !CommonWords.Contains(label))
+            .GroupBy(label => label)
             .Select(g => new PopularKeywordDto(g.Key, g.Count()))
             .OrderByDescending(g => g.Count)
             .Take(15)
@@ -53,6 +54,5 @@ public class PopularKeywordsService(AppDbContext dbContext, IDistributedCache ca
         var serializedKeywords = MessagePackSerializer.Serialize(popularKeywords, cancellationToken: cancellationToken);
         await cache.SetAsync(CacheKeys.PopularKeywordsCacheKey, serializedKeywords, cancellationToken);
         logger.LogInformation("Updated popular keywords cache");
-        
     }
 }
