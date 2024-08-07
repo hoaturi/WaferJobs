@@ -16,8 +16,8 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
     {
         var jobPostListQuery = BuildJobPostListQuery(query);
 
-        if (query.Currency is not null && (query.MinSalary is not null || query.MaxSalary is not null))
-            jobPostListQuery = await ApplyCurrencyFilterAsync(query, jobPostListQuery, cancellationToken);
+        if (query.MinSalary is not null)
+            jobPostListQuery = await ApplySalaryFilterAsync(query.MinSalary.Value, jobPostListQuery, cancellationToken);
 
         var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
 
@@ -63,7 +63,13 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             .Where(j => j.IsPublished && !j.IsDeleted);
 
         if (query.Keyword is not null)
-            jobPostListQuery = jobPostListQuery.Where(jp => jp.SearchVector.Matches(query.Keyword.ToLower()));
+        {
+            var keywords = query.Keyword.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            jobPostListQuery = jobPostListQuery.Where(jp =>
+                keywords.All(keyword =>
+                    jp.SearchVector.Matches(keyword) ||
+                    jp.Tags.Any(t => t.Slug.Contains(keyword))));
+        }
 
         if (query.City is not null)
             jobPostListQuery = jobPostListQuery.Where(j => j.City != null && j.City.Id == query.City);
@@ -71,18 +77,19 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
         if (query.Country is not null)
             jobPostListQuery = jobPostListQuery.Where(j => j.Country.Id == query.Country);
 
-        if (query.ExperienceLevel is not null)
-            jobPostListQuery = jobPostListQuery.Where(j =>
-                j.ExperienceLevel != null && j.ExperienceLevel.Id == query.ExperienceLevel);
+        if (query.ExperienceLevels?.Count > 0)
+            jobPostListQuery = jobPostListQuery.Where(
+                j => j.ExperienceLevelId != null && query.ExperienceLevels.Contains(j.ExperienceLevelId.Value)
+            );
 
         if (query.RemoteOnly is true)
             jobPostListQuery = jobPostListQuery.Where(j => j.IsRemote);
 
         if (query.Categories?.Count > 0)
-            jobPostListQuery = jobPostListQuery.Where(j => query.Categories.Contains(j.Category.Id));
+            jobPostListQuery = jobPostListQuery.Where(j => query.Categories.Contains(j.CategoryId));
 
         if (query.EmploymentTypes?.Count > 0)
-            jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentType.Id));
+            jobPostListQuery = jobPostListQuery.Where(j => query.EmploymentTypes.Contains(j.EmploymentTypeId));
 
         if (query.PostedDate is not null)
         {
@@ -90,36 +97,28 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
         }
 
-        if (query.FeaturedOnly is true)
-            jobPostListQuery = jobPostListQuery.Where(j => j.IsFeatured);
+        jobPostListQuery = query.FeaturedOnly switch
+        {
+            true => jobPostListQuery.Where(j => j.IsFeatured),
+            false => jobPostListQuery.Where(j => !j.IsFeatured),
+            _ => jobPostListQuery
+        };
 
         return jobPostListQuery;
     }
 
-    private async Task<IQueryable<JobPostEntity>> ApplyCurrencyFilterAsync(
-        GetJobPostListQuery query,
+    private async Task<IQueryable<JobPostEntity>> ApplySalaryFilterAsync(
+        int minSalary,
         IQueryable<JobPostEntity> jobPostListQuery,
         CancellationToken cancellationToken)
     {
         var currencies = await currencyService.GetExchangeRatesAsync(cancellationToken);
-        var targetCurrency = currencies.FirstOrDefault(c => c.Id == query.Currency);
+        var usdRate = currencies.First(c => c.Code == "USD");
 
-        if (targetCurrency is null) return jobPostListQuery;
-
-        if (query.MinSalary is not null)
-        {
-            var minSalaryInUsd = query.MinSalary.Value / targetCurrency.Rate;
-            jobPostListQuery = jobPostListQuery.Where(j =>
-                j.Currency != null && j.MinSalary != null &&
-                j.MinSalary.Value / j.Currency.Rate >= minSalaryInUsd);
-        }
-
-        if (query.MaxSalary is null) return jobPostListQuery;
-
-        var maxSalaryInUsd = query.MaxSalary.Value / targetCurrency.Rate;
+        var minSalaryInUsd = minSalary / usdRate.Rate;
         jobPostListQuery = jobPostListQuery.Where(j =>
-            j.Currency != null && j.MaxSalary != null &&
-            j.MaxSalary.Value / j.Currency.Rate <= maxSalaryInUsd);
+            j.Currency != null && j.MinSalary != null &&
+            j.MinSalary.Value / j.Currency.Rate >= minSalaryInUsd);
 
         return jobPostListQuery;
     }

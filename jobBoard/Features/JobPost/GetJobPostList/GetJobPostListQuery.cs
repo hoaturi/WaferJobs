@@ -7,15 +7,13 @@ public record GetJobPostListQuery(
     string? Keyword,
     int? City,
     int? Country,
-    int? ExperienceLevel,
+    List<int>? ExperienceLevels,
     bool? RemoteOnly,
     int? PostedDate,
     List<int>? Categories,
     List<int>? EmploymentTypes,
     bool? FeaturedOnly,
-    int? Currency,
     int? MinSalary,
-    int? MaxSalary,
     int Take,
     int Page
 ) : IRequest<Result<GetJobPostListResponse, Error>>;
