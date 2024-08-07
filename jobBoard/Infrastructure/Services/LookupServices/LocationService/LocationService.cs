@@ -135,19 +135,14 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
         var locations = await dbContext.JobPosts
             .AsNoTracking()
             .Where(j => !j.IsDeleted && j.IsPublished)
-            .Select(j => new
-            {
-                CountryLabel = j.Country.Label,
-                CityLabel = j.City != null ? j.City.Label : null,
-                CountrySlug = j.Country.Slug,
-                CitySlug = j.City != null ? j.City.Slug : null
-            })
-            .Distinct()
-            .Select(l => new LocationDto(
-                l.CityLabel != null ? $"{l.CityLabel}, {l.CountryLabel}" : l.CountryLabel,
-                l.CitySlug,
-                l.CountrySlug
+            .Select(j => new LocationDto(
+                j.City != null ? $"{j.City.Label}, {j.Country.Label}" : j.Country.Label,
+                j.City != null ? j.City.Slug : null,
+                j.Country.Slug,
+                j.CityId,
+                j.CountryId
             ))
+            .Distinct()
             .ToListAsync(cancellationToken);
 
         return locations;
