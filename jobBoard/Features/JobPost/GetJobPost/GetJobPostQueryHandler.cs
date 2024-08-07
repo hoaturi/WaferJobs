@@ -31,7 +31,7 @@ public class GetJobPostQueryHandler(AppDbContext dbContext)
                 j.City != null ? j.City.Label : null,
                 j.MinSalary,
                 j.MaxSalary,
-                j.Currency != null ? j.Currency.Label : null,
+                j.Currency != null ? j.Currency.Code : null,
                 j.ApplyUrl,
                 j.BusinessId,
                 j.CompanyLogoUrl,
