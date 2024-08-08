@@ -5,8 +5,6 @@ using JobBoard.Domain.Business;
 using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace JobBoard.Features.Auth.Signup;
 
@@ -18,8 +16,7 @@ public class SignUpCommandHandler(
 {
     public async Task<Result<Unit, Error>> Handle(
         SignUpCommand command,
-        CancellationToken cancellationToken
-    )
+        CancellationToken cancellationToken)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -27,32 +24,25 @@ public class SignUpCommandHandler(
         {
             var user = new ApplicationUserEntity { UserName = command.Email, Email = command.Email };
 
-            await userManager.CreateAsync(user, command.Password);
+            var createResult = await userManager.CreateAsync(user, command.Password);
+
+            if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
+                return AuthErrors.UserAlreadyExists;
+
             await userManager.AddToRoleAsync(user, command.Role);
 
-            if (command.Role == nameof(UserRoles.Business))
-                await CreateBusiness(command, user, cancellationToken);
+            if (command.Role == nameof(UserRoles.Business)) await CreateBusiness(command, user, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
             logger.LogInformation("Successfully created {UserRole} user with id {UserId}", command.Role, user.Id);
+            return Unit.Value;
         }
-        catch (Exception ex)
+        catch
         {
             await transaction.RollbackAsync(cancellationToken);
-
-            if (ex is DbUpdateException
-                {
-                    InnerException: PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }
-                })
-            {
-                logger.LogError("Failed to create {UserRole} user with email {Email}. Email already exists",
-                    command.Role, command.Email);
-                return AuthErrors.UserAlreadyExists;
-            }
+            throw;
         }
-
-        return Unit.Value;
     }
 
     private async Task CreateBusiness(SignUpCommand command,
@@ -60,7 +50,6 @@ public class SignUpCommandHandler(
     {
         var newBusiness = new BusinessEntity { UserId = newUserEntity.Id, Name = command.Name! };
         await dbContext.Businesses.AddAsync(newBusiness, cancellationToken);
-
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
