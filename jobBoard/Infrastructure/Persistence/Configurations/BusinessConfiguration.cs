@@ -17,10 +17,10 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
         builder.Property(b => b.TwitterUrl).HasMaxLength(2048);
         builder.Property(b => b.LinkedinUrl).HasMaxLength(2048);
 
-        builder.HasOne(b => b.User)
+        builder
+            .HasOne(b => b.User)
             .WithOne()
             .HasForeignKey<BusinessEntity>(b => b.UserId)
-            .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder

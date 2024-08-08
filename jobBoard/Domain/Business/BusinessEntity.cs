@@ -1,4 +1,5 @@
 ﻿using JobBoard.Common;
+using JobBoard.Domain.Auth;
 using JobBoard.Domain.JobPost;
 
 namespace JobBoard.Domain.Business;
@@ -17,7 +18,7 @@ public class BusinessEntity : BaseEntity
     public string? TwitterUrl { get; set; }
     public string? LinkedinUrl { get; set; }
 
-    public BusinessUserEntity User { get; init; } = null!;
-    public List<JobPostEntity>? JobPosts { get; init; }
+    public ApplicationUserEntity User { get; init; } = null!;
+    public List<JobPostEntity>? JobPosts { get; init; } = [];
     public BusinessSizeEntity? BusinessSize { get; init; }
 }
