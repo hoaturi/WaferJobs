@@ -16,7 +16,7 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
     {
         var jobPostListQuery = BuildJobPostListQuery(query);
 
-        if (query.MinSalary is not null)
+        if (query.MinSalary is not null && query.MinSalary.Value > 0)
             jobPostListQuery = await ApplySalaryFilterAsync(query.MinSalary.Value, jobPostListQuery, cancellationToken);
 
         var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
@@ -116,6 +116,9 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
         var usdRate = currencies.First(c => c.Code == "USD");
 
         var minSalaryInUsd = minSalary / usdRate.Rate;
+
+        Console.WriteLine(minSalaryInUsd);
+
         jobPostListQuery = jobPostListQuery.Where(j =>
             j.Currency != null && j.MinSalary != null &&
             j.MinSalary.Value / j.Currency.Rate >= minSalaryInUsd);
