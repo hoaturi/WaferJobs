@@ -23,7 +23,6 @@ public class
         var jobPostListQuery = appDbContext.JobPosts.AsNoTracking()
             .Where(j => !j.IsDeleted && j.Business!.UserId == currentUserId);
 
-
         jobPostListQuery = query.Status switch
         {
             "featured" => jobPostListQuery.Where(j => j.IsPublished && j.IsFeatured),
@@ -39,7 +38,7 @@ public class
         var jobPostList = await jobPostListQuery
             .Skip((query.Page - 1) * PageSize)
             .Take(PageSize)
-            .Select(j => new GetMyJobPost(
+            .Select(j => new GetMyJobPostDto(
                 j.Id,
                 j.Title,
                 j.Category.Label,
@@ -51,6 +50,7 @@ public class
                 j.IsFeatured,
                 !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed),
+                j.ApplyCount,
                 j.FeaturedStartDate,
                 j.FeaturedEndDate,
                 j.PublishedAt,

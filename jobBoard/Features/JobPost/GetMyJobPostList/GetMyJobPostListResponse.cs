@@ -1,8 +1,8 @@
 ﻿namespace JobBoard.Features.JobPost.GetMyJobPostList;
 
-public record GetMyJobPostListResponse(List<GetMyJobPost> JobPostList, int Total);
+public record GetMyJobPostListResponse(List<GetMyJobPostDto> JobPostList, int Total);
 
-public record GetMyJobPost(
+public record GetMyJobPostDto(
     Guid Id,
     string Title,
     string Category,
@@ -13,7 +13,9 @@ public record GetMyJobPost(
     bool IsPublished,
     bool IsFeatured,
     bool RequiresPayment,
+    int ApplyCount,
     DateTime? FeaturedStartDate,
     DateTime? FeaturedEndDate,
     DateTime? PublishedAt,
-    DateTime CreatedAt);
+    DateTime CreatedAt
+);
