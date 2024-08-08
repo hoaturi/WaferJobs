@@ -13,6 +13,7 @@ using JobBoard.Infrastructure.Persistence.Utils;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.FileUploadService;
+using JobBoard.Infrastructure.Services.JobMetricService;
 using JobBoard.Infrastructure.Services.JwtService;
 using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
 using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
@@ -26,6 +27,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
+using StackExchange.Redis;
 
 namespace JobBoard.Infrastructure.Extensions;
 
@@ -99,7 +101,16 @@ public static class ServiceExtensions
     private static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         var redisOptions = configuration.GetSection(RedisOptions.Key).Get<RedisOptions>()!;
-        services.AddStackExchangeRedisCache(option => option.Configuration = redisOptions.ConnectionString);
+
+        IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(redisOptions.ConnectionString);
+
+        services.AddSingleton(connectionMultiplexer);
+
+        services.AddStackExchangeRedisCache(option =>
+        {
+            option.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer);
+        });
+
         return services;
     }
 
@@ -176,10 +187,12 @@ public static class ServiceExtensions
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IPaymentService, PaymentService>();
         services.AddSingleton<IFileUploadService, FileUploadService>();
+
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IPopularKeywordsService, PopularKeywordsService>();
         services.AddScoped<IJobPostCountService, JobPostCountService>();
         services.AddScoped<ICurrencyService, CurrencyService>();
+        services.AddScoped<IJobMetricService, JobMetricService>();
 
         services.AddScoped<EntityConstraintChecker>();
         return services;

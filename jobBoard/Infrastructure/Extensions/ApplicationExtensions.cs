@@ -4,6 +4,7 @@ using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 using JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
+using JobBoard.Infrastructure.BackgroundJobs.PersistApplyCountJob;
 
 namespace JobBoard.Infrastructure.Extensions;
 
@@ -40,9 +41,14 @@ public static class ApplicationExtensions
             Cron.Daily
         );
 
+        RecurringJob.AddOrUpdate<PersistApplyCountJob>(
+            "PersistApplyCountJob",
+            x => x.ExecuteAsync(CancellationToken.None),
+            Cron.Daily
+        );
+
         return app;
     }
-
 
     public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)
     {

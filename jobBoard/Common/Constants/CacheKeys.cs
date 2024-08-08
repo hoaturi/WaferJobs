@@ -9,4 +9,5 @@ public static class CacheKeys
     public const string PopularKeywordsCacheKey = "popularKeywords";
     public const string JobCountCacheKey = "totalJobPostCount";
     public const string CurrencyExchangeRates = "currencyExchangeRates";
+    public const string ApplyClickCount = "applyClickCount";
 }
