@@ -35,8 +35,8 @@ public class PopularKeywordsService(
         CancellationToken cancellationToken)
     {
         var tagLabels = await dbContext.JobPosts
-            .SelectMany(jp => jp.Tags.Select(t => t.Label))
             .AsNoTracking()
+            .SelectMany(jp => jp.Tags.Select(t => t.Label))
             .ToListAsync(cancellationToken);
 
         return tagLabels
