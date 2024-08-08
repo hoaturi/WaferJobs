@@ -30,7 +30,7 @@ public class CurrencyService(
         return await FetchAndCacheExchangeRatesAsync(cancellationToken);
     }
 
-    private async Task<IReadOnlyList<ExchangeRateDto>> FetchAndCacheExchangeRatesAsync(
+    public async Task<IReadOnlyList<ExchangeRateDto>> FetchAndCacheExchangeRatesAsync(
         CancellationToken cancellationToken)
     {
         var currencies = await dbContext.Currencies
@@ -51,9 +51,9 @@ public class CurrencyService(
             {
                 var currency = currencies.FirstOrDefault(c => c.Code == code);
                 if (currency is not null) currency.Rate = rate;
-            }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
+            }
 
             var exchangeRateDtos = currencies.Select(c => new ExchangeRateDto(c.Id, c.Code, c.Rate)).ToList();
 

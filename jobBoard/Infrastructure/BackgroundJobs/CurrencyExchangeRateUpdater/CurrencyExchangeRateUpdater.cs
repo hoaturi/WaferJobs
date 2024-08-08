@@ -8,6 +8,6 @@ public class CurrencyExchangeRateUpdater(
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        await currencyService.GetExchangeRatesAsync(cancellationToken);
+        await currencyService.FetchAndCacheExchangeRatesAsync(cancellationToken);
     }
 }
