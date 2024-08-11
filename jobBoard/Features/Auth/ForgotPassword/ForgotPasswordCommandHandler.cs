@@ -21,8 +21,7 @@ public class ForgotPasswordCommandHandler(
 
         if (user is null)
         {
-            logger.LogWarning("Failed to find user with email: {Email}", command.Email);
-            return AuthErrors.UserNotFound;
+            return Unit.Value;
         }
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
