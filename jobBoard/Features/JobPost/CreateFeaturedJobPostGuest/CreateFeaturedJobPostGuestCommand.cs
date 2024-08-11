@@ -22,9 +22,9 @@ public record CreateFeaturedJobPostGuestCommand(
     int? MaxSalary,
     int? CurrencyId,
     List<string>? Tags,
-    BusinessSignupPayload? SignupPayload) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
+    BusinessSignupDto? SignupPayload) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
 
-public abstract record BusinessSignupPayload(
+public record BusinessSignupDto(
     string Name,
     string Email,
     string Password

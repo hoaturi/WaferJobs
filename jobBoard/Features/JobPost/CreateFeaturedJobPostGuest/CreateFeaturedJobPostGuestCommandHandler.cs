@@ -32,6 +32,9 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         {
             var business = await CreateNewUserIfNeeded(command.SignupPayload, cancellationToken);
 
+            if (business is null && command.SignupPayload is not null)
+                return AuthErrors.UserAlreadyExists;
+
             var jobPostId = await CreateJobPostEntity(command, business?.Id, cancellationToken);
 
             var stripeCustomerId =
@@ -61,13 +64,10 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         }
     }
 
-    private async Task<BusinessEntity?> CreateNewUserIfNeeded(BusinessSignupPayload? signupPayload,
+    private async Task<BusinessEntity?> CreateNewUserIfNeeded(BusinessSignupDto? signupPayload,
         CancellationToken cancellationToken)
     {
         if (signupPayload is null) return null;
-
-        var existingUser = await userManager.FindByEmailAsync(signupPayload.Email);
-        if (existingUser != null) throw new UserAlreadyExistsException(signupPayload.Email);
 
         var newUser = new ApplicationUserEntity
         {
@@ -75,7 +75,11 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             Email = signupPayload.Email
         };
 
-        await userManager.CreateAsync(newUser, signupPayload.Password);
+        var createResult = await userManager.CreateAsync(newUser, signupPayload.Password);
+
+        if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
+            return null;
+
         await userManager.AddToRoleAsync(newUser, nameof(UserRoles.Business));
 
         var business = await CreateBusinessAsync(signupPayload, newUser, cancellationToken);
@@ -85,14 +89,14 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         return business;
     }
 
-    private async Task<BusinessEntity> CreateBusinessAsync(BusinessSignupPayload payload,
+    private async Task<BusinessEntity> CreateBusinessAsync(BusinessSignupDto dto,
         ApplicationUserEntity userEntity,
         CancellationToken cancellationToken)
     {
         var newBusiness = new BusinessEntity
         {
             UserId = userEntity.Id,
-            Name = payload.Name!
+            Name = dto.Name!
         };
 
         await appDbContext.Businesses.AddAsync(newBusiness, cancellationToken);
@@ -150,7 +154,6 @@ public class CreateFeaturedJobPostGuestCommandHandler(
 
         await UpdateJobPostCityAsync(jobPost, command.City, cancellationToken);
         await UpdateJobPostTagsAsync(jobPost, command.Tags, cancellationToken);
-
 
         return jobPost.Id;
     }
