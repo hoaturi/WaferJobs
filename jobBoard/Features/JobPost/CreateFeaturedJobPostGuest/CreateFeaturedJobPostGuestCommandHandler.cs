@@ -18,7 +18,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
     UserManager<ApplicationUserEntity> userManager,
     IPaymentService paymentService,
     ILocationService locationService,
-    AppDbContext appDbContext,
+    AppDbContext dbContext,
     ILogger<CreateFeaturedJobPostGuestCommandHandler> logger)
     : IRequestHandler<CreateFeaturedJobPostGuestCommand, Result<CreateJobPostCheckoutSessionResponse, Error>>
 {
@@ -26,7 +26,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await appDbContext.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -43,7 +43,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
 
             await CreateJobPostPayment(jobPostId, session.Id, cancellationToken);
 
-            await appDbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
             if (business is not null)
@@ -99,7 +99,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             Name = dto.Name!
         };
 
-        await appDbContext.Businesses.AddAsync(newBusiness, cancellationToken);
+        await dbContext.Businesses.AddAsync(newBusiness, cancellationToken);
         return newBusiness;
     }
 
@@ -121,7 +121,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             CheckoutSessionId = sessionId
         };
 
-        await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
+        await dbContext.JobPostPayments.AddAsync(payment, cancellationToken);
     }
 
     private async Task<Guid> CreateJobPostEntity(CreateFeaturedJobPostGuestCommand command, Guid? businessId,
@@ -150,7 +150,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             PublishedAt = null
         };
 
-        await appDbContext.JobPosts.AddAsync(jobPost, cancellationToken);
+        await dbContext.JobPosts.AddAsync(jobPost, cancellationToken);
 
         await UpdateJobPostCityAsync(jobPost, command.City, cancellationToken);
         await UpdateJobPostTagsAsync(jobPost, command.Tags, cancellationToken);
@@ -172,23 +172,28 @@ public class CreateFeaturedJobPostGuestCommandHandler(
 
         var normalizedTags = NormalizeTags(tags);
 
-        var dbTags = await appDbContext.Tags
-            .Where(t => normalizedTags.Contains(t.Slug))
+        var dbTags = await dbContext.Tags
+            .Where(t => normalizedTags.Select(nt => nt.Slug).Contains(t.Slug))
             .ToListAsync(cancellationToken);
 
-        var newTags = normalizedTags.Except(dbTags.Select(t => t.Slug))
-            .Select(newTag => new TagEntity { Label = newTag, Slug = newTag }).ToList();
+        var newTags = normalizedTags
+            .Where(nt => dbTags.All(t => t.Slug != nt.Slug))
+            .Select(nt => new TagEntity { Label = nt.Label, Slug = nt.Slug })
+            .ToList();
 
-        await appDbContext.Tags.AddRangeAsync(newTags, cancellationToken);
+        await dbContext.Tags.AddRangeAsync(newTags, cancellationToken);
         jobPost.Tags = dbTags.Concat(newTags).ToList();
     }
 
-    private static List<string> NormalizeTags(List<string> tags)
+    private static List<(string Label, string Slug)> NormalizeTags(List<string> tags)
     {
         return tags
-            .Select(t => t.Trim().ToLowerInvariant().Replace(" ", "-"))
-            .Where(t => !string.IsNullOrWhiteSpace(t))
-            .Distinct()
+            .Select(t => (
+                Label: t.Trim(),
+                Slug: t.Trim().ToLowerInvariant().Replace(" ", "-")
+            ))
+            .Where(t => !string.IsNullOrWhiteSpace(t.Slug))
+            .DistinctBy(t => t.Slug)
             .ToList();
     }
 }

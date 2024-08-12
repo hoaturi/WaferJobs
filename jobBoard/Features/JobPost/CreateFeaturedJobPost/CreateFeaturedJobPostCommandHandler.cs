@@ -125,22 +125,27 @@ public class CreateFeaturedJobPostCommandHandler(
         var normalizedTags = NormalizeTags(tags);
 
         var dbTags = await dbContext.Tags
-            .Where(t => normalizedTags.Contains(t.Slug))
+            .Where(t => normalizedTags.Select(nt => nt.Slug).Contains(t.Slug))
             .ToListAsync(cancellationToken);
 
-        var newTags = normalizedTags.Except(dbTags.Select(t => t.Slug))
-            .Select(newTag => new TagEntity { Label = newTag, Slug = newTag }).ToList();
+        var newTags = normalizedTags
+            .Where(nt => dbTags.All(t => t.Slug != nt.Slug))
+            .Select(nt => new TagEntity { Label = nt.Label, Slug = nt.Slug })
+            .ToList();
 
         await dbContext.Tags.AddRangeAsync(newTags, cancellationToken);
         jobPost.Tags = dbTags.Concat(newTags).ToList();
     }
 
-    private static List<string> NormalizeTags(List<string> tags)
+    private static List<(string Label, string Slug)> NormalizeTags(List<string> tags)
     {
         return tags
-            .Select(t => t.Trim().ToLowerInvariant().Replace(" ", "-"))
-            .Where(t => !string.IsNullOrWhiteSpace(t))
-            .Distinct()
+            .Select(t => (
+                Label: t.Trim(),
+                Slug: t.Trim().ToLowerInvariant().Replace(" ", "-")
+            ))
+            .Where(t => !string.IsNullOrWhiteSpace(t.Slug))
+            .DistinctBy(t => t.Slug)
             .ToList();
     }
 }
