@@ -12,7 +12,6 @@ public record GetJobPostListQuery(
     int? PostedDate,
     List<int>? Categories,
     List<int>? EmploymentTypes,
-    bool? FeaturedOnly,
     int? MinSalary,
     int Take,
     int Page

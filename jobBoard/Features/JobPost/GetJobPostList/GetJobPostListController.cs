@@ -19,7 +19,6 @@ public class GetJobPostListController(ISender sender) : ControllerBase
         [FromQuery(Name = "postedDate")] int? postedDate,
         [FromQuery(Name = "categories")] List<int>? categories,
         [FromQuery(Name = "employmentTypes")] List<int>? employmentTypes,
-        [FromQuery(Name = "featuredOnly")] bool? featuredOnly,
         [FromQuery(Name = "minSalary")] int? minSalary,
         [FromQuery(Name = "take")] int take = 20,
         [FromQuery(Name = "page")] int page = 1
@@ -27,7 +26,7 @@ public class GetJobPostListController(ISender sender) : ControllerBase
     {
         var result = await sender.Send(
             new GetJobPostListQuery(keyword, city, country, experienceLevels, remoteOnly, postedDate, categories,
-                employmentTypes, featuredOnly, minSalary, take, page)
+                employmentTypes, minSalary, take, page)
         );
 
         return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);

@@ -97,13 +97,6 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
         }
 
-        jobPostListQuery = query.FeaturedOnly switch
-        {
-            true => jobPostListQuery.Where(j => j.IsFeatured),
-            false => jobPostListQuery.Where(j => !j.IsFeatured),
-            _ => jobPostListQuery
-        };
-
         return jobPostListQuery;
     }
 
@@ -116,8 +109,6 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
         var usdRate = currencies.First(c => c.Code == "USD");
 
         var minSalaryInUsd = minSalary / usdRate.Rate;
-
-        Console.WriteLine(minSalaryInUsd);
 
         jobPostListQuery = jobPostListQuery.Where(j =>
             j.Currency != null && j.MinSalary != null &&
