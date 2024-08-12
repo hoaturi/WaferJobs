@@ -11,8 +11,8 @@ namespace JobBoard.Features.JobPost.UploadJobPostLogo;
 public class UploadJobPostLogoController(ISender sender) : ControllerBase
 {
     [HttpPost("new/logo")]
-    // Limit the size of the uploaded file to 1MB
-    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024)]
+    // Limit the size of the uploaded file to 5MB
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 5)]
     public async Task<IActionResult> UploadLogo([FromForm] [ValidateImageFile] IFormFile file)
     {
         var command = new UploadJobPostLogoCommand(file);

@@ -14,8 +14,8 @@ public class UpdateMyBusinessLogoController(ISender sender) : ControllerBase
 {
     [HttpPost("me/logo")]
     [Authorize(nameof(UserRoles.Business))]
-    // Limit the size of the uploaded file to 1MB
-    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024)]
+    // Limit the size of the uploaded file to 5MB
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 5)]
     public async Task<IActionResult> UploadLogo([FromForm] [ValidateImageFile] IFormFile file)
     {
         var command = new UpdateMyBusinessLogoCommand(file);
