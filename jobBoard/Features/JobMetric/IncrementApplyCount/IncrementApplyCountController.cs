@@ -6,10 +6,10 @@ namespace JobBoard.Features.JobMetric.IncrementApplyCount;
 
 [Tags("Job Metric")]
 [ApiController]
-[Route("/api/job-metric")]
+[Route("/api/job-metrics")]
 public class IncrementApplyCountController(ISender sender) : ControllerBase
 {
-    [HttpPost("{id:guid}")]
+    [HttpPost("{id:guid}/apply")]
     public async Task<IActionResult> IncrementApplyClick([FromRoute] Guid id)
     {
         var result = await sender.Send(new IncrementApplyCountCommand(id));

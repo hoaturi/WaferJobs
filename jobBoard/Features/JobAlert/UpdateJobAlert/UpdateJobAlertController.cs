@@ -5,7 +5,7 @@ namespace JobBoard.Features.JobAlert.UpdateJobAlert;
 
 [Tags("Job Alert")]
 [ApiController]
-[Route("api/job-alert")]
+[Route("api/job-alerts")]
 public class UpdateJobAlertController(ISender sender) : ControllerBase
 {
     [HttpPut("{token}")]

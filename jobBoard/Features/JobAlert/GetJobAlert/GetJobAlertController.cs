@@ -6,7 +6,7 @@ namespace JobBoard.Features.JobAlert.GetJobAlert;
 
 [Tags("Job Alert")]
 [ApiController]
-[Route("api/job-alert")]
+[Route("api/job-alerts")]
 public class GetJobAlertController(ISender sender) : ControllerBase
 {
     [HttpGet("{token}")]
