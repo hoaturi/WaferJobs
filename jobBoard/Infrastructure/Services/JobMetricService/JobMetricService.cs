@@ -8,6 +8,7 @@ namespace JobBoard.Infrastructure.Services.JobMetricService;
 public class JobMetricService(
     AppDbContext dbContext,
     IConnectionMultiplexer redis,
+    IHttpContextAccessor httpContext,
     ILogger<JobMetricService> logger)
     : IJobMetricService
 {
@@ -16,8 +17,15 @@ public class JobMetricService(
 
     public async Task IncrementApplyCountAsync(Guid jobId, CancellationToken cancellationToken)
     {
+        var ipAddress = httpContext.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        if (string.IsNullOrWhiteSpace(ipAddress)) return;
+        if (await IsAlreadyApplied(ipAddress, jobId, cancellationToken)) return;
+
         var cacheKey = $"{CacheKeys.ApplyClickCount}:{jobId}";
+        var cacheKeyWithIp = $"{CacheKeys.ApplyClickCount}:{jobId}:{ipAddress}";
+
         await _db.StringIncrementAsync(cacheKey);
+        await _db.StringSetAsync(cacheKeyWithIp, 1, TimeSpan.FromDays(1));
     }
 
     public async Task PersistApplyCountAsync(CancellationToken cancellationToken)
@@ -54,5 +62,12 @@ public class JobMetricService(
         await _db.KeyDeleteAsync(keys);
 
         logger.LogInformation("Persisted and cleared apply count for {Count} jobs", keys.Length);
+    }
+
+    private async Task<bool> IsAlreadyApplied(string ipAddress, Guid jobId, CancellationToken cancellationToken)
+    {
+        var cacheKey = $"{CacheKeys.ApplyClickCount}:{jobId}:{ipAddress}";
+
+        return await _db.KeyExistsAsync(cacheKey);
     }
 }
