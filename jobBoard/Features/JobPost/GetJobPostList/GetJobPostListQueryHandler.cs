@@ -1,6 +1,5 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.JobPost;
-using JobBoard.Features.JobPost.GetJobPost;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
 using MediatR;
@@ -27,7 +26,7 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             .Skip((query.Page - 1) * query.Take)
             .Take(query.Take)
             .Select(j =>
-                new GetJobPostResponse(
+                new JobPostDto(
                     j.Id,
                     j.Category.Label,
                     j.Country.Label,
@@ -42,11 +41,10 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
                     j.MinSalary,
                     j.MaxSalary,
                     j.Currency != null ? j.Currency.Code : null,
-                    null,
+                    j.Tags.Select(t => t.Label).ToList(),
                     j.BusinessId,
                     j.CompanyLogoUrl,
                     j.CompanyWebsiteUrl,
-                    j.Tags.Select(t => t.Label).ToList(),
                     j.FeaturedStartDate.GetValueOrDefault(),
                     j.FeaturedEndDate.GetValueOrDefault(),
                     j.PublishedAt.GetValueOrDefault()
