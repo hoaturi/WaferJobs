@@ -2,7 +2,7 @@
 using JobBoard.Common.Constants;
 using JobBoard.Common.Exceptions;
 
-namespace JobBoard.Domain.Auth;
+namespace JobBoard.Domain.Auth.Exceptions;
 
 public class InvalidPasswordResetTokenException(Guid userId) : CustomException(
     ErrorCodes.InvalidToken,

@@ -61,11 +61,7 @@ public class EmailService(
         email.AddTo(new EmailAddress(passwordResetEmailDto.User.Email));
         email.SetTemplateData(templateData);
 
-        var response = await emailClient.SendEmailAsync(email);
-
-        if (!response.IsSuccessStatusCode)
-            logger.LogWarning("Failed to send password reset email to: {Email}. Status code: {StatusCode}",
-                passwordResetEmailDto.User.Email, response.StatusCode);
+        await emailClient.SendEmailAsync(email);
 
         logger.LogInformation("Password reset email sent to: {Email}", passwordResetEmailDto.User.Email);
     }
@@ -104,10 +100,6 @@ public class EmailService(
         email.AddTo(new EmailAddress(jobAlertEmailDto.RecipientEmail));
         email.SetTemplateData(templateData);
 
-        var response = await emailClient.SendEmailAsync(email);
-
-        if (!response.IsSuccessStatusCode)
-            logger.LogWarning("Failed to send job alert email to: {Email}. Status code: {StatusCode}",
-                jobAlertEmailDto.RecipientEmail, response.StatusCode);
+        await emailClient.SendEmailAsync(email);
     }
 }
