@@ -1,5 +1,6 @@
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
+using JobBoard.Domain.Auth.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -27,10 +28,9 @@ public class ResetPasswordCommandHandler(
             return Unit.Value;
         }
 
-        var resetError = resetResult.Errors.First();
+        if (resetResult.Errors.Any(e => e.Code == "InvalidToken"))
+            throw new InvalidPasswordResetTokenException(user.Id);
 
-        if (resetError.Code == "InvalidToken") throw new InvalidPasswordResetTokenException(user.Id);
-
-        throw new PasswordResetFailedException(user.Id);
+        throw new InvalidOperationException("Unexpected error occurred while resetting password");
     }
 }
