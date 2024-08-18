@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
@@ -27,6 +27,7 @@ public class CreateJobPostCheckoutSessionCommandHandler(
         var jobPost = await appDbContext.JobPosts
             .AsNoTracking()
             .Include(j => j.Business)
+            .ThenInclude(businessProfileEntity => businessProfileEntity!.Members)
             .Include(j => j.Payments)
             .Where(j => j.IsFeatured)
             .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
@@ -35,7 +36,8 @@ public class CreateJobPostCheckoutSessionCommandHandler(
 
         if (jobPost.Business is null) throw new BusinessNotFoundForUserException(userId);
 
-        if (jobPost.Business.UserId != userId) throw new UnauthorizedJobPostAccessException(jobPost.Id, userId);
+        if (jobPost.Business.Members.Any(m => m.UserId != userId))
+            throw new UnauthorizedJobPostAccessException(jobPost.Id, userId);
 
         if (jobPost.Business.StripeCustomerId is null)
             await paymentService.CreateStripeCustomer(

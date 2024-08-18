@@ -1,5 +1,4 @@
 using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
@@ -31,7 +30,6 @@ public class CreateFeaturedJobPostCommandHandler(
 
         var jobPost = await CreateJobPostEntity(command, business, cancellationToken);
 
-
         var stripeCustomerId = await GetOrCreateStripeCustomerId(business, command.CompanyEmail);
         var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
 
@@ -48,7 +46,7 @@ public class CreateFeaturedJobPostCommandHandler(
     private async Task<BusinessEntity> GetBusinessByUserId(Guid userId, CancellationToken cancellationToken)
     {
         var business = await dbContext.Businesses
-            .FirstOrDefaultAsync(b => b.UserId == userId, cancellationToken);
+            .FirstOrDefaultAsync(b => b.Members.Any(m => m.UserId == userId), cancellationToken);
 
         if (business is null) throw new BusinessNotFoundForUserException(userId);
 
@@ -59,7 +57,8 @@ public class CreateFeaturedJobPostCommandHandler(
     {
         if (business.StripeCustomerId is not null) return business.StripeCustomerId;
 
-        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, business.Name, business.Id);
+        var stripeCustomerId =
+            await paymentService.CreateStripeCustomer(email, business.Name, business.Id);
         business.StripeCustomerId = stripeCustomerId;
 
         return stripeCustomerId;
@@ -76,7 +75,8 @@ public class CreateFeaturedJobPostCommandHandler(
         await dbContext.JobPostPayments.AddAsync(payment, cancellationToken);
     }
 
-    private async Task<JobPostEntity> CreateJobPostEntity(CreateFeaturedJobPostCommand command, BusinessEntity business,
+    private async Task<JobPostEntity> CreateJobPostEntity(CreateFeaturedJobPostCommand command,
+        BusinessEntity business,
         CancellationToken cancellationToken)
     {
         var jobPost = new JobPostEntity

@@ -18,9 +18,10 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
         builder.Property(b => b.LinkedinUrl).HasMaxLength(2048);
 
         builder
-            .HasOne(b => b.User)
-            .WithOne()
-            .HasForeignKey<BusinessEntity>(b => b.UserId)
+            .HasMany(b => b.Members)
+            .WithOne(m => m.Business)
+            .HasForeignKey(m => m.BusinessId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder

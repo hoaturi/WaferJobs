@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.FileUploadService;
@@ -23,7 +23,7 @@ public class UpdateMyBusinessLogoCommandHandler(
 
         var business = await appDbContext
             .Businesses
-            .FirstOrDefaultAsync(b => b.UserId == currentUserId, cancellationToken);
+            .FirstOrDefaultAsync(b => b.Members.Any(m => m.UserId == currentUserId), cancellationToken);
 
         if (business is null)
         {

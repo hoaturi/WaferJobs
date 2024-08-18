@@ -19,8 +19,9 @@ public class GetMyJobPostQueryHandler(
 
         var jobPost = await appDbContext.JobPosts
             .AsNoTracking()
-            .Where(j => j.Id == query.Id && !j.IsDeleted)
-            .Select(j => new GetMyJobPostDto(
+            .Where(j => j.Id == query.Id && !j.IsDeleted && j.Business != null &&
+                        j.Business.Members.Any(m => m.UserId == userId))
+            .Select(j => new GetMyJobPostResponse(
                 j.Id,
                 j.Category.Label,
                 j.Country.Label,
@@ -39,40 +40,10 @@ public class GetMyJobPostQueryHandler(
                 j.ApplyUrl,
                 j.CompanyLogoUrl,
                 j.CompanyWebsiteUrl,
-                j.Tags.Select(t => t.Label).ToList(),
-                j.Business != null ? j.Business.UserId : null
+                j.Tags.Select(t => t.Label).ToList()
             ))
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (jobPost is null) throw new JobPostNotFoundException(query.Id);
-
-        if (jobPost.UserId != userId) throw new UnauthorizedJobPostAccessException(query.Id, userId);
-
-        return MapToResponse(jobPost);
-    }
-
-    private static GetMyJobPostResponse MapToResponse(GetMyJobPostDto dto)
-    {
-        return new GetMyJobPostResponse(
-            dto.Id,
-            dto.Category,
-            dto.Country,
-            dto.EmploymentType,
-            dto.Title,
-            dto.Description,
-            dto.IsRemote,
-            dto.IsFeatured,
-            dto.CompanyName,
-            dto.CompanyEmail,
-            dto.ExperienceLevel,
-            dto.City,
-            dto.MinSalary,
-            dto.MaxSalary,
-            dto.Currency,
-            dto.ApplyUrl,
-            dto.CompanyLogoUrl,
-            dto.CompanyWebsiteUrl,
-            dto.Tags
-        );
+        return jobPost ?? throw new JobPostNotFoundException(query.Id);
     }
 }

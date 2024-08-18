@@ -22,10 +22,5 @@ public record CreateFeaturedJobPostGuestCommand(
     int? MaxSalary,
     int? CurrencyId,
     List<string>? Tags,
-    BusinessSignupDto? SignupPayload) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;
-
-public record BusinessSignupDto(
-    string Name,
-    string Email,
-    string Password
-);
+    Guid? BusinessId
+) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;

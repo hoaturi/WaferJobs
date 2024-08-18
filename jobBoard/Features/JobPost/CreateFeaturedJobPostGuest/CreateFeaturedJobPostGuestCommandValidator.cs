@@ -36,15 +36,5 @@ public class CreateFeaturedJobPostGuestCommandValidator : AbstractValidator<Crea
         RuleFor(x => x)
             .Must(x => !((x.MinSalary.HasValue || x.MaxSalary.HasValue) && !x.CurrencyId.HasValue))
             .WithMessage("CurrencyId must be provided when either MinSalary or MaxSalary is specified");
-
-        When(x => x.SignupPayload is not null, () =>
-        {
-            RuleFor(x => x.SignupPayload!.Name).NotEmpty().MaximumLength(100);
-            RuleFor(x => x.SignupPayload!.Email).NotEmpty().EmailAddress().MaximumLength(100);
-            RuleFor(x => x.SignupPayload!.Password)
-                .NotEmpty()
-                .MinimumLength(8)
-                .WithMessage("Password must be at least 8 characters");
-        });
     }
 }

@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
+using JobBoard.Domain.Business;
 using JobBoard.Features.Business.GetBusiness;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
@@ -22,8 +22,7 @@ public class GetMyBusinessQueryHandler(
 
         var businessResponse =
             await appDbContext
-                .Businesses.Where(b => b.UserId == currentUserId)
-                .Include(b => b.BusinessSize)
+                .Businesses.Where(b => b.Members.Any(m => m.UserId == currentUserId))
                 .Select(b => new GetBusinessResponse(
                     b.Id,
                     b.Name,

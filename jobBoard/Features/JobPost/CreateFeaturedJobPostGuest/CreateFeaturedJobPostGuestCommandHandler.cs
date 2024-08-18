@@ -1,6 +1,4 @@
-﻿using JobBoard.Common.Constants;
-using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
+﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
@@ -9,13 +7,11 @@ using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.JobPost.CreateFeaturedJobPostGuest;
 
 public class CreateFeaturedJobPostGuestCommandHandler(
-    UserManager<ApplicationUserEntity> userManager,
     IPaymentService paymentService,
     ILocationService locationService,
     AppDbContext dbContext,
@@ -30,10 +26,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
 
         try
         {
-            var business = await CreateNewUserIfNeeded(command.SignupPayload, cancellationToken);
-
-            if (business is null && command.SignupPayload is not null)
-                return AuthErrors.UserAlreadyExists;
+            var business = await GetExistingBusiness(command, cancellationToken);
 
             var jobPostId = await CreateJobPostEntity(command, business?.Id, cancellationToken);
 
@@ -46,13 +39,8 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            if (business is not null)
-                logger.LogInformation(
-                    "New business {BusinessName} signed up and created a featured job post with id: {JobPostId}",
-                    business.Name, jobPostId);
-            else
-                logger.LogInformation("Guest company {CompanyName} created a featured job post with id: {JobPostId}",
-                    command.CompanyName, jobPostId);
+            logger.LogInformation("Company {CompanyName} created a featured job post with id: {JobPostId}",
+                command.CompanyName, jobPostId);
 
             return new CreateJobPostCheckoutSessionResponse(session.Url);
         }
@@ -64,53 +52,25 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         }
     }
 
-    private async Task<BusinessEntity?> CreateNewUserIfNeeded(BusinessSignupDto? signupPayload,
+    private async Task<BusinessEntity?> GetExistingBusiness(CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
-        if (signupPayload is null) return null;
+        if (command.BusinessId is null) return null;
 
-        var newUser = new ApplicationUserEntity
-        {
-            UserName = signupPayload.Email,
-            Email = signupPayload.Email
-        };
+        var business = await dbContext.Businesses
+            .FirstOrDefaultAsync(b => b.Id == command.BusinessId, cancellationToken);
 
-        var createResult = await userManager.CreateAsync(newUser, signupPayload.Password);
-
-        if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
-            return null;
-
-        await userManager.AddToRoleAsync(newUser, nameof(UserRoles.Business));
-
-        var business = await CreateBusinessAsync(signupPayload, newUser, cancellationToken);
-
-        logger.LogInformation("Created Business user with Id: {UserId}", newUser.Id);
+        if (business is null) throw new BusinessNotFoundException(command.BusinessId.Value);
 
         return business;
     }
 
-    private async Task<BusinessEntity> CreateBusinessAsync(BusinessSignupDto dto,
-        ApplicationUserEntity userEntity,
-        CancellationToken cancellationToken)
-    {
-        var newBusiness = new BusinessEntity
-        {
-            UserId = userEntity.Id,
-            Name = dto.Name!
-        };
-
-        await dbContext.Businesses.AddAsync(newBusiness, cancellationToken);
-        return newBusiness;
-    }
-
     private async Task<string> GetOrCreateStripeCustomerId(string email, string companyName, BusinessEntity? business)
     {
-        var stripeCustomerId = await paymentService.CreateStripeCustomer(email, companyName, business?.Id);
+        if (business is null) return await paymentService.CreateStripeCustomer(email, companyName);
 
-        if (business is not null)
-            business.StripeCustomerId = stripeCustomerId;
-
-        return stripeCustomerId;
+        return business.StripeCustomerId ??
+               (business.StripeCustomerId = await paymentService.CreateStripeCustomer(email, companyName));
     }
 
     private async Task CreateJobPostPayment(Guid jobPostId, string sessionId, CancellationToken cancellationToken)
