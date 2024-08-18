@@ -3,5 +3,5 @@ using MediatR;
 
 namespace JobBoard.Features.Auth.Signup;
 
-public record SignUpCommand(string Email, string Password, string Role, string? Name)
+public record SignUpCommand(string Email, string Password, string Role)
     : IRequest<Result<Unit, Error>>;

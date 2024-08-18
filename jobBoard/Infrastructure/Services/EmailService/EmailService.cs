@@ -16,10 +16,34 @@ public class EmailService(
     private readonly EmailOptions _emailOptions = emailOptions.Value;
     private readonly SendGridOptions _sendGridOptions = sendGridOptions.Value;
 
+    public async Task SendEmailConfirmAsync(ConfirmEmailDto confirmEmailDto)
+    {
+        var encodedToken = HttpUtility.UrlEncode(confirmEmailDto.Token);
+
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.ConfirmEmailTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            token = encodedToken,
+            userId = confirmEmailDto.User.Id
+        };
+
+        email.AddTo(new EmailAddress(confirmEmailDto.User.Email));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Email confirmation email sent to: {Email}", confirmEmailDto.User.Email);
+    }
+
     public async Task SendPasswordResetAsync(PasswordResetEmailDto passwordResetEmailDto)
     {
         var encodedToken = HttpUtility.UrlEncode(passwordResetEmailDto.Token);
-
 
         var email = new SendGridMessage
         {

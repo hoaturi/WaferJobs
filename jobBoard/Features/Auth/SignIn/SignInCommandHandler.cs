@@ -19,25 +19,27 @@ public class SignInCommandHandler(
     {
         var user = await userManager.FindByEmailAsync(command.Email);
 
-        if (user is null)
-        {
-            logger.LogWarning("Failed to find user with email: {Email}", command.Email);
-            return AuthErrors.InvalidCredentials;
-        }
+        if (user is null) return AuthErrors.InvalidCredentials;
 
         var isCorrectPassword = await userManager.CheckPasswordAsync(user, command.Password);
 
         if (!isCorrectPassword)
         {
-            logger.LogWarning("Invalid password for user with id: {UserId}", user.Id);
+            logger.LogWarning("Failed login attempt: Incorrect password for user {Email}", user.Email);
             return AuthErrors.InvalidCredentials;
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            logger.LogWarning("Failed login attempt: Email not verified for user {Email}", user.Email);
+            return AuthErrors.EmailNotVerified;
         }
 
         var roles = await userManager.GetRolesAsync(user);
 
         var (accessToken, refreshToken) = jwtService.GenerateTokens(user, roles);
 
-        logger.LogInformation("User: {Id} logged in successfully", user.Id);
+        logger.LogInformation("Successful login: User {Email} authenticated", user.Email);
 
         var userResponse = new UserResponse(user.Id, user.Email!, roles.ToArray());
 

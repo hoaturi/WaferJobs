@@ -1,8 +1,9 @@
+using Hangfire;
 using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
-using JobBoard.Domain.Business;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,6 +12,8 @@ namespace JobBoard.Features.Auth.Signup;
 public class SignUpCommandHandler(
     UserManager<ApplicationUserEntity> userManager,
     AppDbContext dbContext,
+    IEmailService emailService,
+    IBackgroundJobClient backgroundJobClient,
     ILogger<SignUpCommandHandler> logger)
     : IRequestHandler<SignUpCommand, Result<Unit, Error>>
 {
@@ -29,13 +32,16 @@ public class SignUpCommandHandler(
             if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
                 return AuthErrors.UserAlreadyExists;
 
-            await userManager.AddToRoleAsync(user, command.Role);
+            await userManager.AddToRoleAsync(user, nameof(UserRoles.JobSeeker));
 
-            if (command.Role == nameof(UserRoles.Business)) await CreateBusiness(command, user, cancellationToken);
+            var confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmEmailDto = new ConfirmEmailDto(user, confirmToken);
+
+            backgroundJobClient.Enqueue(() => emailService.SendEmailConfirmAsync(confirmEmailDto));
 
             await transaction.CommitAsync(cancellationToken);
 
-            logger.LogInformation("Successfully created {UserRole} user with id {UserId}", command.Role, user.Id);
+            logger.LogInformation("User {Email} signed up successfully", user.Email);
             return Unit.Value;
         }
         catch
@@ -43,13 +49,5 @@ public class SignUpCommandHandler(
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
-    }
-
-    private async Task CreateBusiness(SignUpCommand command,
-        ApplicationUserEntity newUserEntity, CancellationToken cancellationToken)
-    {
-        var newBusiness = new BusinessEntity { UserId = newUserEntity.Id, Name = command.Name! };
-        await dbContext.Businesses.AddAsync(newBusiness, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

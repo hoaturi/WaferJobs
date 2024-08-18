@@ -9,4 +9,5 @@ public class SendGridOptions
     [Required] public required string ApiKey { get; init; }
     [Required] public required string JobAlertTemplateId { get; init; }
     [Required] public required string PasswordResetTemplateId { get; init; }
+    [Required] public required string ConfirmEmailTemplateId { get; init; }
 }
