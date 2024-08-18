@@ -1,5 +1,6 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
+using JobBoard.Domain.Auth.Exceptions;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
