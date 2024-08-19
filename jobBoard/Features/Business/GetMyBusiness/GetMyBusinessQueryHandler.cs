@@ -1,5 +1,6 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Business;
+using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Features.Business.GetBusiness;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;

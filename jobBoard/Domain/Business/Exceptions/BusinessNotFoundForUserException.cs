@@ -2,7 +2,7 @@
 using JobBoard.Common.Constants;
 using JobBoard.Common.Exceptions;
 
-namespace JobBoard.Domain.Business;
+namespace JobBoard.Domain.Business.Exceptions;
 
 public class BusinessNotFoundForUserException(Guid userId)
     : CustomException(

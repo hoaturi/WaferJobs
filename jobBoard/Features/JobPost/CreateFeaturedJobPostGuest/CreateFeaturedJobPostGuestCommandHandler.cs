@@ -1,5 +1,6 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Business;
+using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
