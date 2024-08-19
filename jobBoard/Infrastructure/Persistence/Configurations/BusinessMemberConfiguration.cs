@@ -8,6 +8,18 @@ public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMemb
 {
     public void Configure(EntityTypeBuilder<BusinessMemberEntity> builder)
     {
+        builder.Property(bm => bm.FirstName)
+            .HasMaxLength(50)
+            .IsRequired();
+
+        builder.Property(bm => bm.LastName)
+            .HasMaxLength(50)
+            .IsRequired();
+
+        builder.Property(bm => bm.Title)
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder
             .HasOne(bm => bm.Business)
             .WithMany(b => b.Members)

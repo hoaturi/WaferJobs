@@ -1,8 +1,7 @@
 ﻿namespace JobBoard.Infrastructure.Services.EmailService;
 
-public record BusinessClaimEmailDto(
+public record BusinessClaimVerificationRequestDto(
     string RecipientEmail,
     string FirstName,
-    string BusinessName,
-    string Token
+    string BusinessName
 );

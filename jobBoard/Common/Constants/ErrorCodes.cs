@@ -15,7 +15,13 @@ public class ErrorCodes
     public static readonly ErrorCodes InvalidBusinessSize = new("BU002");
     public static readonly ErrorCodes BusinessAlreadyExists = new("BU003");
     public static readonly ErrorCodes BusinessNotFoundForUser = new("BU004");
-    public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU005");
+    public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU005");
+    public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU006");
+    public static readonly ErrorCodes UserAlreadyMember = new("BU007");
+    public static readonly ErrorCodes BusinessClaimNotFound = new("BU008");
+    public static readonly ErrorCodes BusinessClaimantNotFound = new("BU009");
+    public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU010");
+    public static readonly ErrorCodes BusinessClaimInProgress = new("BU011");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");

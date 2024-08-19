@@ -10,4 +10,7 @@ public class SendGridOptions
     [Required] public required string JobAlertTemplateId { get; init; }
     [Required] public required string PasswordResetTemplateId { get; init; }
     [Required] public required string ConfirmEmailTemplateId { get; init; }
+    [Required] public required string BusinessClaimVerificationRequestTemplateId { get; init; }
+    [Required] public required string BusinessClaimApprovedTemplateId { get; init; }
+    [Required] public required string BusinessClaimRejectedTemplateId { get; init; }
 }

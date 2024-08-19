@@ -138,6 +138,7 @@ public static class ServiceExtensions
         {
             RolePolicy.AddRolePolicy(options, nameof(UserRoles.JobSeeker));
             RolePolicy.AddRolePolicy(options, nameof(UserRoles.Business));
+            RolePolicy.AddRolePolicy(options, nameof(UserRoles.Admin));
         });
 
         services.AddIdentityCore<ApplicationUserEntity>(ConfigureIdentityOptions)
