@@ -13,7 +13,7 @@ namespace JobBoard.Features.JobAlert.SubscribeToJobAlert;
 
 public class SubscribeToJobAlertCommandHandler(
     AppDbContext dbContext,
-    EntityConstraintChecker constraintChecker,
+    IEntityConstraintChecker constraintChecker,
     ILogger<SubscribeToJobAlertCommandHandler> logger)
     : IRequestHandler<SubscribeToJobAlertCommand, Result<Unit, Error>>
 {
@@ -29,7 +29,7 @@ public class SubscribeToJobAlertCommandHandler(
                 CountryId = command.CountryId,
                 Categories = await GetCategories(command.CategoryIds, cancellationToken),
                 EmploymentTypes = await GetEmploymentTypes(command.EmploymentTypeIds, cancellationToken),
-                ExperienceLevels = await GetExperienceLevels(command.ExperienceLevelIds,cancellationToken),
+                ExperienceLevels = await GetExperienceLevels(command.ExperienceLevelIds, cancellationToken),
                 Token = Base64UrlEncoder.Encode(Guid.NewGuid().ToString())
             };
 
@@ -43,7 +43,7 @@ public class SubscribeToJobAlertCommandHandler(
         catch (DbUpdateException ex)
         {
             if (ex.InnerException is not PostgresException pgEx ||
-                !constraintChecker.IsUniqueConstraintViolation<JobAlertEntity>(dbContext, nameof(JobAlertEntity.Email),
+                !constraintChecker.IsUniqueConstraintViolation<JobAlertEntity>(nameof(JobAlertEntity.Email),
                     pgEx.SqlState, pgEx.ConstraintName)) throw;
 
             logger.LogWarning("Job alert already exists for email {Email}, updating...", command.Email);
@@ -82,7 +82,6 @@ public class SubscribeToJobAlertCommandHandler(
         }
     }
 
-
     private async Task<List<EmploymentTypeEntity>> GetEmploymentTypes(List<int>? employmentTypeIds,
         CancellationToken cancellationToken)
     {
@@ -103,8 +102,9 @@ public class SubscribeToJobAlertCommandHandler(
             .Where(c => categoryIds.Contains(c.Id))
             .ToListAsync(cancellationToken);
     }
-    
-    private async Task<List<ExperienceLevelEntity>> GetExperienceLevels(List<int>? experienceLevelIds, CancellationToken cancellationToken)
+
+    private async Task<List<ExperienceLevelEntity>> GetExperienceLevels(List<int>? experienceLevelIds,
+        CancellationToken cancellationToken)
     {
         if (experienceLevelIds is null || experienceLevelIds.Count == 0)
             return [];

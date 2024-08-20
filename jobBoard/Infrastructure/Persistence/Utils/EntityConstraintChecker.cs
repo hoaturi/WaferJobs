@@ -3,10 +3,10 @@ using Npgsql;
 
 namespace JobBoard.Infrastructure.Persistence.Utils;
 
-public class EntityConstraintChecker(ILogger<EntityConstraintChecker> logger)
+public class EntityConstraintChecker(ILogger<EntityConstraintChecker> logger, AppDbContext dbContext)
+    : IEntityConstraintChecker
 {
-    public bool IsUniqueConstraintViolation<TEntity>(DbContext dbContext, string propertyName, string errorCode,
-        string? constraintName)
+    public bool IsUniqueConstraintViolation<TEntity>(string propertyName, string errorCode, string? constraintName)
         where TEntity : class
     {
         if (errorCode != PostgresErrorCodes.UniqueViolation) return false;

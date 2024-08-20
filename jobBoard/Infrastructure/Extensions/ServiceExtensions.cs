@@ -195,7 +195,7 @@ public static class ServiceExtensions
         services.AddScoped<ICurrencyService, CurrencyService>();
         services.AddScoped<IJobMetricService, JobMetricService>();
 
-        services.AddScoped<EntityConstraintChecker>();
+        services.AddScoped<IEntityConstraintChecker, EntityConstraintChecker>();
         return services;
     }
 
