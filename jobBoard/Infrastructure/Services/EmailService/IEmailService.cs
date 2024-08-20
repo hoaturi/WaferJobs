@@ -14,4 +14,7 @@ public interface IEmailService
 
     Task SendBusinessClaimApprovalEmailAsync(
         BusinessClaimVerificationResultDto dto);
+
+    Task SendBusinessMemberInvitationAsync(
+        BusinessMemberInvitationDto dto);
 }

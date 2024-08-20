@@ -115,6 +115,7 @@ public class EmailService(
 
         var templateData = new
         {
+            baseUrl = _emailOptions.BaseUrl,
             firstName = dto.FirstName,
             businessName = dto.BusinessName
         };
@@ -146,6 +147,7 @@ public class EmailService(
 
         var templateData = new
         {
+            baseUrl = _emailOptions.BaseUrl,
             businessName = dto.BusinessName,
             firstName = dto.RecipientFirstName
         };
@@ -156,6 +158,30 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
 
         logger.LogInformation("Business claim approval email sent to: {Email}", dto.RecipientEmail);
+    }
+
+    public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessMemberInvitationTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            businessName = dto.BusinessName,
+            inviterName = dto.InviterName,
+            token = dto.Token
+        };
+
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
     }
 
     private async Task SendBusinessClaimRejectionEmailAsync(BusinessClaimVerificationResultDto dto)

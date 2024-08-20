@@ -16,6 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<JobSeekerEntity> JobSeekers { get; set; }
     public DbSet<BusinessEntity> Businesses { get; set; }
     public DbSet<BusinessClaimAttemptEntity> BusinessClaimAttempts { get; set; }
+    public DbSet<BusinessMemberInvitationEntity> BusinessMemberInvitations { get; set; }
     public DbSet<BusinessMemberEntity> BusinessMembers { get; set; }
     public DbSet<BusinessSizeEntity> BusinessSizes { get; set; }
     public DbSet<JobPostEntity> JobPosts { get; set; }

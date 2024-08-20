@@ -11,4 +11,10 @@ public static class BusinessErrors
         HttpStatusCode.NotFound,
         "Business profile was not found."
     );
+
+    public static readonly Error InvitationAlreadyExists = new(
+        ErrorCodes.BusinessInvitationAlreadyExists,
+        HttpStatusCode.Conflict,
+        "Invitation to this email already exists."
+    );
 }

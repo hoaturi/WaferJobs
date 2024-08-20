@@ -22,6 +22,9 @@ public class ErrorCodes
     public static readonly ErrorCodes BusinessClaimantNotFound = new("BU009");
     public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU010");
     public static readonly ErrorCodes BusinessClaimInProgress = new("BU011");
+    public static readonly ErrorCodes UserNotBusinessMember = new("BU012");
+    public static readonly ErrorCodes InsufficientBusinessPermission = new("BU013");
+    public static readonly ErrorCodes BusinessInvitationAlreadyExists = new("BU014");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
