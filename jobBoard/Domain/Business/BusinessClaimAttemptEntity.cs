@@ -17,6 +17,7 @@ public class BusinessClaimAttemptEntity : BaseEntity
     public string? Notes { get; set; }
     public ClaimStatus Status { get; set; }
     public DateTime? VerificationDate { get; set; }
+    public DateTime? ExpiresAt { get; set; }
     public BusinessEntity Business { get; set; } = null!;
     public ApplicationUserEntity ClaimantUser { get; set; } = null!;
     public ApplicationUserEntity? Verifier { get; set; }

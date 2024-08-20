@@ -27,21 +27,15 @@ public class BusinessClaimAttemptConfiguration : IEntityTypeConfiguration<Busine
         builder.Property(bca => bca.Notes)
             .HasMaxLength(500);
 
-        builder.HasOne(bca => bca.Business)
-            .WithOne(b => b.ClaimAttempt)
-            .HasForeignKey<BusinessClaimAttemptEntity>(bca => bca.BusinessId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne(bca => bca.ClaimantUser)
-            .WithOne()
-            .HasForeignKey<BusinessClaimAttemptEntity>(bca => bca.ClaimantUserId)
+            .WithMany()
+            .HasForeignKey(bca => bca.ClaimantUserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(bca => bca.Verifier)
-            .WithOne()
-            .HasForeignKey<BusinessClaimAttemptEntity>(bca => bca.VerifierId)
+            .WithMany()
+            .HasForeignKey(bca => bca.VerifierId)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

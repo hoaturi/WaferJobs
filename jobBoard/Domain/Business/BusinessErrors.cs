@@ -17,4 +17,10 @@ public static class BusinessErrors
         HttpStatusCode.Conflict,
         "Invitation to this email already exists."
     );
+
+    public static readonly Error BusinessClaimExpired = new(
+        ErrorCodes.BusinessClaimExpired,
+        HttpStatusCode.BadRequest,
+        "Business claim has expired."
+    );
 }

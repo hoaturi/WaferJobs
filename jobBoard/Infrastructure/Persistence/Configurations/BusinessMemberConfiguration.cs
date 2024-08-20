@@ -21,13 +21,6 @@ public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMemb
             .IsRequired();
 
         builder
-            .HasOne(bm => bm.Business)
-            .WithMany(b => b.Members)
-            .HasForeignKey(bm => bm.BusinessId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder
             .HasOne(bm => bm.User)
             .WithMany()
             .HasForeignKey(bm => bm.UserId)

@@ -25,6 +25,13 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder
+            .HasMany(b => b.ClaimAttempts)
+            .WithOne(ca => ca.Business)
+            .HasForeignKey(ca => ca.BusinessId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
             .HasMany(b => b.JobPosts)
             .WithOne(jp => jp.Business)
             .HasForeignKey(jp => jp.BusinessId)

@@ -18,7 +18,7 @@ public class BusinessEntity : BaseEntity
     public string? Domain { get; set; }
     public bool IsClaimed { get; set; }
     public List<BusinessMemberEntity> Members { get; init; } = [];
-    public List<JobPostEntity>? JobPosts { get; init; } = [];
+    public List<JobPostEntity> JobPosts { get; init; } = [];
     public BusinessSizeEntity? BusinessSize { get; init; }
-    public BusinessClaimAttemptEntity? ClaimAttempt { get; set; }
+    public List<BusinessClaimAttemptEntity> ClaimAttempts { get; set; } = [];
 }

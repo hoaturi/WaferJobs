@@ -13,94 +13,114 @@ namespace JobBoard.Features.Business.ClaimBusiness;
 
 public class ClaimBusinessCommandHandler(
     ICurrentUserService currentUserService,
-    IEmailService emailService,
     IBackgroundJobClient backgroundJobClient,
     AppDbContext dbContext,
-    ILogger<ClaimBusinessCommandHandler> logger
-) : IRequestHandler<ClaimBusinessCommand, Result<Unit, Error>>
+    ILogger<ClaimBusinessCommandHandler> logger)
+    : IRequestHandler<ClaimBusinessCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(ClaimBusinessCommand command, CancellationToken cancellationToken)
     {
         var userId = currentUserService.GetUserId();
-
-        var isAlreadyBusinessMember =
-            await dbContext.BusinessMembers.AsNoTracking()
-                .AnyAsync(m => m.UserId == userId && !m.IsDeleted, cancellationToken);
-        if (isAlreadyBusinessMember) throw new UserAlreadyMemberException(userId);
-
-        var business = await dbContext.Businesses
-            .Include(b => b.Members)
-            .Include(b => b.ClaimAttempt)
-            .FirstOrDefaultAsync(b => b.Id == command.BusinessId, cancellationToken);
-
-        if (business is null) throw new BusinessNotFoundException(command.BusinessId);
-        if (business.IsClaimed || business.ClaimAttempt?.Status is ClaimStatus.Approved)
-            throw new BusinessAlreadyClaimedException(command.BusinessId);
-
-        if (business.ClaimAttempt?.Status is ClaimStatus.Pending)
-            throw new BusinessClaimInProgressException(command.BusinessId);
-
         var userEmail = currentUserService.GetUserEmail();
+
+        await ValidateUserNotAlreadyMember(userId, cancellationToken);
+
+        var business = await GetBusinessWithDetails(command.BusinessId, cancellationToken);
+
+        ValidateBusinessClaimStatus(business);
+
         var userEmailDomain = userEmail.Split('@')[1];
+        var isAutomaticApproval = userEmailDomain.Equals(business.Domain, StringComparison.OrdinalIgnoreCase);
 
-        var doEmailDomainsMatch = userEmailDomain.Equals(business.Domain, StringComparison.OrdinalIgnoreCase);
+        var newClaim = CreateNewClaimAttempt(business.Id, userId, userEmail, command, isAutomaticApproval);
+        business.ClaimAttempts.Add(newClaim);
 
-        var newClaim = new BusinessClaimAttemptEntity
+        var newMember = CreateNewBusinessMember(userId, command, isAutomaticApproval);
+        business.Members.Add(newMember);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        SendClaimResultEmail(isAutomaticApproval, userEmail, command.FirstName, business.Name);
+
+        LogClaimResult(isAutomaticApproval, business.Id, userId);
+
+        return Unit.Value;
+    }
+
+    private async Task ValidateUserNotAlreadyMember(Guid userId, CancellationToken cancellationToken)
+    {
+        if (await dbContext.BusinessMembers.AsNoTracking()
+                .AnyAsync(m => m.UserId == userId && !m.IsDeleted, cancellationToken))
+            throw new UserAlreadyMemberException(userId);
+    }
+
+    private async Task<BusinessEntity> GetBusinessWithDetails(Guid businessId, CancellationToken cancellationToken)
+    {
+        return await dbContext.Businesses
+                   .Include(b => b.Members)
+                   .Include(b => b.ClaimAttempts)
+                   .FirstOrDefaultAsync(b => b.Id == businessId, cancellationToken)
+               ?? throw new BusinessNotFoundException(businessId);
+    }
+
+    private static void ValidateBusinessClaimStatus(BusinessEntity business)
+    {
+        if (business.IsClaimed || business.ClaimAttempts.Any(ca => ca.Status == ClaimStatus.Approved))
+            throw new BusinessAlreadyClaimedException(business.Id);
+
+        var pendingClaimExists = business.ClaimAttempts.Any(ca =>
+            ca.Status == ClaimStatus.Pending && ca.ExpiresAt > DateTime.UtcNow);
+
+        if (pendingClaimExists) throw new BusinessClaimInProgressException(business.Id);
+    }
+
+    private static BusinessClaimAttemptEntity CreateNewClaimAttempt(Guid businessId, Guid userId, string userEmail,
+        ClaimBusinessCommand command, bool isAutomaticApproval)
+    {
+        return new BusinessClaimAttemptEntity
         {
-            BusinessId = business.Id,
+            BusinessId = businessId,
             ClaimantUserId = userId,
             ClaimantEmail = userEmail,
             ClaimantFirstName = command.FirstName,
             ClaimantLastName = command.LastName,
             ClaimantTitle = command.Title,
-            Status = doEmailDomainsMatch ? ClaimStatus.Approved : ClaimStatus.Pending
+            Status = isAutomaticApproval ? ClaimStatus.Approved : ClaimStatus.Pending,
+            ExpiresAt = isAutomaticApproval ? null : DateTime.UtcNow.AddDays(7)
         };
+    }
 
-        var newMember = new BusinessMemberEntity
+    private static BusinessMemberEntity CreateNewBusinessMember(Guid userId, ClaimBusinessCommand command,
+        bool isAutomaticApproval)
+    {
+        return new BusinessMemberEntity
         {
             UserId = userId,
             FirstName = command.FirstName,
             LastName = command.LastName,
             Title = command.Title,
             IsAdmin = true,
-            JoinedAt = doEmailDomainsMatch ? DateTime.UtcNow : default,
-            IsVerified = doEmailDomainsMatch
+            JoinedAt = isAutomaticApproval ? DateTime.UtcNow : null,
+            IsVerified = isAutomaticApproval
         };
+    }
 
-        business.Members.Add(newMember);
-        business.ClaimAttempt = newClaim;
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        if (!doEmailDomainsMatch)
-        {
-            backgroundJobClient.Enqueue(() => emailService.SendBusinessClaimVerificationRequestAsync(
-                new BusinessClaimVerificationRequestDto(
-                    userEmail,
-                    command.FirstName,
-                    business.Name
-                )
-            ));
-
-            logger.LogWarning(
-                "Business claim for business {BusinessId} by user {UserId} requires verification.",
-                business.Id, userId);
-        }
+    private void SendClaimResultEmail(bool isAutomaticApproval, string userEmail, string firstName, string businessName)
+    {
+        if (!isAutomaticApproval)
+            backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessClaimVerificationRequestAsync(
+                new BusinessClaimVerificationRequestDto(userEmail, firstName, businessName)));
         else
-        {
-            backgroundJobClient.Enqueue(() => emailService.SendBusinessClaimApprovalEmailAsync(
-                new BusinessClaimVerificationResultDto(
-                    userEmail,
-                    command.FirstName,
-                    business.Name,
-                    ClaimStatus.Approved
-                )
-            ));
+            backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessClaimApprovalEmailAsync(
+                new BusinessClaimVerificationResultDto(userEmail, firstName, businessName, ClaimStatus.Approved)));
+    }
 
-            logger.LogInformation(
-                "user {UserId} claimed business {BusinessId} successfully.", userId, business.Id);
-        }
-
-        return Unit.Value;
+    private void LogClaimResult(bool isAutomaticApproval, Guid businessId, Guid userId)
+    {
+        if (!isAutomaticApproval)
+            logger.LogWarning("Business claim for business {BusinessId} by user {UserId} requires verification.",
+                businessId, userId);
+        else
+            logger.LogInformation("User {UserId} claimed business {BusinessId} successfully.", userId, businessId);
     }
 }
