@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.InviteMember;
 
 [Tags("Business")]
-[Route("api/businesses/invite")]
+[Route("api/businesses/invitations")]
 [ApiController]
 public class InviteMemberController(ISender sender) : ControllerBase
 {
