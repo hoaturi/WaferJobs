@@ -32,10 +32,9 @@ public class GetBusinessQueryHandler(
             ))
             .FirstOrDefaultAsync(cancellationToken);
 
-
         if (businessResponse is not null) return businessResponse;
 
         logger.LogWarning("Business with id {BusinessId} not found", query.Id);
-        return BusinessErrors.BusinessNotFound(query.Id);
+        return BusinessErrors.BusinessNotFound;
     }
 }
