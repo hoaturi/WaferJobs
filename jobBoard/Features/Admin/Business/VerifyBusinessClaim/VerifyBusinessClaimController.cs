@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Admin.Business.VerifyBusinessClaim;
 
 [Tags("Admin")]
-[Route("api/admin/businesses/claim/verify")]
+[Route("api/admin/businesses/claims/{claimId:guid}/verify")]
 [ApiController]
 public class VerifyBusinessClaimController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Admin))]
-    [HttpPost("{claimId:guid}")]
+    [HttpPost]
     public async Task<IActionResult> VerifyBusinessClaim([FromRoute] Guid claimId,
         [FromBody] VerifyBusinessClaimDto dto)
     {
