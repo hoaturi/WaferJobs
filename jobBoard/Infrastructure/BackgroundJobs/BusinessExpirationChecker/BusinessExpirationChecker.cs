@@ -1,39 +1,18 @@
-﻿using Hangfire;
-using JobBoard.Common.Constants;
+﻿using JobBoard.Common.Constants;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Services.EmailService;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Infrastructure.BackgroundJobs.BusinessChecker;
+namespace JobBoard.Infrastructure.BackgroundJobs.BusinessExpirationChecker;
 
-public class BusinessChecker(
+public class BusinessExpirationChecker(
     AppDbContext dbContext,
-    IBackgroundJobClient backgroundJobClient,
-    ILogger<BusinessChecker> logger)
+    ILogger<BusinessExpirationChecker> logger)
     : IRecurringJobBase
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        await CheckPendingClaimVerifications(cancellationToken);
         await CheckExpiredBusinessClaims(cancellationToken);
         await CheckExpiredBusinessInvitations(cancellationToken);
-    }
-
-    private async Task CheckPendingClaimVerifications(CancellationToken cancellationToken)
-    {
-        logger.LogInformation("Checking for pending business claim verification attempts");
-
-        var pendingClaims = await dbContext.BusinessClaimAttempts
-            .AsNoTracking()
-            .Where(bca => bca.Status == ClaimStatus.Pending)
-            .Select(bca => new PendingClaimVerificationReminderItem(bca.Business.Name, bca.ExpiresAt!.Value))
-            .ToListAsync(cancellationToken);
-
-        backgroundJobClient.Enqueue<IEmailService>(x => x.SendPendingClaimVerificationReminderAsync(
-            new PendingClaimVerificationReminderDto(pendingClaims)
-        ));
-
-        logger.LogInformation("Completed checking for pending business claim verification attempts");
     }
 
     private async Task CheckExpiredBusinessClaims(CancellationToken cancellationToken)
