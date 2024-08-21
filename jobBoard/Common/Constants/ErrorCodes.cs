@@ -29,6 +29,7 @@ public class ErrorCodes
     public static readonly ErrorCodes SelfInvitationNotAllowed = new("BU016");
     public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU017");
     public static readonly ErrorCodes UserCannotBeInvited = new("BU018");
+    public static readonly ErrorCodes InvitationNotFound = new("BU019");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
