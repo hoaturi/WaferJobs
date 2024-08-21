@@ -1,15 +1,14 @@
 ﻿using System.Web;
 using Hangfire;
+using JobBoard.Common.Extensions;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Persistence.Utils;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace JobBoard.Features.Business.InviteMember;
 
@@ -17,57 +16,79 @@ public class InviteMemberCommandHandler(
     AppDbContext dbContext,
     ICurrentUserService currentUserService,
     IBackgroundJobClient backgroundJobClient,
-    IEntityConstraintChecker constraintChecker,
     ILogger<InviteMemberCommandHandler> logger) : IRequestHandler<InviteMemberCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(InviteMemberCommand command, CancellationToken cancellationToken)
     {
-        try
+        var userId = currentUserService.GetUserId();
+        var userEmail = currentUserService.GetUserEmail();
+
+        if (userEmail == command.InviteeEmail)
+            return BusinessErrors.SelfInvitationNotAllowed;
+
+        var member = await GetBusinessMemberAsync(userId, cancellationToken);
+
+        if (!member.IsAdmin)
+            throw new InsufficientBusinessPermissionException(member.UserId);
+
+        if (await IsInviteeAlreadyMemberAsync(command.InviteeEmail, cancellationToken))
         {
-            var userId = currentUserService.GetUserId();
-
-            var member = await dbContext.BusinessMembers
-                .Include(x => x.Business)
-                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-
-            if (member is null) throw new UserNotBusinessMemberException(userId);
-            if (!member.IsAdmin) throw new InsufficientBusinessPermissionException(member.Id);
-
-            var newInvitation = new BusinessMemberInvitationEntity
-            {
-                BusinessId = member.BusinessId,
-                InviterId = member.Id,
-                InviteeEmail = command.InviteeEmail,
-                Token = HttpUtility.UrlEncode(Convert.ToBase64String(Guid.NewGuid().ToByteArray())),
-                ExpiresAt = DateTime.UtcNow.AddDays(7)
-            };
-
-            await dbContext.BusinessMemberInvitations.AddAsync(newInvitation, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
-
-            logger.LogInformation("Business member invitation to {businessName} created for {InviteeEmail}",
-                command.InviteeEmail, member.Business.Name);
-
-            backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessMemberInvitationAsync(
-                new BusinessMemberInvitationDto(
-                    command.InviteeEmail,
-                    member.Business.Name,
-                    member.FirstName,
-                    newInvitation.Token
-                )));
-
-            return Unit.Value;
+            logger.LogWarning("Invitee {InviteeEmail} already has a membership", command.InviteeEmail);
+            return BusinessErrors.UserCannotBeInvited;
         }
-        catch (DbUpdateException ex)
+
+        var newInvitation = CreateBusinessMemberInvitation(command, member);
+        await dbContext.BusinessMemberInvitations.AddAsync(newInvitation, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Business member invitation to {businessName} created for {InviteeEmail}",
+            member.Business.Name, command.InviteeEmail);
+
+        QueueEmailInvitation(command, member, newInvitation.Token);
+        Console.WriteLine(newInvitation.Token);
+
+        return Unit.Value;
+    }
+
+    private async Task<BusinessMemberEntity> GetBusinessMemberAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await dbContext.BusinessMembers
+                   .AsNoTracking()
+                   .Include(x => x.Business)
+                   .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken)
+               ?? throw new UserNotBusinessMemberException(userId);
+    }
+
+    private async Task<bool> IsInviteeAlreadyMemberAsync(string inviteeEmail, CancellationToken cancellationToken)
+    {
+        return await dbContext.BusinessMembers
+            .AsNoTracking()
+            .AnyAsync(bm => bm.User.Email == inviteeEmail, cancellationToken);
+    }
+
+    private BusinessMemberInvitationEntity CreateBusinessMemberInvitation(InviteMemberCommand command,
+        BusinessMemberEntity member)
+    {
+        return new BusinessMemberInvitationEntity
         {
-            if (ex.InnerException is not PostgresException pgEx ||
-                !constraintChecker.IsUniqueConstraintViolation<BusinessMemberInvitationEntity>(
-                    nameof(BusinessMemberInvitationEntity.InviteeEmail),
-                    pgEx.SqlState, pgEx.ConstraintName)) throw;
+            BusinessId = member.BusinessId,
+            InviterId = member.Id,
+            InviterName = $"{member.FirstName} {member.LastName}",
+            InviteeEmail = command.InviteeEmail,
+            Token = Guid.NewGuid().ToBase64String(),
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            IsActive = true
+        };
+    }
 
-            logger.LogWarning("Business member invitation to {InviteeEmail} already exists", command.InviteeEmail);
-
-            return BusinessErrors.InvitationAlreadyExists;
-        }
+    private void QueueEmailInvitation(InviteMemberCommand command, BusinessMemberEntity member, string token)
+    {
+        backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessMemberInvitationAsync(
+            new BusinessMemberInvitationDto(
+                command.InviteeEmail,
+                member.Business.Name,
+                member.FirstName,
+                HttpUtility.UrlEncode(token)
+            )));
     }
 }

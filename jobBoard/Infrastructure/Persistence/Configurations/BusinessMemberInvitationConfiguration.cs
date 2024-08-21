@@ -11,9 +11,15 @@ public class BusinessMemberInvitationConfiguration : IEntityTypeConfiguration<Bu
         builder.Property(b => b.InviteeEmail)
             .HasMaxLength(254);
 
-        builder.HasIndex(b => b.InviteeEmail).IsUnique();
+        builder.Property(b => b.InviterName)
+            .HasMaxLength(100);
 
         builder.HasIndex(b => b.Token)
+            .IsUnique();
+
+        // Add a filtered unique index for accepted invitations
+        builder.HasIndex(b => b.InviteeEmail)
+            .HasFilter("\"IsAccepted\" = true")
             .IsUnique();
 
         builder.HasOne(b => b.Business)
@@ -24,6 +30,6 @@ public class BusinessMemberInvitationConfiguration : IEntityTypeConfiguration<Bu
         builder.HasOne(b => b.Inviter)
             .WithMany()
             .HasForeignKey(b => b.InviterId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

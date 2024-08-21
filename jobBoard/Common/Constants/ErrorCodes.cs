@@ -24,8 +24,11 @@ public class ErrorCodes
     public static readonly ErrorCodes BusinessClaimInProgress = new("BU011");
     public static readonly ErrorCodes UserNotBusinessMember = new("BU012");
     public static readonly ErrorCodes InsufficientBusinessPermission = new("BU013");
-    public static readonly ErrorCodes BusinessInvitationAlreadyExists = new("BU014");
+    public static readonly ErrorCodes InvitationEmailMismatch = new("BU014");
     public static readonly ErrorCodes BusinessClaimExpired = new("BU015");
+    public static readonly ErrorCodes SelfInvitationNotAllowed = new("BU016");
+    public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU017");
+    public static readonly ErrorCodes UserCannotBeInvited = new("BU018");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
