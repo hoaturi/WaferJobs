@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Business.Exceptions;
 public class InvitationNotFoundException(string token) : CustomException(
     ErrorCodes.InvitationNotFound,
     HttpStatusCode.NotFound,
-    "Invitation with token: {token} was not found"
+    $"Invitation with token: {token} was not found"
 );
