@@ -45,7 +45,6 @@ public class InviteMemberCommandHandler(
             member.Business.Name, command.InviteeEmail);
 
         QueueEmailInvitation(command, member, newInvitation.Token);
-        Console.WriteLine(newInvitation.Token);
 
         return Unit.Value;
     }
