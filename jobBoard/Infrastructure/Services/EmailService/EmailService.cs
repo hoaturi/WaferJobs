@@ -206,6 +206,51 @@ public class EmailService(
         logger.LogInformation("Business claim verification reminder email sent to: {Email}", _emailOptions.SenderEmail);
     }
 
+    public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.ConferenceSubmissionReviewTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            title = dto.Title
+        };
+
+        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Conference submission review email sent to: {Email}", _emailOptions.SenderEmail);
+    }
+
+    public async Task SendPendingConferenceSubmissionReminderAsync(PendingConferenceSubmissionReminderDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.PendingConferenceSubmissionReminderTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            conferences = dto.Conferences
+        };
+
+        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Pending conference submission reminder email sent to: {Email}",
+            _emailOptions.SenderEmail);
+    }
+
     private async Task SendBusinessClaimRejectionEmailAsync(BusinessClaimVerificationResultDto dto)
     {
         var email = new SendGridMessage

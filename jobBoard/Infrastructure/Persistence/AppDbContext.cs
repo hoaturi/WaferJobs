@@ -2,6 +2,7 @@
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Business;
 using JobBoard.Domain.Common;
+using JobBoard.Domain.Conference;
 using JobBoard.Domain.JobAlert;
 using JobBoard.Domain.JobPost;
 using JobBoard.Domain.JobSeeker;
@@ -29,6 +30,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<EmploymentTypeEntity> EmploymentTypes { get; set; }
     public DbSet<JobPostPaymentEntity> JobPostPayments { get; set; }
     public DbSet<JobAlertEntity> JobAlerts { get; set; }
+    public DbSet<ConferenceEntity> Conferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

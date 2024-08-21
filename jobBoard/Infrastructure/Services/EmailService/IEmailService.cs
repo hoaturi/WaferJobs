@@ -20,4 +20,10 @@ public interface IEmailService
 
     Task SendPendingClaimVerificationReminderAsync(
         PendingClaimVerificationReminderDto dto);
+
+    Task SendConferenceSubmissionReviewAsync(
+        ConferenceSubmissionReviewDto dto);
+
+    Task SendPendingConferenceSubmissionReminderAsync(
+        PendingConferenceSubmissionReminderDto dto);
 }
