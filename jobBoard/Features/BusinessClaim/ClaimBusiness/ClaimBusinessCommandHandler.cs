@@ -9,7 +9,7 @@ using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.ClaimBusiness;
+namespace JobBoard.Features.BusinessClaim.ClaimBusiness;
 
 public class ClaimBusinessCommandHandler(
     ICurrentUserService currentUserService,

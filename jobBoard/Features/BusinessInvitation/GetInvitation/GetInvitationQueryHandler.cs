@@ -4,7 +4,7 @@ using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.GetInvitation;
+namespace JobBoard.Features.BusinessInvitation.GetInvitation;
 
 public class GetInvitationQueryHandler(AppDbContext dbContext)
     : IRequestHandler<GetInvitationQuery, Result<GetInvitationResponse, Error>>

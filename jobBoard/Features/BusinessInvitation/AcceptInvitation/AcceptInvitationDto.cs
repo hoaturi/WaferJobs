@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Features.Business.AcceptInvitation;
+﻿namespace JobBoard.Features.BusinessInvitation.AcceptInvitation;
 
 public record AcceptInvitationDto(
     string FirstName,

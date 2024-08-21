@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace JobBoard.Features.Business.InviteMember;
+namespace JobBoard.Features.BusinessInvitation.InviteMember;
 
 public class InviteMemberCommandValidator : AbstractValidator<InviteMemberCommand>
 {

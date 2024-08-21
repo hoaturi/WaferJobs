@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Business.ClaimBusiness;
+namespace JobBoard.Features.BusinessClaim.ClaimBusiness;
 
 [Tags("Business")]
 [Route("api/businesses/claim")]

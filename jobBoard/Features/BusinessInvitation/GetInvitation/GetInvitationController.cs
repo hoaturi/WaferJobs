@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Business.GetInvitation;
+namespace JobBoard.Features.BusinessInvitation.GetInvitation;
 
 [Tags("Business")]
 [Route("api/businesses/invitations")]

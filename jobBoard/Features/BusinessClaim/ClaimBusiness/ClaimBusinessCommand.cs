@@ -1,7 +1,7 @@
 ﻿using JobBoard.Common.Models;
 using MediatR;
 
-namespace JobBoard.Features.Business.ClaimBusiness;
+namespace JobBoard.Features.BusinessClaim.ClaimBusiness;
 
 public record ClaimBusinessCommand(
     Guid BusinessId,

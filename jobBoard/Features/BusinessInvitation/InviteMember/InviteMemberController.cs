@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Business.InviteMember;
+namespace JobBoard.Features.BusinessInvitation.InviteMember;
 
 [Tags("Business")]
 [Route("api/businesses/invitations")]

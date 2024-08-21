@@ -10,7 +10,7 @@ using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.InviteMember;
+namespace JobBoard.Features.BusinessInvitation.InviteMember;
 
 public class InviteMemberCommandHandler(
     AppDbContext dbContext,

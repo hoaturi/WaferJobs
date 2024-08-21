@@ -5,7 +5,7 @@ using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.AcceptInvitation;
+namespace JobBoard.Features.BusinessInvitation.AcceptInvitation;
 
 public class AcceptInvitationCommandHandler(
     AppDbContext dbContext,
