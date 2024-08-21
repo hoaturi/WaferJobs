@@ -4,5 +4,6 @@ public enum ClaimStatus
 {
     Pending,
     Approved,
-    Rejected
+    Rejected,
+    Expired
 }

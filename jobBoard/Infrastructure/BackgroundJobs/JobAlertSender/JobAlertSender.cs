@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Hangfire;
 using JobBoard.Common.Extensions;
 using JobBoard.Domain.JobAlert;
 using JobBoard.Infrastructure.Persistence;
@@ -7,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 
-public class JobAlertSender(AppDbContext dbContext, IEmailService emailService, ILogger<JobAlertSender> logger)
+public class JobAlertSender(
+    AppDbContext dbContext,
+    IBackgroundJobClient backgroundJobClient,
+    ILogger<JobAlertSender> logger)
     : IRecurringJobBase
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -34,14 +38,13 @@ public class JobAlertSender(AppDbContext dbContext, IEmailService emailService, 
                     jobPostsToSend
                 );
 
-
-                await emailService.SendJobAlertAsync(jobAlertEmailDto);
+                backgroundJobClient.Enqueue<IEmailService>(emailService =>
+                    emailService.SendJobAlertAsync(jobAlertEmailDto));
             }
 
             jobAlert.LastSentAt = DateTime.UtcNow;
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-
 
         logger.LogInformation("Completed Send Job Alerts Job execution. Processed {JobAlertCount} alerts",
             jobAlerts.Count);
@@ -63,7 +66,6 @@ public class JobAlertSender(AppDbContext dbContext, IEmailService emailService, 
 
         var categoryIds = jobAlert.Categories.Select(c => c.Id).ToList();
         var employmentTypeIds = jobAlert.EmploymentTypes.Select(et => et.Id).ToList();
-
 
         if (categoryIds.Count != 0) query = query.Where(jp => categoryIds.Contains(jp.CategoryId));
 

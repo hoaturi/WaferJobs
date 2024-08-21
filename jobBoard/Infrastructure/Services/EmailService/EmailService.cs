@@ -184,6 +184,28 @@ public class EmailService(
         logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
     }
 
+    public async Task SendPendingClaimVerificationReminderAsync(PendingClaimVerificationReminderDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessClaimVerificationReminderTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            claims = dto.Claims
+        };
+
+        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business claim verification reminder email sent to: {Email}", _emailOptions.SenderEmail);
+    }
+
     private async Task SendBusinessClaimRejectionEmailAsync(BusinessClaimVerificationResultDto dto)
     {
         var email = new SendGridMessage

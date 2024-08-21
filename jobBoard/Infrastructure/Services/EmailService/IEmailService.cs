@@ -17,4 +17,7 @@ public interface IEmailService
 
     Task SendBusinessMemberInvitationAsync(
         BusinessMemberInvitationDto dto);
+
+    Task SendPendingClaimVerificationReminderAsync(
+        PendingClaimVerificationReminderDto dto);
 }

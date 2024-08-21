@@ -1,9 +1,12 @@
 ﻿using Hangfire;
 using JobBoard.Common.Middlewares;
+using JobBoard.Infrastructure.BackgroundJobs.BusinessClaimExpirationChecker;
+using JobBoard.Infrastructure.BackgroundJobs.BusinessInvitationExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 using JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
+using JobBoard.Infrastructure.BackgroundJobs.PendingClaimVerificationReminder;
 using JobBoard.Infrastructure.BackgroundJobs.PersistApplyCountJob;
 
 namespace JobBoard.Infrastructure.Extensions;
@@ -44,15 +47,32 @@ public static class ApplicationExtensions
         RecurringJob.AddOrUpdate<PersistApplyCountJob>(
             "PersistApplyCountJob",
             x => x.ExecuteAsync(CancellationToken.None),
-            Cron.Daily
+            "*/30 * * * *"
+        );
+
+        RecurringJob.AddOrUpdate<BusinessInvitationExpirationChecker>(
+            "InvitationExpirationChecker",
+            x => x.ExecuteAsync(CancellationToken.None),
+            Cron.Hourly
+        );
+
+        RecurringJob.AddOrUpdate<BusinessClaimExpirationChecker>(
+            "BusinessClaimExpirationChecker",
+            x => x.ExecuteAsync(CancellationToken.None),
+            Cron.Hourly
+        );
+
+        RecurringJob.AddOrUpdate<PendingClaimVerificationReminder>(
+            "PendingClaimVerificationReminder",
+            x => x.ExecuteAsync(CancellationToken.None),
+            Cron.Hourly
         );
 
         return app;
     }
 
-    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)
+    public static void UseCustomExceptionHandler(this IApplicationBuilder app)
     {
         app.UseMiddleware<ExceptionHandlingMiddleware>();
-        return app;
     }
 }
