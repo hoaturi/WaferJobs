@@ -1,12 +1,10 @@
 ﻿using Hangfire;
 using JobBoard.Common.Middlewares;
-using JobBoard.Infrastructure.BackgroundJobs.BusinessClaimExpirationChecker;
-using JobBoard.Infrastructure.BackgroundJobs.BusinessInvitationExpirationChecker;
+using JobBoard.Infrastructure.BackgroundJobs.BusinessChecker;
 using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 using JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
-using JobBoard.Infrastructure.BackgroundJobs.PendingClaimVerificationReminder;
 using JobBoard.Infrastructure.BackgroundJobs.PersistApplyCountJob;
 
 namespace JobBoard.Infrastructure.Extensions;
@@ -50,20 +48,8 @@ public static class ApplicationExtensions
             "*/30 * * * *"
         );
 
-        RecurringJob.AddOrUpdate<BusinessInvitationExpirationChecker>(
-            "InvitationExpirationChecker",
-            x => x.ExecuteAsync(CancellationToken.None),
-            Cron.Hourly
-        );
-
-        RecurringJob.AddOrUpdate<BusinessClaimExpirationChecker>(
-            "BusinessClaimExpirationChecker",
-            x => x.ExecuteAsync(CancellationToken.None),
-            Cron.Hourly
-        );
-
-        RecurringJob.AddOrUpdate<PendingClaimVerificationReminder>(
-            "PendingClaimVerificationReminder",
+        RecurringJob.AddOrUpdate<BusinessChecker>(
+            "BusinessChecker",
             x => x.ExecuteAsync(CancellationToken.None),
             Cron.Hourly
         );
