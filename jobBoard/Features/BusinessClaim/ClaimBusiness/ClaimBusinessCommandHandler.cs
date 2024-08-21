@@ -108,10 +108,10 @@ public class ClaimBusinessCommandHandler(
     private void SendClaimResultEmail(bool isAutomaticApproval, string userEmail, string firstName, string businessName)
     {
         if (!isAutomaticApproval)
-            backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessClaimVerificationRequestAsync(
+            backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessClaimVerificationRequestAsync(
                 new BusinessClaimVerificationRequestDto(userEmail, firstName, businessName)));
         else
-            backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessClaimApprovalEmailAsync(
+            backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessClaimApprovalEmailAsync(
                 new BusinessClaimVerificationResultDto(userEmail, firstName, businessName, ClaimStatus.Approved)));
     }
 

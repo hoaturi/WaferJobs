@@ -38,8 +38,8 @@ public class JobAlertSender(
                     jobPostsToSend
                 );
 
-                backgroundJobClient.Enqueue<IEmailService>(emailService =>
-                    emailService.SendJobAlertAsync(jobAlertEmailDto));
+                backgroundJobClient.Enqueue<IEmailService>(x =>
+                    x.SendJobAlertAsync(jobAlertEmailDto));
             }
 
             jobAlert.LastSentAt = DateTime.UtcNow;

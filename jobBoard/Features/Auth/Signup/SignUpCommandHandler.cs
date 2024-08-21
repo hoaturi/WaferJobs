@@ -9,7 +9,6 @@ namespace JobBoard.Features.Auth.Signup;
 
 public class SignUpCommandHandler(
     UserManager<ApplicationUserEntity> userManager,
-    IEmailService emailService,
     IBackgroundJobClient backgroundJobClient,
     ILogger<SignUpCommandHandler> logger)
     : IRequestHandler<SignUpCommand, Result<Unit, Error>>
@@ -30,7 +29,7 @@ public class SignUpCommandHandler(
         var confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmEmailDto = new ConfirmEmailDto(user, confirmToken);
 
-        backgroundJobClient.Enqueue(() => emailService.SendEmailConfirmAsync(confirmEmailDto));
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendEmailConfirmAsync(confirmEmailDto));
 
         logger.LogInformation("User {Email} signed up successfully", user.Email);
         return Unit.Value;

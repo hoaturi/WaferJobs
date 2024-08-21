@@ -9,8 +9,7 @@ namespace JobBoard.Features.Auth.ForgotPassword;
 
 public class ForgotPasswordCommandHandler(
     UserManager<ApplicationUserEntity> userManager,
-    IBackgroundJobClient backgroundJobClient,
-    IEmailService emailService
+    IBackgroundJobClient backgroundJobClient
 ) : IRequestHandler<ForgotPasswordCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(
@@ -25,7 +24,7 @@ public class ForgotPasswordCommandHandler(
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
 
         var resetPasswordDto = new PasswordResetEmailDto(user, resetToken);
-        backgroundJobClient.Enqueue(() => emailService.SendPasswordResetAsync(resetPasswordDto));
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendPasswordResetAsync(resetPasswordDto));
 
         return Unit.Value;
     }

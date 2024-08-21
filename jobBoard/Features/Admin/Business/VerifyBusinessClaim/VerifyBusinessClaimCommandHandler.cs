@@ -15,7 +15,6 @@ public class VerifyBusinessClaimCommandHandler(
     AppDbContext dbContext,
     ICurrentUserService currentUserService,
     IBackgroundJobClient backgroundJobClient,
-    IEmailService emailService,
     ILogger<VerifyBusinessClaimCommandHandler> logger)
     : IRequestHandler<VerifyBusinessClaimCommand, Result<Unit, Error>>
 {
@@ -120,7 +119,7 @@ public class VerifyBusinessClaimCommandHandler(
 
     private void SendVerificationResultEmail(BusinessClaimAttemptEntity pendingClaim)
     {
-        backgroundJobClient.Enqueue(() => emailService.SendBusinessClaimVerificationResultAsync(
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessClaimVerificationResultAsync(
             new BusinessClaimVerificationResultDto(
                 pendingClaim.ClaimantEmail,
                 pendingClaim.ClaimantFirstName,

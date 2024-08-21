@@ -29,10 +29,9 @@ public class BusinessChecker(
             .Select(bca => new PendingClaimVerificationReminderItem(bca.Business.Name, bca.ExpiresAt!.Value))
             .ToListAsync(cancellationToken);
 
-        if (pendingClaims.Count > 0)
-            backgroundJobClient.Enqueue<EmailService>(x => x.SendPendingClaimVerificationReminderAsync(
-                new PendingClaimVerificationReminderDto(pendingClaims)
-            ));
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendPendingClaimVerificationReminderAsync(
+            new PendingClaimVerificationReminderDto(pendingClaims)
+        ));
 
         logger.LogInformation("Completed checking for pending business claim verification attempts");
     }

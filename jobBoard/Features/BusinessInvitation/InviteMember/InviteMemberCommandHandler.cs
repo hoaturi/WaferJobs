@@ -82,7 +82,7 @@ public class InviteMemberCommandHandler(
 
     private void QueueEmailInvitation(InviteMemberCommand command, BusinessMemberEntity member, string token)
     {
-        backgroundJobClient.Enqueue<EmailService>(x => x.SendBusinessMemberInvitationAsync(
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessMemberInvitationAsync(
             new BusinessMemberInvitationDto(
                 command.InviteeEmail,
                 member.Business.Name,
