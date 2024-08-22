@@ -10,4 +10,5 @@ public static class CacheKeys
     public const string JobCount = "totalJobPostCount";
     public const string CurrencyExchangeRates = "currencyExchangeRates";
     public const string ApplyClickCount = "applyClickCount";
+    public const string Conferences = "conferences";
 }
