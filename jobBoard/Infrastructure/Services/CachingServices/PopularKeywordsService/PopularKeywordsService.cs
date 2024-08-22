@@ -19,11 +19,11 @@ public class PopularKeywordsService(
 
     public async Task<IReadOnlyList<PopularKeywordDto>> GetPopularKeywordsAsync(CancellationToken cancellationToken)
     {
-        var keywords = await cache.GetAsync(CacheKeys.PopularKeywordsCacheKey, cancellationToken);
+        var keywords = await cache.GetAsync(CacheKeys.PopularKeywords, cancellationToken);
 
         if (keywords is not null)
-            return MessagePackSerializer.Deserialize<IReadOnlyList<PopularKeywordDto>>(keywords,
-                cancellationToken: cancellationToken);
+            return MessagePackSerializer.Deserialize<IReadOnlyList<PopularKeywordDto>>(keywords
+                , cancellationToken: cancellationToken);
 
         var popularKeywords = await FetchAndProcessPopularKeywords(cancellationToken);
         await CachePopularKeywords(popularKeywords, cancellationToken);
@@ -52,7 +52,7 @@ public class PopularKeywordsService(
         CancellationToken cancellationToken)
     {
         var serializedKeywords = MessagePackSerializer.Serialize(popularKeywords, cancellationToken: cancellationToken);
-        await cache.SetAsync(CacheKeys.PopularKeywordsCacheKey, serializedKeywords, cancellationToken);
+        await cache.SetAsync(CacheKeys.PopularKeywords, serializedKeywords, cancellationToken);
         logger.LogInformation("Updated popular keywords cache");
     }
 }

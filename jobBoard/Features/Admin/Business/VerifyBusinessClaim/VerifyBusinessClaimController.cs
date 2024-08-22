@@ -12,7 +12,7 @@ namespace JobBoard.Features.Admin.Business.VerifyBusinessClaim;
 public class VerifyBusinessClaimController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Admin))]
-    [HttpPost]
+    [HttpPatch]
     public async Task<IActionResult> VerifyBusinessClaim([FromRoute] Guid claimId,
         [FromBody] VerifyBusinessClaimDto dto)
     {

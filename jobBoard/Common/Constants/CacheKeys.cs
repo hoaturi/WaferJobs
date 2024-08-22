@@ -3,11 +3,11 @@
 public static class CacheKeys
 {
     public const string RevokedToken = "revokedToken:";
-    public const string CountriesCacheKey = "countries";
-    public const string CitiesCacheKey = "cities";
-    public const string LocationsCacheKey = "locations";
-    public const string PopularKeywordsCacheKey = "popularKeywords";
-    public const string JobCountCacheKey = "totalJobPostCount";
+    public const string Countries = "countries";
+    public const string Cities = "cities";
+    public const string Locations = "locations";
+    public const string PopularKeywords = "popularKeywords";
+    public const string JobCount = "totalJobPostCount";
     public const string CurrencyExchangeRates = "currencyExchangeRates";
     public const string ApplyClickCount = "applyClickCount";
 }

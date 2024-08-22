@@ -32,7 +32,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
     public async Task<IReadOnlyList<LocationDto>> GetLocationsWithActiveJobPostAsync(
         CancellationToken cancellationToken)
     {
-        var serializedLocations = await cache.GetAsync(CacheKeys.LocationsCacheKey,
+        var serializedLocations = await cache.GetAsync(CacheKeys.Locations,
             new CancellationTokenSource(CacheOperationTimeout).Token);
 
         if (serializedLocations is null || serializedLocations.Length == 0)
@@ -46,7 +46,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
 
     public async Task<IReadOnlyList<CityDto>> GetCitiesWithActiveJobPostAsync(CancellationToken cancellationToken)
     {
-        var serializedCities = await cache.GetAsync(CacheKeys.CitiesCacheKey,
+        var serializedCities = await cache.GetAsync(CacheKeys.Cities,
             new CancellationTokenSource(CacheOperationTimeout).Token);
 
         if (serializedCities is null || serializedCities.Length == 0)
@@ -61,7 +61,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
     public async Task<IReadOnlyList<CountryDto>> GetCountriesWithActiveJobPostAsync(
         CancellationToken cancellationToken)
     {
-        var serializedCountries = await cache.GetAsync(CacheKeys.CountriesCacheKey,
+        var serializedCountries = await cache.GetAsync(CacheKeys.Countries,
             new CancellationTokenSource(CacheOperationTimeout).Token);
 
         if (serializedCountries is null || serializedCountries.Length == 0)
@@ -81,7 +81,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
         {
             var serializedLocations = MessagePackSerializer.Serialize(locations, cancellationToken: cancellationToken);
 
-            await cache.SetAsync(CacheKeys.LocationsCacheKey, serializedLocations, cancellationToken);
+            await cache.SetAsync(CacheKeys.Locations, serializedLocations, cancellationToken);
             logger.LogInformation("Updated location cache with {Count} items", locations.Count);
         }
         else
@@ -100,7 +100,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
         {
             var serializedCountries = MessagePackSerializer.Serialize(countries, cancellationToken: cancellationToken);
 
-            await cache.SetAsync(CacheKeys.CountriesCacheKey, serializedCountries, cancellationToken);
+            await cache.SetAsync(CacheKeys.Countries, serializedCountries, cancellationToken);
             logger.LogInformation("Updated countries cache with {Count} items", countries.Count);
         }
         else
@@ -119,7 +119,7 @@ public class LocationService(IDistributedCache cache, AppDbContext dbContext, IL
         {
             var serializedCities = MessagePackSerializer.Serialize(cities, cancellationToken: cancellationToken);
 
-            await cache.SetAsync(CacheKeys.CitiesCacheKey, serializedCities, cancellationToken);
+            await cache.SetAsync(CacheKeys.Cities, serializedCities, cancellationToken);
             logger.LogInformation("Updated cities cache with {Count} items", cities.Count);
         }
         else

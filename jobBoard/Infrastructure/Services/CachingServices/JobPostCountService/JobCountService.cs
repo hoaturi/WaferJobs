@@ -10,7 +10,7 @@ public class JobPostCountService(AppDbContext dbContext, IDistributedCache cache
 {
     public async Task<int> GetJobPostCountAsync(CancellationToken cancellationToken)
     {
-        var totalCount = await cache.GetStringAsync(CacheKeys.JobCountCacheKey, cancellationToken);
+        var totalCount = await cache.GetStringAsync(CacheKeys.JobCount, cancellationToken);
 
         if (totalCount is not null) return int.Parse(totalCount);
 
@@ -19,7 +19,7 @@ public class JobPostCountService(AppDbContext dbContext, IDistributedCache cache
             )
             .CountAsync(cancellationToken);
 
-        await cache.SetStringAsync(CacheKeys.JobCountCacheKey, count.ToString(), cancellationToken);
+        await cache.SetStringAsync(CacheKeys.JobCount, count.ToString(), cancellationToken);
         logger.LogInformation("Updated job post count cache with {Count} job posts", count);
 
         return count;
