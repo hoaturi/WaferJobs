@@ -12,24 +12,22 @@ public class ErrorCodes
 
     // Business Errors
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
-    public static readonly ErrorCodes InvalidBusinessSize = new("BU002");
-    public static readonly ErrorCodes BusinessAlreadyExists = new("BU003");
-    public static readonly ErrorCodes BusinessNotFoundForUser = new("BU004");
-    public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU005");
-    public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU006");
-    public static readonly ErrorCodes UserAlreadyMember = new("BU007");
-    public static readonly ErrorCodes BusinessClaimNotFound = new("BU008");
-    public static readonly ErrorCodes BusinessClaimantNotFound = new("BU009");
-    public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU010");
-    public static readonly ErrorCodes BusinessClaimInProgress = new("BU011");
-    public static readonly ErrorCodes UserNotBusinessMember = new("BU012");
-    public static readonly ErrorCodes InsufficientBusinessPermission = new("BU013");
-    public static readonly ErrorCodes InvitationEmailMismatch = new("BU014");
-    public static readonly ErrorCodes BusinessClaimExpired = new("BU015");
-    public static readonly ErrorCodes SelfInvitationNotAllowed = new("BU016");
-    public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU017");
-    public static readonly ErrorCodes UserCannotBeInvited = new("BU018");
-    public static readonly ErrorCodes InvitationNotFound = new("BU019");
+    public static readonly ErrorCodes BusinessNotFoundForUser = new("BU002");
+    public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU003");
+    public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU004");
+    public static readonly ErrorCodes UserAlreadyMember = new("BU005");
+    public static readonly ErrorCodes BusinessClaimNotFound = new("BU006");
+    public static readonly ErrorCodes BusinessClaimantNotFound = new("BU007");
+    public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU008");
+    public static readonly ErrorCodes BusinessClaimInProgress = new("BU009");
+    public static readonly ErrorCodes UserNotBusinessMember = new("BU010");
+    public static readonly ErrorCodes InsufficientBusinessPermission = new("BU011");
+    public static readonly ErrorCodes InvitationEmailMismatch = new("BU012");
+    public static readonly ErrorCodes BusinessClaimExpired = new("BU013");
+    public static readonly ErrorCodes SelfInvitationNotAllowed = new("BU014");
+    public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU015");
+    public static readonly ErrorCodes UserCannotBeInvited = new("BU016");
+    public static readonly ErrorCodes InvitationNotFound = new("BU017");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
@@ -46,16 +44,9 @@ public class ErrorCodes
     // Email Errors
     public static readonly ErrorCodes EmailSendFailed = new("EM001");
 
-    // Payment Errors
-    public static readonly ErrorCodes CreateSessionFailed = new("PA001");
-    public static readonly ErrorCodes CreateStripeCustomerFailed = new("PA002");
-
     // Job Alert Errors
     public static readonly ErrorCodes JobAlertAlreadyExists = new("JA001");
     public static readonly ErrorCodes JobAlertNotFound = new("JA002");
-
-    // File Upload Errors
-    public static readonly ErrorCodes FileUploadFailed = new("FI001");
 
     // Internal Server Errors
     public static readonly ErrorCodes InternalServerError = new("IN001");
