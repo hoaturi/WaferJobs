@@ -9,7 +9,7 @@ namespace JobBoard.Features.Auth.ConfirmEmail;
 [ApiController]
 public class ConfirmEmailController(ISender sender) : ControllerBase
 {
-    [HttpPost("confirm-email")]
+    [HttpPatch("confirm-email")]
     public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
     {
         var result = await sender.Send(new ConfirmEmailCommand(userId, token));
