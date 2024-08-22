@@ -30,8 +30,7 @@ public class BusinessClaimAttemptConfiguration : IEntityTypeConfiguration<Busine
         builder.HasOne(bca => bca.ClaimantUser)
             .WithMany()
             .HasForeignKey(bca => bca.ClaimantUserId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(bca => bca.Verifier)
             .WithMany()

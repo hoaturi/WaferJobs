@@ -30,6 +30,6 @@ public class BusinessMemberInvitationConfiguration : IEntityTypeConfiguration<Bu
         builder.HasOne(b => b.Inviter)
             .WithMany()
             .HasForeignKey(b => b.InviterId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
