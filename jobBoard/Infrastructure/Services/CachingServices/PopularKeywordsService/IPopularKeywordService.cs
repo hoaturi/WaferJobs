@@ -1,6 +1,4 @@
-﻿using JobBoard.Features.Lookup.GetPopularKeywords;
-
-namespace JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
+﻿namespace JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
 
 public interface IPopularKeywordsService
 {

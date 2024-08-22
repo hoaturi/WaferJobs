@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
+using JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
 using MediatR;
 
 namespace JobBoard.Features.Lookup.GetPopularKeywords;

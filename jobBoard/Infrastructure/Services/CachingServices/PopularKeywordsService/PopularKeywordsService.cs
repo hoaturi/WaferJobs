@@ -4,7 +4,7 @@ using MessagePack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
+namespace JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
 
 public class PopularKeywordsService(
     AppDbContext dbContext,

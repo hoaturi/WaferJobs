@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+namespace JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 
 public class CurrencyService(
     AppDbContext dbContext,

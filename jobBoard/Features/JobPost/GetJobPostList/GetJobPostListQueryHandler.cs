@@ -1,7 +1,7 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+using JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

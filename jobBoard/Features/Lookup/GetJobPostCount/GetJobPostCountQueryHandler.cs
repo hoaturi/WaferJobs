@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
+using JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
 using MediatR;
 
 namespace JobBoard.Features.Lookup.GetJobPostCount;

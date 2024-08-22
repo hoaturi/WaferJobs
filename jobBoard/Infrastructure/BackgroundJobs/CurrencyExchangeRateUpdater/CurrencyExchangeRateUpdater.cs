@@ -1,4 +1,4 @@
-﻿using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+﻿using JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 
 namespace JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 

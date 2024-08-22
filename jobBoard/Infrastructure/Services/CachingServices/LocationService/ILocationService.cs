@@ -1,6 +1,6 @@
 ﻿using JobBoard.Domain.Common;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
+namespace JobBoard.Infrastructure.Services.CachingServices.LocationService;
 
 public interface ILocationService
 {

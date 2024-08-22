@@ -1,9 +1,9 @@
 ﻿using MessagePack;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
+namespace JobBoard.Infrastructure.Services.CachingServices.LocationService;
 
 [MessagePackObject]
-public record CityDto(
+public record CountryDto(
     [property: Key(0)] int Id,
     [property: Key(1)] string Label,
     [property: Key(2)] string Slug

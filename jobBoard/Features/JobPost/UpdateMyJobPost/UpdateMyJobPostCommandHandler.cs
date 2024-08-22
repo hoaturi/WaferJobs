@@ -2,8 +2,8 @@
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
+using JobBoard.Infrastructure.Services.CachingServices.LocationService;
 using JobBoard.Infrastructure.Services.CurrentUserService;
-using JobBoard.Infrastructure.Services.LookupServices.LocationService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

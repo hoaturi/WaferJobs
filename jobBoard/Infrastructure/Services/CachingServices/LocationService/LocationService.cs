@@ -5,7 +5,7 @@ using MessagePack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.LocationService;
+namespace JobBoard.Infrastructure.Services.CachingServices.LocationService;
 
 public class LocationService(IDistributedCache cache, AppDbContext dbContext, ILogger<LocationService> logger)
     : ILocationService

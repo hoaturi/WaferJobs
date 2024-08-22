@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+namespace JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 
 [MessagePackObject]
 public record ExchangeRateDto(

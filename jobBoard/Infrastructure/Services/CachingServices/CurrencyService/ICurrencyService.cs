@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
+﻿namespace JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 
 public interface ICurrencyService
 {

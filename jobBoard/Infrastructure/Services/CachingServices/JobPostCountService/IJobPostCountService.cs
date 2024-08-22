@@ -1,4 +1,4 @@
-﻿namespace JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
+﻿namespace JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
 
 public interface IJobPostCountService
 {

@@ -3,7 +3,7 @@ using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
+namespace JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
 
 public class JobPostCountService(AppDbContext dbContext, IDistributedCache cache, ILogger<JobPostCountService> logger)
     : IJobPostCountService

@@ -1,7 +1,6 @@
-﻿using JobBoard.Infrastructure.Services.LookupServices.CurrencyService;
-using JobBoard.Infrastructure.Services.LookupServices.JobPostCountService;
-using JobBoard.Infrastructure.Services.LookupServices.LocationService;
-using JobBoard.Infrastructure.Services.LookupServices.PopularKeywordsService;
+﻿using JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
+using JobBoard.Infrastructure.Services.CachingServices.LocationService;
+using JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
 
 namespace JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
 
