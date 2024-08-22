@@ -10,6 +10,7 @@ using JobBoard.Domain.Auth;
 using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Persistence.Utils;
+using JobBoard.Infrastructure.Services.CachingServices.ConferenceService;
 using JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 using JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
 using JobBoard.Infrastructure.Services.CachingServices.LocationService;
@@ -194,6 +195,7 @@ public static class ServiceExtensions
         services.AddScoped<IJobPostCountService, JobPostCountService>();
         services.AddScoped<ICurrencyService, CurrencyService>();
         services.AddScoped<IJobMetricService, JobMetricService>();
+        services.AddScoped<IConferenceService, ConferenceService>();
 
         services.AddScoped<IEntityConstraintChecker, EntityConstraintChecker>();
         return services;
