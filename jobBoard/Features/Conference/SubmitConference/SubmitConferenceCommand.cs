@@ -1,7 +1,7 @@
 ﻿using JobBoard.Common.Models;
 using MediatR;
 
-namespace JobBoard.Features.Conference;
+namespace JobBoard.Features.Conference.SubmitConference;
 
 public record SubmitConferenceCommand(
     string ContactEmail,

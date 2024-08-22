@@ -5,7 +5,7 @@ using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 
-namespace JobBoard.Features.Conference;
+namespace JobBoard.Features.Conference.SubmitConference;
 
 public class SubmitConferenceCommandHandler(
     AppDbContext dbContext,

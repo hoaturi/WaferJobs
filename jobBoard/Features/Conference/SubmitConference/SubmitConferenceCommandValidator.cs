@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace JobBoard.Features.Conference;
+namespace JobBoard.Features.Conference.SubmitConference;
 
 public class SubmitConferenceCommandValidator : AbstractValidator<SubmitConferenceCommand>
 {

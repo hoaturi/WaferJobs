@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Conference;
+namespace JobBoard.Features.Conference.SubmitConference;
 
 [Tags("Conference")]
 [Route("api/conferences")]
