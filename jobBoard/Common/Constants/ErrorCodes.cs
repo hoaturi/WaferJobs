@@ -37,6 +37,9 @@ public class ErrorCodes
     public static readonly ErrorCodes UnauthorizedJobPostAccess = new("JP003");
     public static readonly ErrorCodes JobPostAlreadyPublished = new("JP004");
 
+    // Conference Errors
+    public static readonly ErrorCodes ConferenceNotFound = new("CO001");
+
     // Validation Errors
     public static readonly ErrorCodes ValidationFailed = new("VA001");
 
