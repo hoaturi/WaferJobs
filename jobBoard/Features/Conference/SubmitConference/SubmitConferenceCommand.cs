@@ -7,10 +7,10 @@ public record SubmitConferenceCommand(
     string ContactEmail,
     string ContactName,
     string Title,
-    string OrganizerName,
-    string OrganizerEmail,
+    string Organiser,
+    string OrganiserEmail,
     string Location,
     string WebsiteUrl,
-    DateTime StartDate,
-    DateTime EndDate
+    string StartDate,
+    string EndDate
 ) : IRequest<Result<Unit, Error>>;

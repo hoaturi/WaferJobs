@@ -8,8 +8,8 @@ public class ConferenceEntity : BaseEntity
     public required string ContactEmail { get; set; }
     public required string ContactName { get; set; }
     public required string Title { get; set; }
-    public required string OrganizerName { get; set; }
-    public required string OrganizerEmail { get; set; }
+    public required string Organiser { get; set; }
+    public required string OrganiserEmail { get; set; }
     public required string Location { get; set; }
     public required string WebsiteUrl { get; set; }
     public DateTime StartDate { get; set; }

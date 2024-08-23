@@ -11,8 +11,8 @@ public class ConferenceConfiguration : IEntityTypeConfiguration<ConferenceEntity
         builder.Property(c => c.ContactEmail).HasMaxLength(254);
         builder.Property(c => c.ContactName).HasMaxLength(50);
         builder.Property(c => c.Title).HasMaxLength(150);
-        builder.Property(c => c.OrganizerName).HasMaxLength(150);
-        builder.Property(c => c.OrganizerEmail).HasMaxLength(254);
+        builder.Property(c => c.Organiser).HasMaxLength(150);
+        builder.Property(c => c.OrganiserEmail).HasMaxLength(254);
         builder.Property(c => c.Location).HasMaxLength(150);
         builder.Property(c => c.WebsiteUrl).HasMaxLength(2048);
 
