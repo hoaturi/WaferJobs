@@ -34,11 +34,12 @@ public class ConferenceService(AppDbContext dbContext, IDistributedCache cache) 
     {
         return await dbContext.Conferences
             .AsNoTracking()
-            .Where(c => c.IsPublished && c.StartDate > DateTime.UtcNow)
+            .Where(c => c.IsPublished && c.EndDate > DateTime.UtcNow)
+            .OrderBy(c => c.StartDate)
             .Select(c => new ConferenceDto(
                 c.Title,
-                c.OrganizerName,
-                c.OrganizerEmail,
+                c.Organiser,
+                c.OrganiserEmail,
                 c.Location,
                 c.WebsiteUrl,
                 c.StartDate,
