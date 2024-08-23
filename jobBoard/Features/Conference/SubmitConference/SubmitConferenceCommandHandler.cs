@@ -20,12 +20,12 @@ public class SubmitConferenceCommandHandler(
             ContactEmail = command.ContactEmail,
             ContactName = command.ContactName,
             Title = command.Title,
-            OrganizerName = command.OrganizerName,
-            OrganizerEmail = command.OrganizerEmail,
+            Organiser = command.Organiser,
+            OrganiserEmail = command.OrganiserEmail,
             Location = command.Location,
             WebsiteUrl = command.WebsiteUrl,
-            StartDate = command.StartDate,
-            EndDate = command.EndDate,
+            StartDate = DateTime.SpecifyKind(DateTime.Parse(command.StartDate), DateTimeKind.Utc),
+            EndDate = DateTime.SpecifyKind(DateTime.Parse(command.EndDate), DateTimeKind.Utc),
             IsVerified = false,
             IsPublished = false
         };
