@@ -27,7 +27,7 @@ public class SignUpCommandHandler(
         await userManager.AddToRoleAsync(user, command.Role);
 
         var confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmEmailDto = new ConfirmEmailDto(user, confirmToken);
+        var confirmEmailDto = new ConfirmEmailDto(user.Email, user.Id, confirmToken);
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendEmailConfirmAsync(confirmEmailDto));
 

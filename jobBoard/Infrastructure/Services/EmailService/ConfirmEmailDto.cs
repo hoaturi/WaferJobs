@@ -1,5 +1,3 @@
-﻿using JobBoard.Domain.Auth;
+﻿namespace JobBoard.Infrastructure.Services.EmailService;
 
-namespace JobBoard.Infrastructure.Services.EmailService;
-
-public record ConfirmEmailDto(ApplicationUserEntity User, string Token);
+public record ConfirmEmailDto(string RecipientEmail, Guid UserId, string Token);

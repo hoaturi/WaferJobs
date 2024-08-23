@@ -31,15 +31,15 @@ public class EmailService(
         {
             baseUrl = _emailOptions.BaseUrl,
             token = encodedToken,
-            userId = dto.User.Id
+            userId = dto.UserId
         };
 
-        email.AddTo(new EmailAddress(dto.User.Email));
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
         email.SetTemplateData(templateData);
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Email confirmation email sent to: {Email}", dto.User.Email);
+        logger.LogInformation("Email confirmation email sent to: {Email}", dto.RecipientEmail);
     }
 
     public async Task SendPasswordResetAsync(PasswordResetEmailDto dto)
