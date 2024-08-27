@@ -1,5 +1,4 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Business;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Features.Business.GetBusiness;
 using JobBoard.Infrastructure.Persistence;
@@ -23,7 +22,9 @@ public class GetMyBusinessQueryHandler(
 
         var businessResponse =
             await appDbContext
-                .Businesses.Where(b => b.Members.Any(m => m.UserId == currentUserId))
+                .Businesses
+                .AsNoTracking()
+                .Where(b => b.Members.Any(m => m.UserId == currentUserId))
                 .Select(b => new GetBusinessResponse(
                     b.Id,
                     b.Name,
