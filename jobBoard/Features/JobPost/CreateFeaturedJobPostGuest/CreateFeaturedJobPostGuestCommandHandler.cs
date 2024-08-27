@@ -1,6 +1,4 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Business;
-using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
@@ -23,55 +21,19 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        var jobPostId = await CreateJobPostEntity(command, cancellationToken);
 
-        try
-        {
-            var business = await GetExistingBusiness(command, cancellationToken);
+        var stripeCustomerId = await paymentService.CreateStripeCustomer(command.CompanyEmail, command.CompanyName);
+        var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPostId);
 
-            var jobPostId = await CreateJobPostEntity(command, business?.Id, cancellationToken);
+        await CreateJobPostPayment(jobPostId, session.Id, cancellationToken);
 
-            var stripeCustomerId =
-                await GetOrCreateStripeCustomerId(command.CompanyEmail, command.CompanyName, business);
-            var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPostId);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
-            await CreateJobPostPayment(jobPostId, session.Id, cancellationToken);
+        logger.LogInformation("Guest company {CompanyName} created a featured job post with id: {JobPostId}",
+            command.CompanyName, jobPostId);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-
-            logger.LogInformation("Company {CompanyName} created a featured job post with id: {JobPostId}",
-                command.CompanyName, jobPostId);
-
-            return new CreateJobPostCheckoutSessionResponse(session.Url);
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e, "Failed to create a featured job post for company {CompanyName}", command.CompanyName);
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
-    }
-
-    private async Task<BusinessEntity?> GetExistingBusiness(CreateFeaturedJobPostGuestCommand command,
-        CancellationToken cancellationToken)
-    {
-        if (command.BusinessId is null) return null;
-
-        var business = await dbContext.Businesses
-            .FirstOrDefaultAsync(b => b.Id == command.BusinessId, cancellationToken);
-
-        if (business is null) throw new BusinessNotFoundException(command.BusinessId.Value);
-
-        return business;
-    }
-
-    private async Task<string> GetOrCreateStripeCustomerId(string email, string companyName, BusinessEntity? business)
-    {
-        if (business is null) return await paymentService.CreateStripeCustomer(email, companyName);
-
-        return business.StripeCustomerId ??
-               (business.StripeCustomerId = await paymentService.CreateStripeCustomer(email, companyName));
+        return new CreateJobPostCheckoutSessionResponse(session.Url);
     }
 
     private async Task CreateJobPostPayment(Guid jobPostId, string sessionId, CancellationToken cancellationToken)
@@ -85,12 +47,11 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         await dbContext.JobPostPayments.AddAsync(payment, cancellationToken);
     }
 
-    private async Task<Guid> CreateJobPostEntity(CreateFeaturedJobPostGuestCommand command, Guid? businessId,
+    private async Task<Guid> CreateJobPostEntity(CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
         var jobPost = new JobPostEntity
         {
-            BusinessId = businessId,
             CategoryId = command.CategoryId,
             CountryId = command.CountryId,
             EmploymentTypeId = command.EmploymentTypeId,
