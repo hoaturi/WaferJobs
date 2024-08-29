@@ -124,31 +124,7 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
     }
 
-    public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessMemberInvitationTemplateId
-        };
-
-        var templateData = new
-        {
-            baseUrl = _emailOptions.BaseUrl,
-            businessName = dto.BusinessName,
-            inviterName = dto.InviterName,
-            token = dto.Token
-        };
-
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
-    }
-
-    public Task SendClaimVerificationAsync(ClaimVerificationDto dto)
+    public async Task SendBusinessClaimVerificationAsync(BusinessClaimVerificationEmailDto dto)
     {
         var email = new SendGridMessage
         {
@@ -160,13 +136,16 @@ public class EmailService(
         {
             baseUrl = _emailOptions.BaseUrl,
             businessName = dto.BusinessName,
-            token = dto.Pin
+            pin = dto.Pin
         };
 
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
+        email.AddTo(new EmailAddress(dto.UserEmail));
         email.SetTemplateData(templateData);
 
-        return emailClient.SendEmailAsync(email);
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business claim verification PIN sent for business '{BusinessName}' to user {UserId}",
+            dto.BusinessName, dto.UserId);
     }
 
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
@@ -189,6 +168,30 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
 
         logger.LogInformation("Conference submission review email sent to: {Email}", _emailOptions.SenderEmail);
+    }
+
+    public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessMemberInvitationTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            businessName = dto.BusinessName,
+            inviterName = dto.InviterName,
+            token = dto.Token
+        };
+
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
     }
 
     public async Task SendPendingConferenceSubmissionReminderAsync(PendingConferenceSubmissionReminderDto dto)

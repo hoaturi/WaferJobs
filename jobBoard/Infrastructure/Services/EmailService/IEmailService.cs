@@ -7,10 +7,7 @@ public interface IEmailService
     Task SendEmailChangeVerificationAsync(EmailChangeVerificationDto dto);
     Task SendJobAlertAsync(JobAlertEmailDto dto);
 
-    Task SendBusinessMemberInvitationAsync(
-        BusinessMemberInvitationDto dto);
-
-    Task SendClaimVerificationAsync(ClaimVerificationDto dto);
+    Task SendBusinessClaimVerificationAsync(BusinessClaimVerificationEmailDto dto);
 
     Task SendConferenceSubmissionReviewAsync(
         ConferenceSubmissionReviewDto dto);

@@ -4,8 +4,8 @@ using JobBoard.Common.Exceptions;
 
 namespace JobBoard.Domain.Business.Exceptions;
 
-public class EmailDomainMismatchException() : CustomException(
+public class EmailDomainMismatchException(Guid userId, Guid businessId) : CustomException(
     ErrorCodes.EmailDomainMismatch,
     HttpStatusCode.BadRequest,
-    "User email domain does not match the business domain."
+    $"The email domain of the user with id {userId} does not match the domain of the business with id {businessId}."
 );
