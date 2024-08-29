@@ -4,6 +4,7 @@ namespace JobBoard.Domain.Auth;
 
 public class EmailChangeRequestEntity : BaseEntity
 {
+    public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public required string NewEmail { get; set; }
     public int Pin { get; set; }
