@@ -10,7 +10,6 @@ public class BusinessMemberInvitationEntity : BaseEntity
     public required string InviterName { get; set; }
     public required string InviteeEmail { get; set; }
     public required string Token { get; set; }
-    public bool IsActive { get; set; }
     public bool IsAccepted { get; set; }
     public DateTime? AcceptedAt { get; set; }
     public DateTime ExpiresAt { get; set; }

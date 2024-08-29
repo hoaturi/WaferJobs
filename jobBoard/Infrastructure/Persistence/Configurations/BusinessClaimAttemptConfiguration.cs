@@ -4,37 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class BusinessClaimAttemptConfiguration : IEntityTypeConfiguration<BusinessClaimAttemptEntity>
+public class BusinessClaimAttemptConfiguration : IEntityTypeConfiguration<BusinessClaimRequestEntity>
 {
-    public void Configure(EntityTypeBuilder<BusinessClaimAttemptEntity> builder)
+    public void Configure(EntityTypeBuilder<BusinessClaimRequestEntity> builder)
     {
-        builder.Property(bca => bca.ClaimantEmail)
-            .HasMaxLength(254)
-            .IsRequired();
+        builder.HasIndex(bca => bca.Pin)
+            .IsUnique();
 
-        builder.Property(bca => bca.ClaimantFirstName)
-            .HasMaxLength(50)
-            .IsRequired();
+        builder.HasIndex(bca => bca.ExpiresAt);
+        builder.HasIndex(bca => bca.IsVerified);
 
-        builder.Property(bca => bca.ClaimantLastName)
-            .HasMaxLength(50)
-            .IsRequired();
-
-        builder.Property(bca => bca.ClaimantTitle)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(bca => bca.Notes)
-            .HasMaxLength(500);
+        builder.HasOne(bca => bca.Business)
+            .WithMany()
+            .HasForeignKey(bca => bca.BusinessId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(bca => bca.ClaimantUser)
             .WithMany()
             .HasForeignKey(bca => bca.ClaimantUserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(bca => bca.Verifier)
-            .WithMany()
-            .HasForeignKey(bca => bca.VerifierId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 }

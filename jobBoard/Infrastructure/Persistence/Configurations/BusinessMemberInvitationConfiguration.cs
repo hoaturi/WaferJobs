@@ -17,9 +17,7 @@ public class BusinessMemberInvitationConfiguration : IEntityTypeConfiguration<Bu
         builder.HasIndex(b => b.Token)
             .IsUnique();
 
-        // Add a filtered unique index for accepted invitations
-        builder.HasIndex(b => b.InviteeEmail)
-            .HasFilter("\"IsAccepted\" = true")
+        builder.HasIndex(b => new { b.BusinessId, b.InviteeEmail })
             .IsUnique();
 
         builder.HasOne(b => b.Business)

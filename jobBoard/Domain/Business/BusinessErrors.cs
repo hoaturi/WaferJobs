@@ -47,4 +47,10 @@ public static class BusinessErrors
         HttpStatusCode.BadRequest,
         "Invitation email does not match the user's email."
     );
+
+    public static readonly Error BusinessClaimAlreadyConfirmed = new(
+        ErrorCodes.BusinessClaimAlreadyConfirmed,
+        HttpStatusCode.BadRequest,
+        "Business claim has already been confirmed."
+    );
 }

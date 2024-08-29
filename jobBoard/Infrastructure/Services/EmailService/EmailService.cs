@@ -1,5 +1,4 @@
 ﻿using System.Web;
-using JobBoard.Common.Constants;
 using JobBoard.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -67,6 +66,27 @@ public class EmailService(
         logger.LogInformation("Password reset email sent to: {Email}", dto.User.Email);
     }
 
+    public async Task SendEmailChangeVerificationAsync(EmailChangeVerificationDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.EmailChangeConfirmationTemplateId
+        };
+
+        var templateData = new
+        {
+            pin = dto.Pin
+        };
+
+        email.AddTo(new EmailAddress(dto.NewEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Email change verification email sent to: {Email}", dto.NewEmail);
+    }
+
     public async Task SendJobAlertAsync(JobAlertEmailDto dto)
     {
         var capitalizedKeyword = dto.Keyword is null
@@ -104,62 +124,6 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
     }
 
-    public async Task SendBusinessClaimVerificationRequestAsync(
-        BusinessClaimVerificationRequestDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessClaimVerificationRequestTemplateId
-        };
-
-        var templateData = new
-        {
-            baseUrl = _emailOptions.BaseUrl,
-            firstName = dto.FirstName,
-            businessName = dto.BusinessName
-        };
-
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business claim verification request email sent to: {Email}",
-            dto.RecipientEmail);
-    }
-
-    public async Task SendBusinessClaimVerificationResultAsync(BusinessClaimVerificationResultDto dto)
-    {
-        if (dto.Status == ClaimStatus.Approved)
-            await SendBusinessClaimApprovalEmailAsync(dto);
-        else
-            await SendBusinessClaimRejectionEmailAsync(dto);
-    }
-
-    public async Task SendBusinessClaimApprovalEmailAsync(BusinessClaimVerificationResultDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessClaimApprovedTemplateId
-        };
-
-        var templateData = new
-        {
-            baseUrl = _emailOptions.BaseUrl,
-            businessName = dto.BusinessName,
-            firstName = dto.RecipientFirstName
-        };
-
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business claim approval email sent to: {Email}", dto.RecipientEmail);
-    }
-
     public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationDto dto)
     {
         var email = new SendGridMessage
@@ -184,26 +148,25 @@ public class EmailService(
         logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
     }
 
-    public async Task SendPendingClaimVerificationReminderAsync(PendingClaimVerificationReminderDto dto)
+    public Task SendClaimVerificationAsync(ClaimVerificationDto dto)
     {
         var email = new SendGridMessage
         {
             From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessClaimVerificationReminderTemplateId
+            TemplateId = _sendGridOptions.BusinessClaimVerificationTemplateId
         };
 
         var templateData = new
         {
             baseUrl = _emailOptions.BaseUrl,
-            claims = dto.Claims
+            businessName = dto.BusinessName,
+            token = dto.Pin
         };
 
-        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
         email.SetTemplateData(templateData);
 
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business claim verification reminder email sent to: {Email}", _emailOptions.SenderEmail);
+        return emailClient.SendEmailAsync(email);
     }
 
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
@@ -249,27 +212,5 @@ public class EmailService(
 
         logger.LogInformation("Pending conference submission reminder email sent to: {Email}",
             _emailOptions.SenderEmail);
-    }
-
-    private async Task SendBusinessClaimRejectionEmailAsync(BusinessClaimVerificationResultDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessClaimRejectedTemplateId
-        };
-
-        var templateData = new
-        {
-            businessName = dto.BusinessName,
-            firstName = dto.RecipientFirstName
-        };
-
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business claim rejection email sent to: {Email}", dto.RecipientEmail);
     }
 }

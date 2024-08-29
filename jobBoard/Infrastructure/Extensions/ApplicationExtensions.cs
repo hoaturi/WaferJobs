@@ -1,7 +1,5 @@
 ﻿using Hangfire;
 using JobBoard.Common.Middlewares;
-using JobBoard.Infrastructure.BackgroundJobs.AdminReminder;
-using JobBoard.Infrastructure.BackgroundJobs.BusinessExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
@@ -47,18 +45,6 @@ public static class ApplicationExtensions
             "PersistApplyCountJob",
             x => x.ExecuteAsync(CancellationToken.None),
             "*/30 * * * *"
-        );
-
-        RecurringJob.AddOrUpdate<BusinessExpirationChecker>(
-            "BusinessExpirationChecker",
-            x => x.ExecuteAsync(CancellationToken.None),
-            Cron.Hourly
-        );
-
-        RecurringJob.AddOrUpdate<AdminReminder>(
-            "AdminReminders",
-            x => x.ExecuteAsync(CancellationToken.None),
-            "0 */6 * * *"
         );
 
         return app;

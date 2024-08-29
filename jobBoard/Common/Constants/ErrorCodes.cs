@@ -9,6 +9,7 @@ public class ErrorCodes
     public static readonly ErrorCodes InvalidToken = new("AU004");
     public static readonly ErrorCodes InvalidCurrentPassword = new("AU005");
     public static readonly ErrorCodes EmailNotVerified = new("AU006");
+    public static readonly ErrorCodes InvalidPin = new("AU007");
 
     // Business Errors
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
@@ -16,7 +17,7 @@ public class ErrorCodes
     public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU003");
     public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU004");
     public static readonly ErrorCodes UserAlreadyMember = new("BU005");
-    public static readonly ErrorCodes BusinessClaimNotFound = new("BU006");
+    public static readonly ErrorCodes InvalidOrMissingBusinessClaim = new("BU006");
     public static readonly ErrorCodes BusinessClaimantNotFound = new("BU007");
     public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU008");
     public static readonly ErrorCodes BusinessClaimInProgress = new("BU009");
@@ -28,6 +29,11 @@ public class ErrorCodes
     public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU015");
     public static readonly ErrorCodes UserCannotBeInvited = new("BU016");
     public static readonly ErrorCodes InvitationNotFound = new("BU017");
+    public static readonly ErrorCodes EmailDomainMismatch = new("BU018");
+
+    // Business Claim Errors
+    public static readonly ErrorCodes BusinessClaimNotConfirmed = new("BC001");
+    public static readonly ErrorCodes BusinessClaimAlreadyConfirmed = new("BC002");
 
     // Job Post Errors
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
