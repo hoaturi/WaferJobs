@@ -46,13 +46,15 @@ public class ConfirmEmailChangeCommandHandler(
         if (!setEmailResult.Succeeded || !setUserNameResult.Succeeded)
             throw new InvalidOperationException($"Failed to update user email with id {userId}");
 
+        changeRequest.IsVerified = true;
+        changeRequest.VerifiedAt = DateTime.UtcNow;
+
         var unusedClaims = await dbContext.BusinessClaimRequests
             .Where(x => x.ClaimantUserId == userId && !x.IsUsed)
             .ToListAsync(cancellationToken);
 
         dbContext.BusinessClaimRequests.RemoveRange(unusedClaims);
 
-        dbContext.EmailChangeRequests.Remove(changeRequest);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Email changed successfully for user {UserId}", userId);
