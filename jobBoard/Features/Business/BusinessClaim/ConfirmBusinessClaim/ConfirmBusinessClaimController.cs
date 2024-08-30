@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.BusinessClaim.ConfirmBusinessClaim;
 
 [Tags("Business")]
-[Route("api/business/claim/confirm")]
+[Route("api/businesses/claim/confirm")]
 [ApiController]
 public class ConfirmBusinessClaimController(ISender sender) : ControllerBase
 {

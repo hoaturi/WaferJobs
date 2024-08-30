@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Auth.ConfirmEmailChange;
 
 [Tags("Auth")]
-[Route("api/auth/email-change/confirm")]
+[Route("api/auth/change-email/confirm")]
 [ApiController]
 public class ConfirmEmailChangeController(ISender sender) : ControllerBase
 {
     [Authorize]
-    [HttpPost]
+    [HttpPatch]
     public async Task<IActionResult> ConfirmEmailChange(ConfirmEmailChangeCommand changeCommand)
     {
         var result = await sender.Send(changeCommand);

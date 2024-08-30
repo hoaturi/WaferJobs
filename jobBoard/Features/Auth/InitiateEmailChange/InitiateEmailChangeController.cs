@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Auth.InitiateEmailChange;
 
 [Tags("Auth")]
-[Route("api/auth/email-change")]
+[Route("api/auth/change-email")]
 [ApiController]
 public class InitiateEmailChangeController(ISender sender) : ControllerBase
 {
