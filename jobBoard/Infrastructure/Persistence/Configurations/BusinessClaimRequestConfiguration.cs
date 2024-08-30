@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class BusinessClaimAttemptConfiguration : IEntityTypeConfiguration<BusinessClaimRequestEntity>
+public class BusinessClaimRequestConfiguration : IEntityTypeConfiguration<BusinessClaimRequestEntity>
 {
     public void Configure(EntityTypeBuilder<BusinessClaimRequestEntity> builder)
     {

@@ -10,7 +10,7 @@ public static class AuthErrors
         new(
             ErrorCodes.EmailAlreadyInUse,
             HttpStatusCode.Conflict,
-            "User with this email already exists"
+            "Email is already in use"
         );
 
     public static readonly Error InvalidCredentials =

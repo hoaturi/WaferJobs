@@ -4,8 +4,8 @@ using JobBoard.Common.Exceptions;
 
 namespace JobBoard.Domain.Business.Exceptions;
 
-public class UserAlreadyMemberException(Guid userId) : CustomException(
+public class DuplicateUserMembershipException(Guid userId) : CustomException(
     ErrorCodes.UserAlreadyMember,
     HttpStatusCode.BadRequest,
-    $"User with id: {userId} is already a member of a business."
+    $"User {userId} is already a member of the business."
 );
