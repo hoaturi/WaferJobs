@@ -28,9 +28,18 @@ public class InitiateBusinessClaimCommandHandler(
         var userId = currentUserService.GetUserId();
 
         var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+
         var business =
-            await dbContext.Businesses.FirstOrDefaultAsync(x => x.Id == command.BusinessId, cancellationToken) ??
+            await dbContext.Businesses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == command.BusinessId, cancellationToken) ??
             throw new BusinessNotFoundException(command.BusinessId);
+
+        var isUserExistingMember = await dbContext.BusinessMembers
+            .AsNoTracking()
+            .AnyAsync(x => x.UserId == userId, cancellationToken);
+
+        if (isUserExistingMember) throw new DuplicateUserMembershipException(userId);
 
         var userEmailDomain = user.Email!.Split('@')[1];
         if (business.Domain != userEmailDomain) throw new EmailDomainMismatchException(userId, business.Id);
@@ -51,6 +60,7 @@ public class InitiateBusinessClaimCommandHandler(
         var emailDto = new BusinessClaimVerificationEmailDto(
             user.Id,
             user.Email,
+            business.Id,
             business.Name,
             claimRequest.Pin);
 

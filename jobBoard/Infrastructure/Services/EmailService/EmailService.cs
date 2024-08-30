@@ -144,8 +144,8 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business claim verification PIN sent for business '{BusinessName}' to user {UserId}",
-            dto.BusinessName, dto.UserId);
+        logger.LogInformation("Business claim verification PIN sent for business '{businessId}' to user {UserId}",
+            dto.BusinessId, dto.UserId);
     }
 
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
