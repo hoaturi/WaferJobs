@@ -22,7 +22,7 @@ public class SignUpCommandHandler(
         var createResult = await userManager.CreateAsync(user, command.Password);
 
         if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
-            return AuthErrors.UserAlreadyExists;
+            return AuthErrors.EmailAlreadyInUse;
 
         await userManager.AddToRoleAsync(user, command.Role);
 

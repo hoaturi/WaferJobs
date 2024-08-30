@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace JobBoard.Features.Business.InitiateBusinessClaim;
+namespace JobBoard.Features.Business.BusinessClaim.InitiateBusinessClaim;
 
 public class InitiateBusinessClaimCommandValidator : AbstractValidator<InitiateBusinessClaimCommand>
 {

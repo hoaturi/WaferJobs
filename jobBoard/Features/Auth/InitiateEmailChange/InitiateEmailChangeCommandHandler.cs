@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Auth.Exceptions;
@@ -7,6 +8,7 @@ using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.Auth.InitiateEmailChange;
 
@@ -24,21 +26,25 @@ public class InitiateEmailChangeCommandHandler(
 
         var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
-        var isPasswordValid = await userManager.CheckPasswordAsync(user, command.Password);
-        if (!isPasswordValid) return AuthErrors.InvalidCurrentPassword;
+        if (!await userManager.CheckPasswordAsync(user, command.Password))
+            return AuthErrors.InvalidCurrentPassword;
 
-        var pin = new Random().Next(100000, 999999);
+        if (await dbContext.BusinessMembers.AsNoTracking().AnyAsync(x => x.UserId == userId, cancellationToken))
+            return AuthErrors.EmailChangeNotAllowedForBusinessMembers;
 
-        var emailChangeRequest = new EmailChangeRequestEntity
+        if (await userManager.FindByEmailAsync(command.NewEmail) is not null)
+            return AuthErrors.EmailAlreadyInUse;
+
+        var pin = new Random().Next(PinConstants.MinValue, PinConstants.MaxValue);
+        var newRequest = new EmailChangeRequestEntity
         {
             UserId = userId,
             NewEmail = command.NewEmail,
             Pin = pin,
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(PinConstants.PinExpiryInMinutes),
             IsVerified = false
         };
-
-        dbContext.EmailChangeRequests.Add(emailChangeRequest);
+        dbContext.EmailChangeRequests.Add(newRequest);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

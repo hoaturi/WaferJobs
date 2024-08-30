@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Auth.Exceptions;
@@ -11,7 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Features.Business.InitiateBusinessClaim;
+namespace JobBoard.Features.Business.BusinessClaim.InitiateBusinessClaim;
 
 public class InitiateBusinessClaimCommandHandler(
     AppDbContext dbContext,
@@ -38,8 +39,10 @@ public class InitiateBusinessClaimCommandHandler(
         {
             BusinessId = business.Id,
             ClaimantUserId = userId,
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
-            Pin = new Random().Next(100000, 999999), IsVerified = false
+            Pin = new Random().Next(PinConstants.MinValue, PinConstants.MaxValue),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(PinConstants.PinExpiryInMinutes),
+            IsVerified = false,
+            Attempts = 0
         };
 
         dbContext.BusinessClaimRequests.Add(claimRequest);

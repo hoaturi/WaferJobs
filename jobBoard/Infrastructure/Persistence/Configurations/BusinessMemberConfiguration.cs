@@ -20,9 +20,6 @@ public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMemb
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.HasIndex(bm => bm.UserId)
-            .IsUnique();
-
         builder
             .HasOne(bm => bm.User)
             .WithMany()

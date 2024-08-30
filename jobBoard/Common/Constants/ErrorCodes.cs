@@ -2,14 +2,19 @@
 
 public class ErrorCodes
 {
+    // Common Errors
+    public static readonly ErrorCodes InvalidPin = new("CO001");
+    public static readonly ErrorCodes TooManyVerificationAttempts = new("CO002");
+
     // User Errors
-    public static readonly ErrorCodes UserAlreadyExists = new("AU001");
+    public static readonly ErrorCodes EmailAlreadyInUse = new("AU001");
     public static readonly ErrorCodes InvalidCredentials = new("AU002");
     public static readonly ErrorCodes UserNotFound = new("AU003");
     public static readonly ErrorCodes InvalidToken = new("AU004");
     public static readonly ErrorCodes InvalidCurrentPassword = new("AU005");
     public static readonly ErrorCodes EmailNotVerified = new("AU006");
-    public static readonly ErrorCodes InvalidPin = new("AU007");
+    public static readonly ErrorCodes EmailChangeRequestNotFound = new("AU007");
+    public static readonly ErrorCodes EmailChangeNotAllowed = new("AU008");
 
     // Business Errors
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
@@ -17,7 +22,7 @@ public class ErrorCodes
     public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU003");
     public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU004");
     public static readonly ErrorCodes UserAlreadyMember = new("BU005");
-    public static readonly ErrorCodes InvalidOrMissingBusinessClaim = new("BU006");
+    public static readonly ErrorCodes BusinessClaimRequestNotFound = new("BU006");
     public static readonly ErrorCodes BusinessClaimantNotFound = new("BU007");
     public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU008");
     public static readonly ErrorCodes BusinessClaimInProgress = new("BU009");

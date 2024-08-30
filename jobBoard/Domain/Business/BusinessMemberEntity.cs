@@ -8,7 +8,6 @@ public class BusinessMemberEntity : BaseEntity
     public Guid Id { get; set; }
     public Guid BusinessId { get; set; }
     public Guid UserId { get; set; }
-    public required string Email { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Title { get; set; }

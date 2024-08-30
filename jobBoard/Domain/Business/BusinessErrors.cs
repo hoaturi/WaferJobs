@@ -53,4 +53,6 @@ public static class BusinessErrors
         HttpStatusCode.BadRequest,
         "Business claim has already been confirmed."
     );
+
+    public static readonly Error InvalidClaimPin = new(ErrorCodes.InvalidPin, HttpStatusCode.BadRequest, "Invalid Pin");
 }
