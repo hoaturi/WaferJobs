@@ -9,6 +9,7 @@ public class EmailChangeRequestEntity : BaseEntity
     public required string NewEmail { get; set; }
     public int Pin { get; set; }
     public DateTime ExpiresAt { get; set; }
+    public int Attempts { get; set; }
     public bool IsVerified { get; set; }
     public DateTime? VerifiedAt { get; set; }
     public ApplicationUserEntity User { get; set; } = null!;

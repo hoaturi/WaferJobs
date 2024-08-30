@@ -1,6 +1,8 @@
-﻿using JobBoard.Common.Models;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Domain.Auth.Exceptions;
+using JobBoard.Domain.Common.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
@@ -12,7 +14,9 @@ namespace JobBoard.Features.Auth.ConfirmEmailChange;
 public class ConfirmEmailChangeCommandHandler(
     AppDbContext dbContext,
     UserManager<ApplicationUserEntity> userManager,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    ILogger<ConfirmEmailChangeCommandHandler> logger
+)
     : IRequestHandler<ConfirmEmailChangeCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(ConfirmEmailChangeCommand command,
@@ -21,8 +25,18 @@ public class ConfirmEmailChangeCommandHandler(
         var userId = currentUserService.GetUserId();
 
         var changeRequest = await dbContext.EmailChangeRequests
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.Pin == command.Pin && x.ExpiresAt > DateTime.UtcNow,
-                cancellationToken) ?? throw new InvalidEmailChangePinException(userId);
+            .FirstOrDefaultAsync(x => x.UserId == userId && !x.IsVerified && x.ExpiresAt > DateTime.UtcNow,
+                cancellationToken) ?? throw new EmailChangeRequestNotFoundException(userId);
+
+        if (!changeRequest.Pin.Equals(command.Pin))
+        {
+            changeRequest.Attempts++;
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return AuthErrors.InvalidEmailChangePin;
+        }
+
+        if (changeRequest.Attempts >= PinConstants.MaxPinAttempts)
+            throw new TooManyVerificationAttemptsException("email change", userId);
 
         var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
@@ -32,8 +46,16 @@ public class ConfirmEmailChangeCommandHandler(
         if (!setEmailResult.Succeeded || !setUserNameResult.Succeeded)
             throw new InvalidOperationException($"Failed to update user email with id {userId}");
 
+        var unusedClaims = await dbContext.BusinessClaimRequests
+            .Where(x => x.ClaimantUserId == userId && !x.IsUsed)
+            .ToListAsync(cancellationToken);
+
+        dbContext.BusinessClaimRequests.RemoveRange(unusedClaims);
+
         dbContext.EmailChangeRequests.Remove(changeRequest);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Email changed successfully for user {UserId}", userId);
 
         return Unit.Value;
     }

@@ -5,7 +5,7 @@ using JobBoard.Common.Exceptions;
 namespace JobBoard.Domain.Auth.Exceptions;
 
 public class UserAlreadyExistsException(string email) : CustomException(
-    ErrorCodes.UserAlreadyExists,
+    ErrorCodes.EmailAlreadyInUse,
     HttpStatusCode.Conflict,
     $"User with email {email} already exists."
 );

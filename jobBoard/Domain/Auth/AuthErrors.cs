@@ -6,9 +6,9 @@ namespace JobBoard.Domain.Auth;
 
 public static class AuthErrors
 {
-    public static readonly Error UserAlreadyExists =
+    public static readonly Error EmailAlreadyInUse =
         new(
-            ErrorCodes.UserAlreadyExists,
+            ErrorCodes.EmailAlreadyInUse,
             HttpStatusCode.Conflict,
             "User with this email already exists"
         );
@@ -24,4 +24,11 @@ public static class AuthErrors
 
     public static readonly Error EmailNotVerified =
         new(ErrorCodes.EmailNotVerified, HttpStatusCode.BadRequest, "Email not verified");
+
+    public static readonly Error InvalidEmailChangePin =
+        new(ErrorCodes.InvalidPin, HttpStatusCode.BadRequest, "Invalid pin");
+
+    public static readonly Error EmailChangeNotAllowedForBusinessMembers =
+        new(ErrorCodes.EmailChangeNotAllowed, HttpStatusCode.Forbidden,
+            "Email change not allowed for users with business membership");
 }
