@@ -42,7 +42,16 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Features\Auth\ChangeEmail\"/>
         <Folder Include="Features\JobMetric\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Resources\PublicEmailDomains.txt"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\publicEmailDomains.txt"/>
     </ItemGroup>
 
 </Project>

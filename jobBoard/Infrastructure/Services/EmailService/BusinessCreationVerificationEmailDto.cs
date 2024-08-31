@@ -1,9 +1,8 @@
 ﻿namespace JobBoard.Infrastructure.Services.EmailService;
 
-public record BusinessClaimVerificationEmailDto(
+public record BusinessCreationVerificationEmailDto(
     Guid UserId,
     string UserEmail,
-    Guid BusinessId,
     string BusinessName,
     string Token,
     int ExpiryInMinutes

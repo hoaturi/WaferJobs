@@ -136,7 +136,8 @@ public class EmailService(
         {
             baseUrl = _emailOptions.BaseUrl,
             businessName = dto.BusinessName,
-            pin = dto.Pin
+            token = dto.Token,
+            expiry = $"{dto.ExpiryInMinutes} minutes"
         };
 
         email.AddTo(new EmailAddress(dto.UserEmail));
@@ -144,8 +145,53 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business claim verification PIN sent for business '{businessId}' to user {UserId}",
-            dto.BusinessId, dto.UserId);
+        logger.LogInformation("Business claim verification email sent to user {userId}", dto.UserId);
+    }
+
+    public async Task SendBusinessCreationVerificationAsync(BusinessCreationVerificationEmailDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessCreationVerificationTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            businessName = dto.BusinessName,
+            token = dto.Token,
+            expiry = $"{dto.ExpiryInMinutes} minutes"
+        };
+
+        email.AddTo(new EmailAddress(dto.UserEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business creation verification email sent to user {userId}", dto.UserId);
+    }
+
+    public async Task SendBusinessCreationReviewAsync(BusinessCreationReviewEmailDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessCreationReviewTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            businessName = dto.BusinessName
+        };
+
+        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business creation review email sent");
     }
 
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)

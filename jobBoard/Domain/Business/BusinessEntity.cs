@@ -21,5 +21,4 @@ public class BusinessEntity : BaseEntity
     public List<BusinessMemberEntity> Members { get; init; } = [];
     public List<JobPostEntity> JobPosts { get; init; } = [];
     public BusinessSizeEntity? BusinessSize { get; init; }
-    public List<BusinessClaimRequestEntity> ClaimAttempts { get; set; } = [];
 }

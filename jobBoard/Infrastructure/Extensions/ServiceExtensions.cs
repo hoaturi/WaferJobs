@@ -12,6 +12,7 @@ using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Persistence.Utils;
 using JobBoard.Infrastructure.Services.CurrentUserService;
+using JobBoard.Infrastructure.Services.DomainValidationService;
 using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.FileUploadService;
 using JobBoard.Infrastructure.Services.JobMetricService;
@@ -201,6 +202,7 @@ public static class ServiceExtensions
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IPaymentService, PaymentService>();
         services.AddSingleton<IFileUploadService, FileUploadService>();
+        services.AddSingleton<IDomainValidationService, DomainValidationService>();
 
         services.AddScoped<IJobMetricService, JobMetricService>();
 

@@ -17,7 +17,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<EmailChangeRequestEntity> EmailChangeRequests { get; set; }
     public DbSet<JobSeekerEntity> JobSeekers { get; set; }
     public DbSet<BusinessEntity> Businesses { get; set; }
-    public DbSet<BusinessClaimRequestEntity> BusinessClaimRequests { get; set; }
+    public DbSet<BusinessClaimTokenEntity> BusinessClaimTokens { get; set; }
+    public DbSet<BusinessCreationTokenEntity> BusinessCreationTokens { get; set; }
     public DbSet<BusinessMemberInvitationEntity> BusinessMemberInvitations { get; set; }
     public DbSet<BusinessMemberEntity> BusinessMembers { get; set; }
     public DbSet<BusinessSizeEntity> BusinessSizes { get; set; }

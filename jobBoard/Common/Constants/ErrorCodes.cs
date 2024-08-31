@@ -2,11 +2,13 @@
 
 public class ErrorCodes
 {
-    // Common Errors
+    // Common Errors (CO)
     public static readonly ErrorCodes InvalidPin = new("CO001");
     public static readonly ErrorCodes TooManyVerificationAttempts = new("CO002");
+    public static readonly ErrorCodes ValidationFailed = new("CO003");
+    public static readonly ErrorCodes InternalServerError = new("CO004");
 
-    // User Errors
+    // Authentication Errors (AU)
     public static readonly ErrorCodes EmailAlreadyInUse = new("AU001");
     public static readonly ErrorCodes InvalidCredentials = new("AU002");
     public static readonly ErrorCodes UserNotFound = new("AU003");
@@ -15,52 +17,31 @@ public class ErrorCodes
     public static readonly ErrorCodes EmailNotVerified = new("AU006");
     public static readonly ErrorCodes EmailChangeRequestNotFound = new("AU007");
     public static readonly ErrorCodes EmailChangeNotAllowed = new("AU008");
+    public static readonly ErrorCodes EmailUnChanged = new("AU009");
 
-    // Business Errors
+    // Business Errors (BU)
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
     public static readonly ErrorCodes BusinessNotFoundForUser = new("BU002");
-    public static readonly ErrorCodes BusinessClaimAlreadyExists = new("BU003");
-    public static readonly ErrorCodes BusinessAlreadyClaimed = new("BU004");
-    public static readonly ErrorCodes UserAlreadyMember = new("BU005");
-    public static readonly ErrorCodes BusinessClaimRequestNotFound = new("BU006");
-    public static readonly ErrorCodes BusinessClaimantNotFound = new("BU007");
-    public static readonly ErrorCodes BusinessClaimAlreadyVerified = new("BU008");
-    public static readonly ErrorCodes BusinessClaimInProgress = new("BU009");
-    public static readonly ErrorCodes UserNotBusinessMember = new("BU010");
-    public static readonly ErrorCodes InsufficientBusinessPermission = new("BU011");
-    public static readonly ErrorCodes InvitationEmailMismatch = new("BU012");
-    public static readonly ErrorCodes BusinessClaimExpired = new("BU013");
-    public static readonly ErrorCodes SelfInvitationNotAllowed = new("BU014");
-    public static readonly ErrorCodes InvalidOrExpiredInvitationToken = new("BU015");
-    public static readonly ErrorCodes UserCannotBeInvited = new("BU016");
-    public static readonly ErrorCodes InvitationNotFound = new("BU017");
-    public static readonly ErrorCodes EmailDomainMismatch = new("BU018");
+    public static readonly ErrorCodes UserAlreadyMember = new("BU003");
+    public static readonly ErrorCodes BusinessClaimRequestNotFound = new("BU004");
+    public static readonly ErrorCodes EmailDomainMismatch = new("BU005");
+    public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU006");
 
-    // Business Claim Errors
-    public static readonly ErrorCodes BusinessClaimNotConfirmed = new("BC001");
-    public static readonly ErrorCodes BusinessClaimAlreadyConfirmed = new("BC002");
-
-    // Job Post Errors
+    // Job Post Errors (JP)
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
     public static readonly ErrorCodes JobPostAlreadyDeleted = new("JP002");
     public static readonly ErrorCodes UnauthorizedJobPostAccess = new("JP003");
     public static readonly ErrorCodes JobPostAlreadyPublished = new("JP004");
 
-    // Conference Errors
-    public static readonly ErrorCodes ConferenceNotFound = new("CO001");
+    // Conference Errors (CF)
+    public static readonly ErrorCodes ConferenceNotFound = new("CF001");
 
-    // Validation Errors
-    public static readonly ErrorCodes ValidationFailed = new("VA001");
-
-    // Email Errors
+    // Email Errors (EM)
     public static readonly ErrorCodes EmailSendFailed = new("EM001");
 
-    // Job Alert Errors
+    // Job Alert Errors (JA)
     public static readonly ErrorCodes JobAlertAlreadyExists = new("JA001");
     public static readonly ErrorCodes JobAlertNotFound = new("JA002");
-
-    // Internal Server Errors
-    public static readonly ErrorCodes InternalServerError = new("IN001");
 
     private ErrorCodes(string code)
     {
