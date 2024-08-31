@@ -34,6 +34,6 @@ public class ChangePasswordCommandHandler(
         if (passwordUpdateError.Code == "PasswordMismatch")
             return AuthErrors.InvalidCurrentPassword;
 
-        throw new ChangePasswordFailedException(userId);
+        throw new InvalidOperationException("Failed to change password");
     }
 }

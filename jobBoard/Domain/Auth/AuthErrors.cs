@@ -31,4 +31,7 @@ public static class AuthErrors
     public static readonly Error EmailChangeNotAllowedForBusinessMembers =
         new(ErrorCodes.EmailChangeNotAllowed, HttpStatusCode.Forbidden,
             "Email change not allowed for users with business membership");
+
+    public static readonly Error EmailUnChanged =
+        new(ErrorCodes.EmailUnChanged, HttpStatusCode.BadRequest, "Email unchanged");
 }
