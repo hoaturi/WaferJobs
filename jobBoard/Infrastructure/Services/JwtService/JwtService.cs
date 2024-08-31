@@ -4,22 +4,15 @@ using System.Text;
 using JobBoard.Common.Constants;
 using JobBoard.Domain.Auth;
 using JobBoard.Infrastructure.Options;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JobBoard.Infrastructure.Services.JwtService;
 
-public class JwtService(IOptions<JwtOptions> options) : IJwtService
+public class JwtService(IOptions<JwtOptions> options, IDistributedCache cache) : IJwtService
 {
     private readonly JwtOptions _jwtOptions = options.Value;
-
-    public (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity,
-        IList<string> roles)
-    {
-        var accessToken = GenerateToken(userEntity, roles, JwtTypes.AccessToken);
-        var refreshToken = GenerateToken(userEntity, roles, JwtTypes.RefreshToken);
-        return (accessToken, refreshToken);
-    }
 
     public string GenerateAccessToken(ApplicationUserEntity userEntity, IList<string> roles)
     {
@@ -32,18 +25,46 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
         return await ValidateToken(token, key);
     }
 
-    public long GetExpiration(string token)
-    {
-        var parsedToken = ReadToken(token);
-        var expClaim = parsedToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Exp).Value;
-        return long.Parse(expClaim);
-    }
-
     public Guid GetUserId(string token)
     {
-        var parsedToken = ReadToken(token);
-        var userId = parsedToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+        var userId = ReadToken(token).Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
         return Guid.Parse(userId);
+    }
+
+    public async Task RevokeRefreshToken(string refreshToken, CancellationToken cancellationToken)
+    {
+        var cacheKey = CacheKeys.RevokedToken + refreshToken;
+        var cacheExpirationInSeconds = GetExpiration(refreshToken) - DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        await cache.SetStringAsync(
+            cacheKey,
+            RefreshTokenStatus.Revoked.ToString(),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheExpirationInSeconds)
+            },
+            cancellationToken
+        );
+    }
+
+    public async Task<bool> IsRefreshTokenRevoked(string refreshToken, CancellationToken cancellationToken)
+    {
+        var cacheKey = CacheKeys.RevokedToken + refreshToken;
+        return await cache.GetStringAsync(cacheKey, cancellationToken) is not null;
+    }
+
+    public (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity,
+        IList<string> roles)
+    {
+        var accessToken = GenerateToken(userEntity, roles, JwtTypes.AccessToken);
+        var refreshToken = GenerateToken(userEntity, roles, JwtTypes.RefreshToken);
+        return (accessToken, refreshToken);
+    }
+
+    private static long GetExpiration(string token)
+    {
+        var expClaim = ReadToken(token).Claims.First(x => x.Type == JwtRegisteredClaimNames.Exp).Value;
+        return long.Parse(expClaim);
     }
 
     private string GenerateToken(ApplicationUserEntity userEntity, IList<string> roles, JwtTypes jwtType)
@@ -60,12 +81,9 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims,
         JwtTypes jwtType)
     {
-        var expires = jwtType switch
-        {
-            JwtTypes.AccessToken => DateTime.Now.AddMinutes(double.Parse(_jwtOptions.AccessExpires)),
-            JwtTypes.RefreshToken => DateTime.Now.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
-            _ => throw new ArgumentException("Invalid JWT type", nameof(jwtType))
-        };
+        var expires = jwtType == JwtTypes.AccessToken
+            ? DateTime.Now.AddMinutes(double.Parse(_jwtOptions.AccessExpires))
+            : DateTime.Now.AddDays(double.Parse(_jwtOptions.RefreshExpires));
 
         return new JwtSecurityToken(
             _jwtOptions.Issuer,
@@ -117,7 +135,6 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
 
     private static JwtSecurityToken ReadToken(string token)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        return tokenHandler.ReadJwtToken(token);
+        return new JwtSecurityTokenHandler().ReadJwtToken(token);
     }
 }

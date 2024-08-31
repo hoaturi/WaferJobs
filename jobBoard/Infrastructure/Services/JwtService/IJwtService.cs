@@ -5,7 +5,7 @@ namespace JobBoard.Infrastructure.Services.JwtService;
 
 public interface IJwtService
 {
-    (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity, List<string> roles);
+    (string accessToken, string refreshToken) GenerateTokens(ApplicationUserEntity userEntity, IList<string> roles);
     string GenerateAccessToken(ApplicationUserEntity userEntity, IList<string> roles);
     Task<bool> ValidateToken(string token, JwtTypes jwtType);
     Task RevokeRefreshToken(string refreshToken, CancellationToken cancellationToken);

@@ -1,15 +1,12 @@
 using JobBoard.Common.Constants;
 using JobBoard.Common.Models;
-using JobBoard.Domain.Auth;
 using JobBoard.Infrastructure.Services.JwtService;
 using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace JobBoard.Features.Auth.SignOut;
 
 public class SignOutCommandHandler(
     IJwtService jwtService,
-    IDistributedCache cache,
     ILogger<SignOutCommandHandler> logger)
     : IRequestHandler<SignOutCommand, Result<Unit, Error>>
 {
@@ -18,47 +15,24 @@ public class SignOutCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var cacheKey = CacheKeys.RevokedToken + command.RefreshToken;
-
-        var isTokenRevoked = await cache.GetStringAsync(cacheKey, cancellationToken);
-        if (isTokenRevoked is not null)
+        var isTokenRevoked = await jwtService.IsRefreshTokenRevoked(command.RefreshToken, cancellationToken);
+        if (isTokenRevoked)
         {
-            logger.LogWarning("User tried to log out with an already revoked refresh token: {RefreshToken}",
-                command.RefreshToken);
+            logger.LogWarning("Attempt to log out with an already revoked refresh token");
             return Unit.Value;
         }
 
         var isTokenValid = await jwtService.ValidateToken(command.RefreshToken, JwtTypes.RefreshToken);
         if (!isTokenValid)
         {
-            logger.LogWarning("User tried to log out with an invalid refresh token: {RefreshToken}",
-                command.RefreshToken);
+            logger.LogWarning("Attempt to log out with an invalid refresh token");
             return Unit.Value;
         }
 
-        await RevokeRefreshToken(command.RefreshToken, cancellationToken);
+        await jwtService.RevokeRefreshToken(command.RefreshToken, cancellationToken);
 
-        logger.LogInformation("Successfully logged user out. The refresh token: {RefreshToken} was revoked.",
-            command.RefreshToken);
+        logger.LogInformation("User successfully logged out and refresh token revoked");
 
         return Unit.Value;
-    }
-
-    private async Task RevokeRefreshToken(string refreshToken, CancellationToken cancellationToken)
-    {
-        var cacheKey = CacheKeys.RevokedToken + refreshToken;
-        var tokenExpiration = jwtService.GetExpiration(refreshToken);
-        var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var cacheExpirationInSeconds = tokenExpiration - currentTimestamp;
-
-        await cache.SetStringAsync(
-            cacheKey,
-            RefreshTokenStatus.Revoked.ToString(),
-            new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheExpirationInSeconds)
-            },
-            cancellationToken
-        );
     }
 }
