@@ -1,4 +1,5 @@
-﻿using JobBoard.Common.Extensions;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Common.Extensions;
 using JobBoard.Features.Lookup.GetActiveJobCities;
 using JobBoard.Features.Lookup.GetActiveJobCountries;
 using JobBoard.Features.Lookup.GetActiveJobLocations;
@@ -6,6 +7,7 @@ using JobBoard.Features.Lookup.GetJobPostCount;
 using JobBoard.Features.Lookup.GetPopularKeywords;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace JobBoard.Features.Lookup;
 
@@ -15,6 +17,7 @@ namespace JobBoard.Features.Lookup;
 public class LookupsController(ISender sender) : ControllerBase
 {
     [HttpGet("active-job-countries")]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn5Minutes))]
     public async Task<IActionResult> GetActiveJobCountries()
     {
         var result = await sender.Send(new GetActiveJobCountriesQuery());
@@ -23,6 +26,7 @@ public class LookupsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("active-job-cities")]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn5Minutes))]
     public async Task<IActionResult> GetActiveJobCities()
     {
         var result = await sender.Send(new GetActiveJobCitiesQuery());
@@ -31,6 +35,7 @@ public class LookupsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("active-job-locations")]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn5Minutes))]
     public async Task<IActionResult> GetActiveJobLocations()
     {
         var result = await sender.Send(new GetActiveJobLocationsQuery());
@@ -39,6 +44,7 @@ public class LookupsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("popular-keywords")]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn1Day))]
     public async Task<IActionResult> GetPopularKeywords()
     {
         var result = await sender.Send(new GetPopularKeywordsQuery());
@@ -47,6 +53,7 @@ public class LookupsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("job-count")]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn5Minutes))]
     public async Task<IActionResult> GetTotalJobPostCount()
     {
         var result = await sender.Send(new GetJobPostCountQuery());

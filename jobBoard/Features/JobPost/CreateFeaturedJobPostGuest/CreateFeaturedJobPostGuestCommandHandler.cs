@@ -3,7 +3,6 @@ using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Services.CachingServices.LocationService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,6 @@ namespace JobBoard.Features.JobPost.CreateFeaturedJobPostGuest;
 
 public class CreateFeaturedJobPostGuestCommandHandler(
     IPaymentService paymentService,
-    ILocationService locationService,
     AppDbContext dbContext,
     ILogger<CreateFeaturedJobPostGuestCommandHandler> logger)
     : IRequestHandler<CreateFeaturedJobPostGuestCommand, Result<CreateJobPostCheckoutSessionResponse, Error>>
@@ -84,7 +82,15 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(cityName))
-            jobPost.City = await locationService.GetOrCreateCityAsync(cityName, cancellationToken);
+        {
+            var normalizedCity = cityName.Trim().ToLowerInvariant().Replace(" ", "-");
+
+            var city = await dbContext.Cities
+                           .FirstOrDefaultAsync(c => c.Slug == normalizedCity, cancellationToken) ??
+                       new CityEntity { Label = cityName, Slug = normalizedCity };
+
+            jobPost.City = city;
+        }
     }
 
     private async Task UpdateJobPostTagsAsync(JobPostEntity jobPost, List<string>? tags,

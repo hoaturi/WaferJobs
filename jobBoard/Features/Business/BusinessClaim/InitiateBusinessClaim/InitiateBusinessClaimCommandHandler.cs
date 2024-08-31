@@ -39,7 +39,7 @@ public class InitiateBusinessClaimCommandHandler(
             .AsNoTracking()
             .AnyAsync(x => x.UserId == userId, cancellationToken);
 
-        if (isUserExistingMember) throw new DuplicateUserMembershipException(userId);
+        if (isUserExistingMember) throw new DuplicateMembershipException(userId);
 
         var userEmailDomain = user.Email!.Split('@')[1];
         if (business.Domain != userEmailDomain) throw new EmailDomainMismatchException(userId, business.Id);

@@ -1,5 +1,5 @@
-﻿using JobBoard.Infrastructure.Services.CachingServices.LocationService;
+﻿namespace JobBoard.Features.Lookup.GetActiveJobCities;
 
-namespace JobBoard.Features.Lookup.GetActiveJobCities;
+public record ActiveJobCityDto(int Id, string Label, string Slug);
 
-public record GetActiveJobCitiesResponse(IReadOnlyList<CityDto> Cities);
+public record GetActiveJobCitiesResponse(List<ActiveJobCityDto> Cities);

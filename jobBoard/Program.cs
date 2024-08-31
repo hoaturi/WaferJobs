@@ -29,6 +29,7 @@ app.UseHangfireJobs();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseOutputCache();
 
 app.MapControllers();
 

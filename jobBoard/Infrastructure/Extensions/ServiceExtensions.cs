@@ -7,14 +7,10 @@ using JobBoard.Common.Exceptions;
 using JobBoard.Common.Middlewares;
 using JobBoard.Common.Security;
 using JobBoard.Domain.Auth;
+using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Persistence.Utils;
-using JobBoard.Infrastructure.Services.CachingServices.ConferenceService;
-using JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
-using JobBoard.Infrastructure.Services.CachingServices.JobPostCountService;
-using JobBoard.Infrastructure.Services.CachingServices.LocationService;
-using JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.FileUploadService;
@@ -43,6 +39,7 @@ public static class ServiceExtensions
             .AddDbContexts(configuration)
             .AddRedisCache(configuration)
             .AddAuthentications(configuration)
+            .AddOutputCaches()
             .AddHangfire(configuration)
             .AddSendGrid(configuration)
             .AddInfrastructureServices()
@@ -150,6 +147,21 @@ public static class ServiceExtensions
         return services;
     }
 
+    private static IServiceCollection AddOutputCaches(this IServiceCollection services)
+    {
+        services.AddOutputCache(options =>
+        {
+            foreach (OutputCacheKeys cacheKey in Enum.GetValues(typeof(OutputCacheKeys)))
+            {
+                var policyName = cacheKey.ToString();
+                var minutes = (int)cacheKey;
+
+                options.AddPolicy(policyName, builder => builder.Expire(TimeSpan.FromMinutes(minutes)));
+            }
+        });
+        return services;
+    }
+
     private static void ConfigureIdentityOptions(IdentityOptions options)
     {
         options.Password.RequireDigit = false;
@@ -190,12 +202,7 @@ public static class ServiceExtensions
         services.AddSingleton<IPaymentService, PaymentService>();
         services.AddSingleton<IFileUploadService, FileUploadService>();
 
-        services.AddScoped<ILocationService, LocationService>();
-        services.AddScoped<IPopularKeywordsService, PopularKeywordsService>();
-        services.AddScoped<IJobPostCountService, JobPostCountService>();
-        services.AddScoped<ICurrencyService, CurrencyService>();
         services.AddScoped<IJobMetricService, JobMetricService>();
-        services.AddScoped<IConferenceService, ConferenceService>();
 
         services.AddScoped<IEntityConstraintChecker, EntityConstraintChecker>();
         return services;
@@ -204,8 +211,10 @@ public static class ServiceExtensions
     private static IServiceCollection AddTypedHttpClient(this IServiceCollection services, IConfiguration configuration)
     {
         var currencyOptions = configuration.GetSection(CurrencyOptions.Key).Get<CurrencyOptions>()!;
-        services.AddHttpClient<ICurrencyService, CurrencyService>(
-            c => { c.BaseAddress = new Uri(currencyOptions.BaseUrl); });
+
+        services.AddHttpClient<CurrencyExchangeRateUpdater>()
+            .ConfigureHttpClient(client => { client.BaseAddress = new Uri(currencyOptions.BaseUrl); });
+
         return services;
     }
 

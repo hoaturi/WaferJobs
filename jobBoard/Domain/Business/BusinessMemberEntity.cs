@@ -13,6 +13,7 @@ public class BusinessMemberEntity : BaseEntity
     public required string Title { get; set; }
     public bool IsAdmin { get; set; }
     public DateTime JoinedAt { get; set; }
+    public bool IsActive { get; set; }
     public BusinessEntity Business { get; set; } = null!;
     public ApplicationUserEntity User { get; set; } = null!;
 }

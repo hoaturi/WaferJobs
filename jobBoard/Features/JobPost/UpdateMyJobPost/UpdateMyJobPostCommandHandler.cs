@@ -2,7 +2,6 @@
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Services.CachingServices.LocationService;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +10,7 @@ namespace JobBoard.Features.JobPost.UpdateMyJobPost;
 
 public class UpdateMyJobPostCommandHandler(
     ICurrentUserService currentUser,
-    AppDbContext appDbContext,
-    ILocationService locationService,
+    AppDbContext dbContext,
     ILogger<UpdateMyJobPostCommandHandler> logger)
     : IRequestHandler<UpdateMyJobPostCommand, Result<Unit, Error>>
 {
@@ -20,7 +18,7 @@ public class UpdateMyJobPostCommandHandler(
     {
         var userId = currentUser.GetUserId();
 
-        var jobPost = await appDbContext.JobPosts
+        var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
             .ThenInclude(b => b!.Members)
             .Include(j => j.City)
@@ -63,8 +61,19 @@ public class UpdateMyJobPostCommandHandler(
         CancellationToken cancellationToken)
     {
         if (jobPost.City?.Label != cityName && !string.IsNullOrWhiteSpace(cityName))
-            jobPost.City = await locationService.GetOrCreateCityAsync(cityName, cancellationToken);
-        else if (string.IsNullOrWhiteSpace(cityName)) jobPost.City = null;
+        {
+            var normalizedCity = cityName.Trim().ToLowerInvariant().Replace(" ", "-");
+
+            var city = await dbContext.Cities
+                           .FirstOrDefaultAsync(c => c.Slug == normalizedCity, cancellationToken) ??
+                       new CityEntity { Label = cityName, Slug = normalizedCity };
+
+            jobPost.City = city;
+        }
+        else if (string.IsNullOrWhiteSpace(cityName))
+        {
+            jobPost.City = null;
+        }
     }
 
     private async Task UpdateJobPostTagsAsync(JobPostEntity jobPost, List<string>? tags,
@@ -83,7 +92,7 @@ public class UpdateMyJobPostCommandHandler(
         {
             jobPost.Tags.Clear();
 
-            var dbTags = await appDbContext.Tags
+            var dbTags = await dbContext.Tags
                 .Where(t => normalizedTags.Contains(t.Slug))
                 .ToListAsync(cancellationToken);
 

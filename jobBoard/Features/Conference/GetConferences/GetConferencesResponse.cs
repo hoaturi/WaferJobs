@@ -1,7 +1,15 @@
-﻿using JobBoard.Infrastructure.Services.CachingServices.ConferenceService;
+﻿namespace JobBoard.Features.Conference.GetConferences;
 
-namespace JobBoard.Features.Conference.GetConferences;
+public record ConferenceDto(
+    string Title,
+    string Organiser,
+    string OrganiserEmail,
+    string Location,
+    string WebsiteUrl,
+    DateTime StartDate,
+    DateTime EndDate
+);
 
 public record GetConferencesResponse(
-    IReadOnlyList<ConferenceDto> Conferences
+    List<ConferenceDto> Conferences
 );

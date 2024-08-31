@@ -1,7 +1,10 @@
-﻿using JobBoard.Infrastructure.Services.CachingServices.PopularKeywordsService;
+﻿namespace JobBoard.Features.Lookup.GetPopularKeywords;
 
-namespace JobBoard.Features.Lookup.GetPopularKeywords;
+public record PopularKeywordDto(
+    string Label,
+    int Count
+);
 
 public record GetPopularKeywordsResponse(
-    IReadOnlyList<PopularKeywordDto> Keywords
+    List<PopularKeywordDto> Keywords
 );

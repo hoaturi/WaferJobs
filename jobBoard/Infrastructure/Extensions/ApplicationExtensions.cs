@@ -3,7 +3,6 @@ using JobBoard.Common.Middlewares;
 using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
 using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
-using JobBoard.Infrastructure.BackgroundJobs.LookupDataCacheUpdater;
 using JobBoard.Infrastructure.BackgroundJobs.PersistApplyCountJob;
 
 namespace JobBoard.Infrastructure.Extensions;
@@ -25,12 +24,6 @@ public static class ApplicationExtensions
 
         RecurringJob.AddOrUpdate<FeaturedJobExpirationChecker>(
             "FeaturedJobExpirationChecker",
-            x => x.ExecuteAsync(CancellationToken.None),
-            Cron.Hourly
-        );
-
-        RecurringJob.AddOrUpdate<LookupDataCacheUpdater>(
-            "LookupDataCacheUpdater",
             x => x.ExecuteAsync(CancellationToken.None),
             Cron.Hourly
         );

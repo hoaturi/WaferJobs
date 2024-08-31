@@ -1,22 +1,18 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.JobPost;
 using JobBoard.Infrastructure.Persistence;
-using JobBoard.Infrastructure.Services.CachingServices.CurrencyService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Features.JobPost.GetJobPostList;
 
-public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService currencyService)
+public class GetJobPostListQueryHandler(AppDbContext dbContext)
     : IRequestHandler<GetJobPostListQuery, Result<GetJobPostListResponse, Error>>
 {
     public async Task<Result<GetJobPostListResponse, Error>> Handle(GetJobPostListQuery query,
         CancellationToken cancellationToken)
     {
         var jobPostListQuery = BuildJobPostListQuery(query);
-
-        if (query.MinSalary is not null && query.MinSalary.Value > 0)
-            jobPostListQuery = await ApplySalaryFilterAsync(query.MinSalary.Value, jobPostListQuery, cancellationToken);
 
         var totalJobPostCount = await jobPostListQuery.CountAsync(cancellationToken);
 
@@ -95,22 +91,10 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext, ICurrencyService
             jobPostListQuery = jobPostListQuery.Where(j => j.PublishedAt >= postedDate);
         }
 
-        return jobPostListQuery;
-    }
-
-    private async Task<IQueryable<JobPostEntity>> ApplySalaryFilterAsync(
-        int minSalary,
-        IQueryable<JobPostEntity> jobPostListQuery,
-        CancellationToken cancellationToken)
-    {
-        var currencies = await currencyService.GetExchangeRatesAsync(cancellationToken);
-        var usdRate = currencies.First(c => c.Code == "USD");
-
-        var minSalaryInUsd = minSalary / usdRate.Rate;
-
-        jobPostListQuery = jobPostListQuery.Where(j =>
-            j.Currency != null && j.MinSalary != null &&
-            j.MinSalary.Value / j.Currency.Rate >= minSalaryInUsd);
+        if (query.MinSalary is not null && query.MinSalary.Value > 0)
+            jobPostListQuery = jobPostListQuery.Where(j =>
+                j.Currency != null && j.MinSalary != null &&
+                j.MinSalary.Value / j.Currency.Rate >= query.MinSalary.Value);
 
         return jobPostListQuery;
     }
