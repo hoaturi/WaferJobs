@@ -15,7 +15,7 @@ public class GetPendingConferenceSubmissionsQueryHandler(
         var pendingSubmissions = await dbContext.Conferences
             .AsNoTracking()
             .Where(c => !c.IsVerified)
-            .Select(c => new PendingConference(
+            .Select(c => new PendingConferenceDto(
                 c.Id,
                 c.ContactEmail,
                 c.ContactName,

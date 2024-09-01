@@ -1,6 +1,6 @@
 ﻿namespace JobBoard.Features.Admin.Conference.GetPendingConferenceSubmissions;
 
-public record PendingConference(
+public record PendingConferenceDto(
     int Id,
     string ContactEmail,
     string ContactName,
@@ -14,5 +14,5 @@ public record PendingConference(
 );
 
 public record GetPendingConferencesResponse(
-    List<PendingConference> Conferences
+    List<PendingConferenceDto> Conferences
 );

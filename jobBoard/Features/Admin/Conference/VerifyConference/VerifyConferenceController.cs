@@ -13,7 +13,8 @@ public class VerifyConferenceController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Admin))]
     [HttpPatch]
-    public async Task<IActionResult> VerifyConference([FromRoute] int conferenceId, [FromBody] VerifyConferenceDto dto)
+    public async Task<IActionResult> VerifyConference([FromRoute] int conferenceId,
+        [FromBody] VerifyConferenceRequestDto dto)
     {
         var command = new VerifyConferenceCommand(conferenceId, dto.IsApproved);
         var result = await sender.Send(command);
