@@ -194,6 +194,30 @@ public class EmailService(
         logger.LogInformation("Business creation review email sent");
     }
 
+    public async Task SendBusinessReviewResultAsync(BusinessReviewResultEmailDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = dto.IsApproved
+                ? _sendGridOptions.BusinessReviewApprovedTemplateId
+                : _sendGridOptions.BusinessReviewRejectedTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = dto.IsApproved ? _emailOptions.BaseUrl : null,
+            businessName = dto.BusinessName
+        };
+
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business review result email sent for business {BusinessId}", dto.BusinessId);
+    }
+
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
     {
         var email = new SendGridMessage
@@ -214,52 +238,5 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
 
         logger.LogInformation("Conference submission review email sent to: {Email}", _emailOptions.SenderEmail);
-    }
-
-    public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessMemberInvitationTemplateId
-        };
-
-        var templateData = new
-        {
-            baseUrl = _emailOptions.BaseUrl,
-            businessName = dto.BusinessName,
-            inviterName = dto.InviterName,
-            token = dto.Token
-        };
-
-        email.AddTo(new EmailAddress(dto.RecipientEmail));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Business member invitation email sent to: {Email}", dto.RecipientEmail);
-    }
-
-    public async Task SendPendingConferenceSubmissionReminderAsync(PendingConferenceSubmissionReminderDto dto)
-    {
-        var email = new SendGridMessage
-        {
-            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.PendingConferenceSubmissionReminderTemplateId
-        };
-
-        var templateData = new
-        {
-            baseUrl = _emailOptions.BaseUrl,
-            conferences = dto.Conferences
-        };
-
-        email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
-        email.SetTemplateData(templateData);
-
-        await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Pending conference submission reminder email sent to: {Email}",
-            _emailOptions.SenderEmail);
     }
 }

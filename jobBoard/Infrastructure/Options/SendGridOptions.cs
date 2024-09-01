@@ -14,6 +14,8 @@ public class SendGridOptions
     [Required] public required string BusinessClaimVerificationTemplateId { get; init; }
     [Required] public required string BusinessCreationVerificationTemplateId { get; init; }
     [Required] public required string BusinessCreationReviewTemplateId { get; init; }
+    [Required] public required string BusinessReviewApprovedTemplateId { get; init; }
+    [Required] public required string BusinessReviewRejectedTemplateId { get; init; }
     [Required] public required string BusinessMemberInvitationTemplateId { get; init; }
     [Required] public required string ConferenceSubmissionReviewTemplateId { get; init; }
     [Required] public required string PendingConferenceSubmissionReminderTemplateId { get; init; }

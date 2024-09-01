@@ -9,6 +9,7 @@ public interface IEmailService
     Task SendBusinessClaimVerificationAsync(BusinessClaimVerificationEmailDto dto);
     Task SendBusinessCreationVerificationAsync(BusinessCreationVerificationEmailDto dto);
     Task SendBusinessCreationReviewAsync(BusinessCreationReviewEmailDto dto);
+    Task SendBusinessReviewResultAsync(BusinessReviewResultEmailDto dto);
 
     Task SendConferenceSubmissionReviewAsync(
         ConferenceSubmissionReviewDto dto);
