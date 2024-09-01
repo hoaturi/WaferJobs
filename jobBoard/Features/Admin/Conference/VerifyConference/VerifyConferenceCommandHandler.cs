@@ -14,10 +14,9 @@ public class VerifyConferenceCommandHandler(
     public async Task<Result<Unit, Error>> Handle(VerifyConferenceCommand command, CancellationToken cancellationToken)
     {
         var conference =
-            await dbContext.Conferences.FirstOrDefaultAsync(c => c.Id == command.ConferenceId, cancellationToken);
-
-        if (conference is null)
-            throw new ConferenceNotFoundException(command.ConferenceId);
+            await dbContext.Conferences.FirstOrDefaultAsync(
+                c => c.Id == command.ConferenceId && !c.IsVerified && !c.IsPublished,
+                cancellationToken) ?? throw new ConferenceNotFoundException(command.ConferenceId);
 
         conference.IsVerified = true;
         conference.IsPublished = command.IsApproved;
