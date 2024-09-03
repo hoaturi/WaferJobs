@@ -3,6 +3,7 @@ using JobBoard.Common.Models;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,7 @@ public class VerifyBusinessCommandHandler(
         var member =
             await dbContext.BusinessMembers.Include(m => m.User)
                 .Where(m => m.BusinessId == business.Id && m.IsAdmin && !m.IsActive)
-                .FirstOrDefaultAsync(cancellationToken) ?? throw new BusinessMemberNotFoundException(business.Id);
+                .FirstOrDefaultAsync(cancellationToken) ?? throw new BusinessMembershipNotFoundException(business.Id);
 
         if (command.IsApproved)
         {

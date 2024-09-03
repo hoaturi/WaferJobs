@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using JobBoard.Infrastructure.Options;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -66,7 +67,7 @@ public class EmailService(
         logger.LogInformation("Password reset email sent to: {Email}", dto.User.Email);
     }
 
-    public async Task SendEmailChangeVerificationAsync(EmailChangeVerificationDto dto)
+    public async Task SendEmailChangeVerificationAsync(EmailChangeVerificationEmailDto dto)
     {
         var email = new SendGridMessage
         {
@@ -218,7 +219,32 @@ public class EmailService(
         logger.LogInformation("Business review result email sent for business {BusinessId}", dto.BusinessId);
     }
 
-    public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewDto dto)
+    public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationEmailDto dto)
+    {
+        var email = new SendGridMessage
+        {
+            From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
+            TemplateId = _sendGridOptions.BusinessMemberInvitationTemplateId
+        };
+
+        var templateData = new
+        {
+            baseUrl = _emailOptions.BaseUrl,
+            businessName = dto.BusinessName,
+            inviterName = dto.InviterName,
+            token = dto.Token,
+            expiry = $"{dto.Expiry} days"
+        };
+
+        email.AddTo(new EmailAddress(dto.RecipientEmail));
+        email.SetTemplateData(templateData);
+
+        await emailClient.SendEmailAsync(email);
+
+        logger.LogInformation("Business member invitation email sent for business: {BusinessId}", dto.BusinessId);
+    }
+
+    public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewEmailDto dto)
     {
         var email = new SendGridMessage
         {

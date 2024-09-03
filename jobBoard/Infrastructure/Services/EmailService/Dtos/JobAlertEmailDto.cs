@@ -1,6 +1,6 @@
 ﻿using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
 
-namespace JobBoard.Infrastructure.Services.EmailService;
+namespace JobBoard.Infrastructure.Services.EmailService.Dtos;
 
 public record JobAlertEmailDto(
     string RecipientEmail,

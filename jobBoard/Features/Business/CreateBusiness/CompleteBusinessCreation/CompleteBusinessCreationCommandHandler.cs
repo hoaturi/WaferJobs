@@ -5,6 +5,7 @@ using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

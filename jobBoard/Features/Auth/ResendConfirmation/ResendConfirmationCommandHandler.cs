@@ -2,6 +2,7 @@
 using JobBoard.Common.Models;
 using JobBoard.Domain.Auth;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

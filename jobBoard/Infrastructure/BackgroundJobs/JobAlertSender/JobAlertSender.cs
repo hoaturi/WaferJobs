@@ -4,6 +4,7 @@ using JobBoard.Common.Extensions;
 using JobBoard.Domain.JobAlert;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;

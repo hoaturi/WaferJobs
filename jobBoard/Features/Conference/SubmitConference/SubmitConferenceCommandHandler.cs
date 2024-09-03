@@ -3,6 +3,7 @@ using JobBoard.Common.Models;
 using JobBoard.Domain.Conference;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 
 namespace JobBoard.Features.Conference.SubmitConference;
@@ -34,7 +35,7 @@ public class SubmitConferenceCommandHandler(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         backgroundJobClient.Enqueue<IEmailService>(x =>
-            x.SendConferenceSubmissionReviewAsync(new ConferenceSubmissionReviewDto(newConference.Title)));
+            x.SendConferenceSubmissionReviewAsync(new ConferenceSubmissionReviewEmailDto(newConference.Title)));
 
         logger.LogInformation("A new conference has been submitted with ID: {ConferenceId}", newConference.Id);
 
