@@ -17,4 +17,10 @@ public static class BusinessErrors
         HttpStatusCode.BadRequest,
         "Invalid creation token."
     );
+
+    public static readonly Error InvalidInvitationToken = new(
+        ErrorCodes.InvalidToken,
+        HttpStatusCode.BadRequest,
+        "Invalid invitation token."
+    );
 }
