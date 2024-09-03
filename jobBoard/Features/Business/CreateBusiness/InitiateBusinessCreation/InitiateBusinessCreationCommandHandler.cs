@@ -46,7 +46,7 @@ public class InitiateBusinessCreationCommandHandler(
             WebsiteUrl = creationCommand.WebsiteUrl,
             Domain = businessDomain,
             Token = Guid.NewGuid().ToBase64String(),
-            ExpiresAt = DateTime.UtcNow.AddMinutes(TokenConstants.BusinessTokenExpirationInMinutes)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(TokenConstants.ExpiresIn30Minutes)
         };
 
         dbContext.BusinessCreationTokens.Add(token);
@@ -56,7 +56,7 @@ public class InitiateBusinessCreationCommandHandler(
         var emailDto =
             new BusinessCreationVerificationEmailDto(userId, userEmail, creationCommand.Name,
                 encodedToken,
-                TokenConstants.BusinessTokenExpirationInMinutes);
+                TokenConstants.ExpiresIn30Minutes);
 
         backgroundJobClient.Enqueue<IEmailService>(x =>
             x.SendBusinessCreationVerificationAsync(emailDto));

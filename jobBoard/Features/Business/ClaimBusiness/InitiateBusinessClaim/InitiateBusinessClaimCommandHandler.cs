@@ -52,7 +52,7 @@ public class InitiateBusinessClaimCommandHandler(
             BusinessId = business.Id,
             UserId = userId,
             Token = Guid.NewGuid().ToBase64String(),
-            ExpiresAt = DateTime.UtcNow.AddMinutes(TokenConstants.BusinessTokenExpirationInMinutes)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(TokenConstants.ExpiresIn30Minutes)
         };
 
         dbContext.BusinessClaimTokens.Add(claimToken);
@@ -66,7 +66,7 @@ public class InitiateBusinessClaimCommandHandler(
             business.Id,
             business.Name,
             encodedToken,
-            TokenConstants.BusinessTokenExpirationInMinutes
+            TokenConstants.ExpiresIn30Minutes
         );
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessClaimVerificationAsync(emailDto));
