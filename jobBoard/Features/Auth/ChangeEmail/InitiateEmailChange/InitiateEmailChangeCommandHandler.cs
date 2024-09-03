@@ -6,6 +6,7 @@ using JobBoard.Domain.Auth.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.EmailService;
+using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ public class InitiateEmailChangeCommandHandler(
         if (await dbContext.BusinessMembers.AsNoTracking().AnyAsync(x => x.UserId == userId, cancellationToken))
             return AuthErrors.EmailChangeNotAllowedForBusinessMembers;
 
-        if (await userManager.FindByEmailAsync(command.NewEmail) is not null)
+        if (await dbContext.Users.AsNoTracking().AnyAsync(x => x.Email == command.NewEmail, cancellationToken))
             return AuthErrors.EmailAlreadyInUse;
 
         var pin = new Random().Next(PinConstants.MinValue, PinConstants.MaxValue);
@@ -52,7 +53,7 @@ public class InitiateEmailChangeCommandHandler(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendEmailChangeVerificationAsync(
-            new EmailChangeVerificationDto(command.NewEmail, pin)));
+            new EmailChangeVerificationEmailDto(command.NewEmail, pin)));
 
         return Unit.Value;
     }
