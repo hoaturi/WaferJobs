@@ -26,7 +26,7 @@ public class ErrorCodes
     public static readonly ErrorCodes BusinessClaimRequestNotFound = new("BU004");
     public static readonly ErrorCodes EmailDomainMismatch = new("BU005");
     public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU006");
-    public static readonly ErrorCodes BusinessMemberNotFound = new("BU007");
+    public static readonly ErrorCodes BusinessMembershipNotFound = new("BU007");
 
     // Job Post Errors (JP)
     public static readonly ErrorCodes JobPostNotFound = new("JP001");

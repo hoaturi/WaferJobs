@@ -7,7 +7,6 @@ public class BusinessMemberInvitationEntity : BaseEntity
     public Guid Id { get; set; }
     public Guid BusinessId { get; set; }
     public Guid InviterId { get; set; }
-    public required string InviterName { get; set; }
     public required string InviteeEmail { get; set; }
     public required string Token { get; set; }
     public bool IsAccepted { get; set; }

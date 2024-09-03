@@ -11,9 +11,6 @@ public class BusinessMemberInvitationConfiguration : IEntityTypeConfiguration<Bu
         builder.Property(b => b.InviteeEmail)
             .HasMaxLength(254);
 
-        builder.Property(b => b.InviterName)
-            .HasMaxLength(100);
-
         builder.HasIndex(b => b.Token)
             .IsUnique();
 
