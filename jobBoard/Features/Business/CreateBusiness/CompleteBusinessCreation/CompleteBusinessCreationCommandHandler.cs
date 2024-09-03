@@ -44,7 +44,7 @@ public class CompleteBusinessCreationCommandHandler(
             IsActive = false
         };
 
-        var member = new BusinessMemberEntity
+        var member = new BusinessMembershipEntity
         {
             UserId = userId,
             BusinessId = business.Id,

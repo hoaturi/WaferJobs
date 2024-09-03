@@ -35,7 +35,7 @@ public class InitiateBusinessCreationCommandHandler(
         if (await domainValidationService.IsPublicEmailDomainAsync(userEmailDomain))
             throw new PublicEmailDomainNotAllowedException(userId);
 
-        var userHasMembership = await dbContext.BusinessMembers.AsNoTracking()
+        var userHasMembership = await dbContext.BusinessMemberships.AsNoTracking()
             .AnyAsync(b => b.UserId == userId, cancellationToken);
         if (userHasMembership) throw new DuplicateMembershipException(userId);
 

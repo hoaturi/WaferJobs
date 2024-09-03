@@ -13,5 +13,5 @@ public class BusinessMemberInvitationEntity : BaseEntity
     public DateTime? AcceptedAt { get; set; }
     public DateTime ExpiresAt { get; set; }
     public BusinessEntity Business { get; set; } = null!;
-    public BusinessMemberEntity Inviter { get; set; } = null!;
+    public BusinessMembershipEntity Inviter { get; set; } = null!;
 }

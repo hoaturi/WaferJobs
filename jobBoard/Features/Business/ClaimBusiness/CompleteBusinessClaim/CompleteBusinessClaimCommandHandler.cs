@@ -33,7 +33,7 @@ public class CompleteBusinessClaimCommandHandler(
         token.IsUsed = true;
         token.UsedAt = DateTime.UtcNow;
 
-        var newMember = new BusinessMemberEntity
+        var newMember = new BusinessMembershipEntity
         {
             BusinessId = token.BusinessId,
             UserId = userId,
@@ -47,7 +47,7 @@ public class CompleteBusinessClaimCommandHandler(
         business.IsClaimed = true;
         token.IsUsed = true;
 
-        dbContext.BusinessMembers.Add(newMember);
+        dbContext.BusinessMemberships.Add(newMember);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

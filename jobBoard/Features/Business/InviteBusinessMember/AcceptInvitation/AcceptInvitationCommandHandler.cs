@@ -44,7 +44,7 @@ public class AcceptInvitationCommandHandler(
         var confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmEmailDto = new ConfirmEmailDto(user.Email, user.Id, confirmToken);
 
-        var newMembership = new BusinessMemberEntity
+        var newMembership = new BusinessMembershipEntity
         {
             BusinessId = invitation.BusinessId,
             UserId = user.Id,
@@ -53,7 +53,7 @@ public class AcceptInvitationCommandHandler(
             Title = command.Title
         };
 
-        dbContext.BusinessMembers.Add(newMembership);
+        dbContext.BusinessMemberships.Add(newMembership);
         invitation.IsAccepted = true;
         invitation.AcceptedAt = DateTime.UtcNow;
 

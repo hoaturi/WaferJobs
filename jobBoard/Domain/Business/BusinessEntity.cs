@@ -8,17 +8,17 @@ public class BusinessEntity : BaseEntity
     public Guid Id { get; init; }
     public int? BusinessSizeId { get; set; }
     public required string Name { get; set; }
+    public required string WebsiteUrl { get; set; }
+    public required string Domain { get; set; }
     public string? LogoUrl { get; set; }
     public string? Description { get; set; }
     public string? Location { get; set; }
     public string? StripeCustomerId { get; set; }
-    public string? WebsiteUrl { get; set; }
     public string? TwitterUrl { get; set; }
     public string? LinkedinUrl { get; set; }
-    public string? Domain { get; set; }
     public bool IsClaimed { get; set; }
     public bool IsActive { get; set; }
-    public List<BusinessMemberEntity> Members { get; init; } = [];
+    public List<BusinessMembershipEntity> Members { get; init; } = [];
     public List<JobPostEntity> JobPosts { get; init; } = [];
     public BusinessSizeEntity? BusinessSize { get; init; }
 }

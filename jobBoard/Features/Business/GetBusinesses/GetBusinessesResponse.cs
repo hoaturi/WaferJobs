@@ -3,8 +3,8 @@
 public record BusinessListItem(
     Guid Id,
     string Name,
-    string? LogoUrl,
-    bool IsClaimed
+    string Domain,
+    string? LogoUrl
 );
 
 public record GetBusinessesResponse(

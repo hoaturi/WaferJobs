@@ -25,7 +25,7 @@ public class VerifyBusinessCommandHandler(
             throw new BusinessNotFoundException(command.BusinessId);
 
         var member =
-            await dbContext.BusinessMembers.Include(m => m.User)
+            await dbContext.BusinessMemberships.Include(m => m.User)
                 .Where(m => m.BusinessId == business.Id && m.IsAdmin && !m.IsActive)
                 .FirstOrDefaultAsync(cancellationToken) ?? throw new BusinessMembershipNotFoundException(business.Id);
 
@@ -37,7 +37,7 @@ public class VerifyBusinessCommandHandler(
         }
         else
         {
-            dbContext.BusinessMembers.Remove(member);
+            dbContext.BusinessMemberships.Remove(member);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

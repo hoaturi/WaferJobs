@@ -28,7 +28,7 @@ public class SendInvitationCommandHandler(
 
         var userId = currentUserService.GetUserId();
 
-        var membership = await dbContext.BusinessMembers
+        var membership = await dbContext.BusinessMemberships
                              .AsNoTracking()
                              .Where(x => x.UserId == userId && x.IsActive && x.IsAdmin)
                              .FirstOrDefaultAsync(cancellationToken)

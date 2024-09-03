@@ -13,7 +13,7 @@ public class GetBusinessesQueryHandler(
         CancellationToken cancellationToken)
     {
         var businessQuery = dbContext.Businesses.AsNoTracking()
-            .Select(b => new BusinessListItem(b.Id, b.Name, b.LogoUrl, b.IsClaimed));
+            .Select(b => new BusinessListItem(b.Id, b.Name, b.Domain, b.LogoUrl));
 
         var businesses = await businessQuery.ToListAsync(cancellationToken);
 

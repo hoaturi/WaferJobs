@@ -33,7 +33,7 @@ public class InitiateEmailChangeCommandHandler(
         if (!await userManager.CheckPasswordAsync(user, command.Password))
             return AuthErrors.InvalidCurrentPassword;
 
-        if (await dbContext.BusinessMembers.AsNoTracking().AnyAsync(x => x.UserId == userId, cancellationToken))
+        if (await dbContext.BusinessMemberships.AsNoTracking().AnyAsync(x => x.UserId == userId, cancellationToken))
             return AuthErrors.EmailChangeNotAllowedForBusinessMembers;
 
         if (await dbContext.Users.AsNoTracking().AnyAsync(x => x.Email == command.NewEmail, cancellationToken))

@@ -20,7 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<BusinessClaimTokenEntity> BusinessClaimTokens { get; set; }
     public DbSet<BusinessCreationTokenEntity> BusinessCreationTokens { get; set; }
     public DbSet<BusinessMemberInvitationEntity> BusinessMemberInvitations { get; set; }
-    public DbSet<BusinessMemberEntity> BusinessMembers { get; set; }
+    public DbSet<BusinessMembershipEntity> BusinessMemberships { get; set; }
     public DbSet<BusinessSizeEntity> BusinessSizes { get; set; }
     public DbSet<JobPostEntity> JobPosts { get; set; }
     public DbSet<TagEntity> Tags { get; set; }

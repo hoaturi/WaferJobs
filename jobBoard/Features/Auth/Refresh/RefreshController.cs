@@ -19,6 +19,8 @@ public class RefreshController(ISender sender) : ControllerBase
 
         var result = await sender.Send(new RefreshCommand(refreshToken));
 
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : this.HandleError(result.Error);
     }
 }

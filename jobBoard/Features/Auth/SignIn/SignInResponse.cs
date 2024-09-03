@@ -1,5 +1,5 @@
 namespace JobBoard.Features.Auth.SignIn;
 
-public record SignInResponse(UserResponse User, string AccessToken, string RefreshToken);
+public record SignInResponse(UserDto User, string AccessToken, string RefreshToken);
 
-public record UserResponse(Guid Id, string Email, IList<string> Roles);
+public record UserDto(Guid Id, string Email, IList<string> Roles, bool HasCompletedOnboarding);

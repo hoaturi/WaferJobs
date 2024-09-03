@@ -3,7 +3,7 @@ using JobBoard.Domain.Auth;
 
 namespace JobBoard.Domain.Business;
 
-public class BusinessMemberEntity : BaseEntity
+public class BusinessMembershipEntity : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid BusinessId { get; set; }

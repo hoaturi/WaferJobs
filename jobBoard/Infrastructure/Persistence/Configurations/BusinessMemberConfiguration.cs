@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMemberEntity>
+public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMembershipEntity>
 {
-    public void Configure(EntityTypeBuilder<BusinessMemberEntity> builder)
+    public void Configure(EntityTypeBuilder<BusinessMembershipEntity> builder)
     {
         builder.Property(bm => bm.FirstName)
             .HasMaxLength(50)

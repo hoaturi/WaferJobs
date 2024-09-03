@@ -38,7 +38,7 @@ public class InitiateBusinessClaimCommandHandler(
                 .FirstOrDefaultAsync(x => x.Id == command.BusinessId, cancellationToken) ??
             throw new BusinessNotFoundException(command.BusinessId);
 
-        var isUserExistingMember = await dbContext.BusinessMembers
+        var isUserExistingMember = await dbContext.BusinessMemberships
             .AsNoTracking()
             .AnyAsync(x => x.UserId == userId, cancellationToken);
 
