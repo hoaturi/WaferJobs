@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.ClaimBusiness.InitiateBusinessClaim;
 
 [Tags("Business")]
-[Route("api/businesses/{businessId:guid}/claims")]
+[Route("api/businesses/{businessId:guid}/claim")]
 [ApiController]
 public class InitiateBusinessClaimController(ISender sender) : ControllerBase
 {

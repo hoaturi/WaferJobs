@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.CreateBusiness.InitiateBusinessCreation;
 
 [Tags("Business")]
-[Route("api/businesses")]
+[Route("api/businesses/creation/initiate")]
 [ApiController]
 public class InitiateBusinessCreationController(ISender sender) : ControllerBase
 {

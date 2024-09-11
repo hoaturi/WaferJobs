@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.CreateBusiness.CompleteBusinessCreation;
 
 [Tags("Business")]
-[Route("api/businesses/complete")]
+[Route("api/businesses/creation/complete")]
 [ApiController]
 public class CompleteBusinessCreationController(ISender sender) : ControllerBase
 {

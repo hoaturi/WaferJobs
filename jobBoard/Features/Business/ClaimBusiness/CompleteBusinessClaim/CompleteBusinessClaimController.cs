@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.ClaimBusiness.CompleteBusinessClaim;
 
 [Tags("Business")]
-[Route("api/businesses/claims/complete")]
+[Route("api/businesses/claim/complete")]
 public class CompleteBusinessClaimController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Business))]
