@@ -11,10 +11,10 @@ namespace JobBoard.Features.Business.ValidateBusinessClaimToken;
 public class ValidateBusinessClaimTokenController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Business))]
-    [HttpGet]
-    public async Task<IActionResult> ValidateBusinessClaimToken([FromQuery] string token)
+    [HttpPost]
+    public async Task<IActionResult> ValidateBusinessClaimToken([FromBody] ValidateBusinessClaimTokenQuery query)
     {
-        var result = await sender.Send(new ValidateBusinessClaimTokenQuery(token));
+        var result = await sender.Send(query);
 
         return result.IsSuccess
             ? Ok(result.Value)

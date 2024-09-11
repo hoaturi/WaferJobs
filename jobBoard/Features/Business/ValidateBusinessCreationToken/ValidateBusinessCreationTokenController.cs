@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using JobBoard.Common.Constants;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoard.Features.Business.ValidateBusinessCreationToken;
@@ -8,10 +10,11 @@ namespace JobBoard.Features.Business.ValidateBusinessCreationToken;
 [ApiController]
 public class ValidateBusinessCreationTokenController(ISender sender) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> ValidateBusinessCreationToken([FromQuery] string token)
+    [Authorize(nameof(UserRoles.Business))]
+    [HttpPost]
+    public async Task<IActionResult> ValidateBusinessCreationToken([FromBody] ValidateBusinessCreationTokenQuery query)
     {
-        var result = await sender.Send(new ValidateBusinessCreationTokenQuery(token));
+        var result = await sender.Send(query);
 
         return result.IsSuccess
             ? Ok(result.Value)
