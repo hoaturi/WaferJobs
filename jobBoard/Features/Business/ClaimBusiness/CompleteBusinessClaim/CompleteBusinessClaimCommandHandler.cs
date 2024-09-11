@@ -22,7 +22,9 @@ public class CompleteBusinessClaimCommandHandler(
         var token = await dbContext.BusinessClaimTokens
             .FirstOrDefaultAsync(
                 x => x.Token == command.Token && x.UserId == userId && !x.IsUsed && x.ExpiresAt > DateTime.UtcNow,
-                cancellationToken) ?? throw new BusinessClaimRequestNotFoundException(userId);
+                cancellationToken);
+
+        if (token is null) return BusinessErrors.InvalidClaimToken;
 
         var business = await dbContext.Businesses.FirstOrDefaultAsync(x => x.Id == token.BusinessId,
             cancellationToken) ?? throw new BusinessNotFoundException(token.BusinessId);
