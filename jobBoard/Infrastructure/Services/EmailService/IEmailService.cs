@@ -8,7 +8,7 @@ public interface IEmailService
     Task SendPasswordResetAsync(PasswordResetEmailDto dto);
     Task SendEmailChangeVerificationAsync(EmailChangeVerificationEmailDto dto);
     Task SendJobAlertAsync(JobAlertEmailDto dto);
-    Task SendBusinessClaimVerificationAsync(BusinessClaimVerificationEmailDto dto);
+    Task SendCompleteBusinessClaimAsync(CompleteBusinessClaimEmailDto dto);
     Task SendCompleteBusinessCreationAsync(CompleteBusinessCreationEmailDto dto);
     Task SendBusinessCreationReviewAsync(BusinessCreationReviewEmailDto dto);
     Task SendBusinessReviewResultAsync(BusinessReviewResultEmailDto dto);

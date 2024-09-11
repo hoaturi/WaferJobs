@@ -11,7 +11,7 @@ public class SendGridOptions
     [Required] public required string JobAlertTemplateId { get; init; }
     [Required] public required string PasswordResetTemplateId { get; init; }
     [Required] public required string ConfirmEmailTemplateId { get; init; }
-    [Required] public required string BusinessClaimVerificationTemplateId { get; init; }
+    [Required] public required string CompleteBusinessClaimTemplateId { get; init; }
     [Required] public required string CompleteBusinessCreationTemplateId { get; init; }
     [Required] public required string BusinessCreationReviewTemplateId { get; init; }
     [Required] public required string BusinessReviewApprovedTemplateId { get; init; }

@@ -125,12 +125,12 @@ public class EmailService(
         await emailClient.SendEmailAsync(email);
     }
 
-    public async Task SendBusinessClaimVerificationAsync(BusinessClaimVerificationEmailDto dto)
+    public async Task SendCompleteBusinessClaimAsync(CompleteBusinessClaimEmailDto dto)
     {
         var email = new SendGridMessage
         {
             From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessClaimVerificationTemplateId
+            TemplateId = _sendGridOptions.CompleteBusinessClaimTemplateId
         };
 
         var templateData = new

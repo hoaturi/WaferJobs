@@ -60,7 +60,7 @@ public class InitiateBusinessClaimCommandHandler(
 
         var encodedToken = HttpUtility.UrlEncode(claimToken.Token);
 
-        var emailDto = new BusinessClaimVerificationEmailDto(
+        var emailDto = new CompleteBusinessClaimEmailDto(
             user.Id,
             user.Email,
             business.Id,
@@ -69,7 +69,7 @@ public class InitiateBusinessClaimCommandHandler(
             TokenConstants.ExpiresIn30Minutes
         );
 
-        backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessClaimVerificationAsync(emailDto));
+        backgroundJobClient.Enqueue<IEmailService>(x => x.SendCompleteBusinessClaimAsync(emailDto));
 
         return Unit.Value;
     }
