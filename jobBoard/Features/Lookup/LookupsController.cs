@@ -5,6 +5,7 @@ using JobBoard.Features.Lookup.GetActiveJobCountries;
 using JobBoard.Features.Lookup.GetActiveJobLocations;
 using JobBoard.Features.Lookup.GetJobPostCount;
 using JobBoard.Features.Lookup.GetPopularKeywords;
+using JobBoard.Features.Lookup.ValidatePublicDomain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -57,6 +58,14 @@ public class LookupsController(ISender sender) : ControllerBase
     public async Task<IActionResult> GetTotalJobPostCount()
     {
         var result = await sender.Send(new GetJobPostCountQuery());
+
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
+    }
+
+    [HttpPost("domains/validate-public")]
+    public async Task<IActionResult> ValidatePublicDomain([FromBody] ValidatePublicDomainCommand command)
+    {
+        var result = await sender.Send(command);
 
         return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
