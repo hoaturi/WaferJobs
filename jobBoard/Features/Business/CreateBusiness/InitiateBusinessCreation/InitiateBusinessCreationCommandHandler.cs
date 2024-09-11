@@ -54,12 +54,12 @@ public class InitiateBusinessCreationCommandHandler(
 
         var encodedToken = HttpUtility.UrlEncode(token.Token);
         var emailDto =
-            new BusinessCreationVerificationEmailDto(userId, userEmail, creationCommand.Name,
+            new CompleteBusinessCreationEmailDto(userId, userEmail, creationCommand.Name,
                 encodedToken,
                 TokenConstants.ExpiresIn30Minutes);
 
         backgroundJobClient.Enqueue<IEmailService>(x =>
-            x.SendBusinessCreationVerificationAsync(emailDto));
+            x.SendCompleteBusinessCreationAsync(emailDto));
 
         logger.LogInformation("User {userId} has requested to create a business {businessName}",
             userId, creationCommand.Name);

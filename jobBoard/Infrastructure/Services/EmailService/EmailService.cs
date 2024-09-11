@@ -149,12 +149,12 @@ public class EmailService(
         logger.LogInformation("Business claim verification email sent to user {userId}", dto.UserId);
     }
 
-    public async Task SendBusinessCreationVerificationAsync(BusinessCreationVerificationEmailDto dto)
+    public async Task SendCompleteBusinessCreationAsync(CompleteBusinessCreationEmailDto dto)
     {
         var email = new SendGridMessage
         {
             From = new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName),
-            TemplateId = _sendGridOptions.BusinessCreationVerificationTemplateId
+            TemplateId = _sendGridOptions.CompleteBusinessCreationTemplateId
         };
 
         var templateData = new

@@ -1,6 +1,6 @@
 ﻿namespace JobBoard.Infrastructure.Services.EmailService.Dtos;
 
-public record BusinessCreationVerificationEmailDto(
+public record CompleteBusinessCreationEmailDto(
     Guid UserId,
     string UserEmail,
     string BusinessName,
