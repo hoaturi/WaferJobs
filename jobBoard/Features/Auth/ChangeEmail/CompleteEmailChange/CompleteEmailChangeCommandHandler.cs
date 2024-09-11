@@ -41,6 +41,7 @@ public class CompleteEmailChangeCommandHandler(
 
         var setEmailResult = await userManager.SetEmailAsync(user, changeRequest.NewEmail);
         var setUserNameResult = await userManager.SetUserNameAsync(user, changeRequest.NewEmail);
+        user.EmailConfirmed = true;
 
         if (!setEmailResult.Succeeded || !setUserNameResult.Succeeded)
             throw new InvalidOperationException($"Failed to update user email with id {userId}");

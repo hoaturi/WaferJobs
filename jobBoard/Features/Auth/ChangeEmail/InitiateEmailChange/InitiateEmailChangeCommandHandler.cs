@@ -39,7 +39,7 @@ public class InitiateEmailChangeCommandHandler(
         if (await dbContext.Users.AsNoTracking().AnyAsync(x => x.Email == command.NewEmail, cancellationToken))
             return AuthErrors.EmailAlreadyInUse;
 
-        var pin = new Random().Next(PinConstants.MinValue, PinConstants.MaxValue);
+        var pin = new Random().Next(PinConstants.MinValue, PinConstants.MaxValue).ToString();
         var newRequest = new EmailChangeRequestEntity
         {
             UserId = userId,

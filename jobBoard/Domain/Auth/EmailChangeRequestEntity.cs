@@ -7,7 +7,7 @@ public class EmailChangeRequestEntity : BaseEntity
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public required string NewEmail { get; set; }
-    public int Pin { get; set; }
+    public required string Pin { get; set; }
     public DateTime ExpiresAt { get; set; }
     public int Attempts { get; set; }
     public bool IsVerified { get; set; }
