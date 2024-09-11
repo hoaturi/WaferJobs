@@ -12,6 +12,12 @@ public static class BusinessErrors
         "Business profile was not found."
     );
 
+    public static readonly Error InvalidClaimToken = new(
+        ErrorCodes.InvalidToken,
+        HttpStatusCode.BadRequest,
+        "Invalid claim token."
+    );
+
     public static readonly Error InvalidCreationToken = new(
         ErrorCodes.InvalidToken,
         HttpStatusCode.BadRequest,

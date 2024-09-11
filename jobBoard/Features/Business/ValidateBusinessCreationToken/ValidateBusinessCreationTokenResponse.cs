@@ -1,0 +1,3 @@
+﻿namespace JobBoard.Features.Business.ValidateBusinessCreationToken;
+
+public record ValidateBusinessCreationTokenResponse(string BusinessName);
