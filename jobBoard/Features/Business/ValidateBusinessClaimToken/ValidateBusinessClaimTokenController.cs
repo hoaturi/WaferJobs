@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoard.Features.Business.ValidateBusinessClaimToken;
 
 [Tags("Business")]
-[Route("api/businesses/claims/validate-token")]
+[Route("api/businesses/claim/validate-token")]
 [ApiController]
 public class ValidateBusinessClaimTokenController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Business))]
-    [HttpGet]
-    public async Task<IActionResult> ValidateBusinessClaimToken([FromQuery] string token)
+    [HttpPost]
+    public async Task<IActionResult> ValidateBusinessClaimToken([FromBody] ValidateBusinessClaimTokenQuery query)
     {
-        var result = await sender.Send(new ValidateBusinessClaimTokenQuery(token));
+        var result = await sender.Send(query);
 
         return result.IsSuccess
             ? Ok(result.Value)
