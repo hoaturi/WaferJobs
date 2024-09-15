@@ -57,7 +57,7 @@ public class JobAlertSender(
         var referenceDate = jobAlert.LastSentAt ?? jobAlert.CreatedAt;
 
         var query = dbContext.JobPosts
-            .Where(jp => jp.IsPublished && !jp.IsDeleted)
+            .Where(jp => jp.IsPublished)
             .Where(jp => jp.PublishedAt != null && jp.PublishedAt > referenceDate);
 
         if (!string.IsNullOrEmpty(jobAlert.Keyword))

@@ -8,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 namespace JobBoard.Features.JobPost.DeleteMyJobPost;
 
 public class DeleteMyJobPostCommandHandler(
+    AppDbContext dbContext,
     ICurrentUserService currentUserService,
-    AppDbContext appDbContext,
     ILogger<DeleteMyJobPostCommand> logger) : IRequestHandler<DeleteMyJobPostCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(DeleteMyJobPostCommand command, CancellationToken cancellationToken)
     {
         var currentUserId = currentUserService.GetUserId();
 
-        var jobPost = await appDbContext.JobPosts
+        var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
             .ThenInclude(businessProfileEntity => businessProfileEntity!.Members)
             .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
@@ -26,12 +26,8 @@ public class DeleteMyJobPostCommandHandler(
         if (jobPost.Business is not null && jobPost.Business.Members.Any(m => m.UserId != currentUserId))
             throw new UnauthorizedJobPostAccessException(command.Id, currentUserId);
 
-        if (jobPost.IsDeleted)
-            throw new JobPostAlreadyDeletedException(command.Id);
-
-        jobPost.IsDeleted = true;
-
-        await appDbContext.SaveChangesAsync(cancellationToken);
+        dbContext.Remove(jobPost);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Job post {Id} deleted by user {UserId}", command.Id, currentUserId);
 

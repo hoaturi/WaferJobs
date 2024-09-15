@@ -13,7 +13,7 @@ public class GetActiveJobLocationsQueryHandler(AppDbContext dbContext)
     {
         var locations = await dbContext.JobPosts
             .AsNoTracking()
-            .Where(j => !j.IsDeleted && j.IsPublished)
+            .Where(j => j.IsPublished)
             .Select(j => new ActiveJobLocationDto(
                 j.City != null ? $"{j.City.Label}, {j.Country.Label}" : j.Country.Label,
                 j.City != null ? j.City.Slug : null,

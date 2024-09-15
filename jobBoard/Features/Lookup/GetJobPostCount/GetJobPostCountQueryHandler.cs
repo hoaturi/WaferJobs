@@ -12,7 +12,7 @@ public class GetJobPostCountQueryHandler(AppDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var count = await dbContext.JobPosts.Where(
-                jp => !jp.IsDeleted && jp.IsPublished
+                jp => jp.IsPublished
             )
             .CountAsync(cancellationToken);
 

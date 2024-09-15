@@ -24,7 +24,7 @@ public class UpdateMyJobPostCommandHandler(
             .ThenInclude(b => b!.Members)
             .Include(j => j.City)
             .Include(j => j.Tags)
-            .FirstOrDefaultAsync(j => j.Id == command.Id && !j.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
 
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 

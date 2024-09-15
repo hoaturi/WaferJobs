@@ -19,7 +19,6 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
 
         builder.HasIndex(jp => jp.Slug).IsUnique();
         builder.HasIndex(jp => jp.IsPublished);
-        builder.HasIndex(jp => jp.IsDeleted);
         builder.HasIndex(jp => jp.PublishedAt);
         builder.HasIndex(jp => jp.IsFeatured);
         builder.HasIndex(jp => jp.IsPublished);

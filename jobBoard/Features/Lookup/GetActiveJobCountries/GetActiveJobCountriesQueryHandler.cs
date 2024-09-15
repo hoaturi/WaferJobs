@@ -14,7 +14,7 @@ public class GetActiveJobCountriesQueryHandler(
     {
         var countries = await dbContext.JobPosts
             .AsNoTracking()
-            .Where(j => !j.IsDeleted && j.IsPublished)
+            .Where(j => j.IsPublished)
             .Select(j => j.Country)
             .Distinct()
             .Select(c => new ActiveJobCountryDto(

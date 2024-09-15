@@ -55,7 +55,7 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext)
     {
         var jobPostListQuery = dbContext.JobPosts
             .AsNoTracking()
-            .Where(j => j.IsPublished && !j.IsDeleted);
+            .Where(j => j.IsPublished);
 
         if (query.Keyword is not null)
         {

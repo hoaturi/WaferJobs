@@ -30,7 +30,6 @@ public class JobPostEntity : BaseEntity
     public DateTime? FeaturedEndDate { get; set; }
     public bool IsPublished { get; set; }
     public DateTime? PublishedAt { get; set; }
-    public bool IsDeleted { get; set; }
     public int ApplyCount { get; set; }
     public required string Slug { get; set; }
     public BusinessEntity? Business { get; set; }

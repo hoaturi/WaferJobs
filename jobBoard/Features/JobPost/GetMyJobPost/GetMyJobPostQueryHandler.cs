@@ -19,7 +19,7 @@ public class GetMyJobPostQueryHandler(
 
         var jobPost = await appDbContext.JobPosts
             .AsNoTracking()
-            .Where(j => j.Slug == query.Slug && !j.IsDeleted && j.Business != null &&
+            .Where(j => j.Slug == query.Slug && j.Business != null &&
                         j.Business.Members.Any(m => m.UserId == userId))
             .Select(j => new GetMyJobPostResponse(
                 j.Id,
@@ -32,7 +32,6 @@ public class GetMyJobPostQueryHandler(
                 j.IsFeatured,
                 j.CompanyName,
                 j.CompanyEmail,
-                j.Slug,
                 j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
                 j.City != null ? j.City.Label : null,
                 j.MinSalary,

@@ -21,7 +21,7 @@ public class
         var currentUserId = currentUserService.GetUserId();
 
         var jobPostListQuery = appDbContext.JobPosts.AsNoTracking()
-            .Where(j => !j.IsDeleted && j.Business != null &&
+            .Where(j => j.Business != null &&
                         j.Business.Members.Any(m => m.UserId == currentUserId));
 
         jobPostListQuery = query.Status switch

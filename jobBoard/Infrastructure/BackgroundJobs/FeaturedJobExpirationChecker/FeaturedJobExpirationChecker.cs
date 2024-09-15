@@ -15,7 +15,7 @@ public class FeaturedJobExpirationChecker(AppDbContext dbContext, ILogger<Featur
         var expirationDate = DateTime.UtcNow.AddDays(-ExpirationDays);
 
         var updatedCount = await dbContext.JobPosts
-            .Where(jp => jp.IsFeatured && jp.IsPublished && !jp.IsDeleted && jp.PublishedAt != null &&
+            .Where(jp => jp.IsFeatured && jp.IsPublished && jp.PublishedAt != null &&
                          jp.PublishedAt < expirationDate)
             .ExecuteUpdateAsync(s =>
                     s.SetProperty(jp => jp.IsFeatured, false)
