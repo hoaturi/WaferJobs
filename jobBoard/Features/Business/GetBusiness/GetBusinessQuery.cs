@@ -3,4 +3,4 @@ using MediatR;
 
 namespace JobBoard.Features.Business.GetBusiness;
 
-public record GetBusinessQuery(Guid Id) : IRequest<Result<GetBusinessResponse, Error>>;
+public record GetBusinessQuery(string Slug) : IRequest<Result<GetBusinessResponse, Error>>;

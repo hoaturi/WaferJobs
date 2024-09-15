@@ -8,6 +8,7 @@ using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Slugify;
 
 namespace JobBoard.Features.Business.CreateBusiness.CompleteBusinessCreation;
 
@@ -36,12 +37,15 @@ public class CompleteBusinessCreationCommandHandler(
         token.IsUsed = true;
         token.UsedAt = DateTime.UtcNow;
 
+        var slugHelper = new SlugHelper();
+
         var business = new BusinessEntity
         {
             Name = token.Name,
             WebsiteUrl = token.WebsiteUrl,
             Domain = token.Domain,
-            IsActive = false
+            IsActive = false,
+            Slug = slugHelper.GenerateSlug(token.Name)
         };
 
         var member = new BusinessMembershipEntity

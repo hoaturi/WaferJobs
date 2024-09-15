@@ -9,10 +9,10 @@ namespace JobBoard.Features.Business.GetBusiness;
 [Route("api/businesses")]
 public class GetBusinessController(ISender sender) : ControllerBase
 {
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetBusiness(Guid id)
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetBusiness(string slug)
     {
-        var result = await sender.Send(new GetBusinessQuery(id));
+        var result = await sender.Send(new GetBusinessQuery(slug));
 
         return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }

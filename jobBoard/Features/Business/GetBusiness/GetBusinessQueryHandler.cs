@@ -18,7 +18,7 @@ public class GetBusinessQueryHandler(
         var businessResponse = await appDbContext
             .Businesses
             .AsNoTracking()
-            .Where(b => b.Id == query.Id)
+            .Where(b => b.Slug == query.Slug)
             .Select(b => new GetBusinessResponse(
                 b.Id,
                 b.Name,
@@ -34,7 +34,6 @@ public class GetBusinessQueryHandler(
 
         if (businessResponse is not null) return businessResponse;
 
-        logger.LogWarning("Business with id {BusinessId} not found", query.Id);
         return BusinessErrors.BusinessNotFound;
     }
 }

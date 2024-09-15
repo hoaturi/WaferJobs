@@ -17,6 +17,14 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
         builder.Property(b => b.LinkedinUrl).HasMaxLength(2048);
 
         builder
+            .HasIndex(b => b.Name)
+            .IsUnique();
+
+        builder
+            .HasIndex(b => b.Slug)
+            .IsUnique();
+
+        builder
             .HasMany(b => b.Members)
             .WithOne(m => m.Business)
             .HasForeignKey(m => m.BusinessId)
