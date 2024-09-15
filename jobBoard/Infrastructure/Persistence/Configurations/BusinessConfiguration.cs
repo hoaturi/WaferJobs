@@ -12,7 +12,6 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
         builder.Property(b => b.LogoUrl).HasMaxLength(2048);
         builder.Property(b => b.Description).HasMaxLength(2000);
         builder.Property(b => b.Location).HasMaxLength(100);
-        builder.Property(b => b.StripeCustomerId).HasMaxLength(255);
         builder.Property(b => b.WebsiteUrl).HasMaxLength(2048);
         builder.Property(b => b.TwitterUrl).HasMaxLength(2048);
         builder.Property(b => b.LinkedinUrl).HasMaxLength(2048);

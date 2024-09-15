@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobBoard.Infrastructure.Persistence.Configurations;
 
-public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMembershipEntity>
+public class BusinessMemberShipConfiguration : IEntityTypeConfiguration<BusinessMembershipEntity>
 {
     public void Configure(EntityTypeBuilder<BusinessMembershipEntity> builder)
     {
@@ -19,6 +19,8 @@ public class BusinessMemberConfiguration : IEntityTypeConfiguration<BusinessMemb
         builder.Property(bm => bm.Title)
             .HasMaxLength(100)
             .IsRequired();
+
+        builder.Property(bm => bm.stripeCustomerId).HasMaxLength(255);
 
         builder
             .HasOne(bm => bm.User)

@@ -11,6 +11,7 @@ public class BusinessMembershipEntity : BaseEntity
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Title { get; set; }
+    public string? stripeCustomerId { get; set; }
     public bool IsAdmin { get; set; }
     public DateTime JoinedAt { get; set; }
     public bool IsActive { get; set; }

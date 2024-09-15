@@ -13,7 +13,6 @@ public class BusinessEntity : BaseEntity
     public string? LogoUrl { get; set; }
     public string? Description { get; set; }
     public string? Location { get; set; }
-    public string? StripeCustomerId { get; set; }
     public string? TwitterUrl { get; set; }
     public string? LinkedinUrl { get; set; }
     public bool IsClaimed { get; set; }

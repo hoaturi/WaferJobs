@@ -1,5 +1,4 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Business;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Domain.JobPost;
 using JobBoard.Features.Payment;
@@ -12,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace JobBoard.Features.JobPost.CreateJobPostCheckoutSession;
 
 public class CreateJobPostCheckoutSessionCommandHandler(
-    AppDbContext appDbContext,
+    AppDbContext dbContext,
     ICurrentUserService currentUserService,
     IPaymentService paymentService,
     ILogger<CreateJobPostCheckoutSessionCommandHandler> logger)
@@ -25,37 +24,32 @@ public class CreateJobPostCheckoutSessionCommandHandler(
     {
         var userId = currentUserService.GetUserId();
 
-        var jobPost = await appDbContext.JobPosts
-            .AsNoTracking()
+        var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
-            .ThenInclude(businessProfileEntity => businessProfileEntity!.Members)
-            .Include(j => j.Payments)
-            .Where(j => j.IsFeatured)
-            .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
+            .Where(j => j.Id == command.Id && j.Business != null && j.Business.Members.Any(m => m.UserId == userId))
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
-        if (jobPost.Business is null) throw new BusinessNotFoundForUserException(userId);
+        var membership = jobPost.Business!.Members.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
+                         throw new BusinessMembershipNotFoundException(userId);
 
-        if (jobPost.Business.Members.Any(m => m.UserId != userId))
-            throw new UnauthorizedJobPostAccessException(jobPost.Id, userId);
+        if (membership.stripeCustomerId is null)
+        {
+            var stripeCustomerId =
+                await paymentService.CreateStripeCustomer(membership.User.Email!, membership.FirstName);
+            membership.stripeCustomerId = stripeCustomerId;
+        }
 
-        if (jobPost.Business.StripeCustomerId is null)
-            await paymentService.CreateStripeCustomer(
-                jobPost.CompanyEmail,
-                jobPost.Business.Name,
-                jobPost.BusinessId
-            );
-
-        var session = await paymentService.CreateCheckoutSession(jobPost.Business.StripeCustomerId!, jobPost.Id);
+        var session = await paymentService.CreateCheckoutSession(membership.stripeCustomerId, jobPost.Id);
 
         var payment = new JobPostPaymentEntity
             { JobPostId = jobPost.Id, CheckoutSessionId = session.Id };
 
-        await appDbContext.JobPostPayments.AddAsync(payment, cancellationToken);
+        await dbContext.JobPostPayments.AddAsync(payment, cancellationToken);
         logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
 
-        await appDbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }

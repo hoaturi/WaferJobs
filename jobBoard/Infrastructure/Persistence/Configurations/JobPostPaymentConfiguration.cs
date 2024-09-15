@@ -17,6 +17,6 @@ public class JobPostPaymentConfiguration : IEntityTypeConfiguration<JobPostPayme
             .WithMany(jp => jp.Payments)
             .HasForeignKey(jpp => jpp.JobPostId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
