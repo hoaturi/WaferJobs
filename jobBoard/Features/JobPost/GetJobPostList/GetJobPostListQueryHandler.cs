@@ -32,6 +32,7 @@ public class GetJobPostListQueryHandler(AppDbContext dbContext)
                     j.IsRemote,
                     j.IsFeatured,
                     j.CompanyName,
+                    j.Slug,
                     j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
                     j.City != null ? j.City.Label : null,
                     j.MinSalary,

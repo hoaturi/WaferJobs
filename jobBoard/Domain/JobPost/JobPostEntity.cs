@@ -32,6 +32,7 @@ public class JobPostEntity : BaseEntity
     public DateTime? PublishedAt { get; set; }
     public bool IsDeleted { get; set; }
     public int ApplyCount { get; set; }
+    public required string Slug { get; set; }
     public BusinessEntity? Business { get; set; }
     public CurrencyEntity? Currency { get; set; }
     public ExperienceLevelEntity? ExperienceLevel { get; set; }

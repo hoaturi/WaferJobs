@@ -6,13 +6,15 @@ using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Slugify;
 
 namespace JobBoard.Features.JobPost.CreateFeaturedJobPostGuest;
 
 public class CreateFeaturedJobPostGuestCommandHandler(
     IPaymentService paymentService,
     AppDbContext dbContext,
-    ILogger<CreateFeaturedJobPostGuestCommandHandler> logger)
+    ILogger<CreateFeaturedJobPostGuestCommandHandler> logger
+)
     : IRequestHandler<CreateFeaturedJobPostGuestCommand, Result<CreateJobPostCheckoutSessionResponse, Error>>
 {
     public async Task<Result<CreateJobPostCheckoutSessionResponse, Error>> Handle(
@@ -48,6 +50,8 @@ public class CreateFeaturedJobPostGuestCommandHandler(
     private async Task<Guid> CreateJobPostEntity(CreateFeaturedJobPostGuestCommand command,
         CancellationToken cancellationToken)
     {
+        var slug = GenerateSlug(command.CompanyName, command.Title);
+
         var jobPost = new JobPostEntity
         {
             CategoryId = command.CategoryId,
@@ -65,6 +69,7 @@ public class CreateFeaturedJobPostGuestCommandHandler(
             MinSalary = command.MinSalary,
             MaxSalary = command.MaxSalary,
             CurrencyId = command.CurrencyId,
+            Slug = slug,
             IsFeatured = true,
             IsPublished = false,
             PublishedAt = null
@@ -76,6 +81,14 @@ public class CreateFeaturedJobPostGuestCommandHandler(
         await UpdateJobPostTagsAsync(jobPost, command.Tags, cancellationToken);
 
         return jobPost.Id;
+    }
+
+    private static string GenerateSlug(string companyName, string title)
+    {
+        var slugHelper = new SlugHelper();
+        var randomString = Guid.NewGuid().ToString("N")[..6];
+
+        return slugHelper.GenerateSlug($"{randomString} {companyName} {title}");
     }
 
     private async Task UpdateJobPostCityAsync(JobPostEntity jobPost, string? cityName,

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace JobBoard.Features.JobPost.GetJobPost;
 
-public record GetJobPostQuery(Guid Id) : IRequest<Result<GetJobPostResponse, Error>>;
+public record GetJobPostQuery(string Slug) : IRequest<Result<GetJobPostResponse, Error>>;

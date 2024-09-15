@@ -9,6 +9,7 @@ using JobBoard.Infrastructure.Services.CurrentUserService;
 using JobBoard.Infrastructure.Services.PaymentService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Slugify;
 
 namespace JobBoard.Features.JobPost.CreateFeaturedJobPost;
 
@@ -29,7 +30,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
         var jobPost = await CreateJobPostEntity(command, business, cancellationToken);
 
-        var stripeCustomerId = await GetOrCreateStripeCustomerId(business, command.CompanyEmail);
+        var stripeCustomerId = await GetOrCreateStripeCustomerId(business, currentUserId, command.CompanyEmail);
         var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
 
         await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
@@ -45,6 +46,7 @@ public class CreateFeaturedJobPostCommandHandler(
     private async Task<BusinessEntity> GetBusinessByUserId(Guid userId, CancellationToken cancellationToken)
     {
         var business = await dbContext.Businesses
+            .Include(b => b.Members)
             .FirstOrDefaultAsync(b => b.Members.Any(m => m.UserId == userId), cancellationToken);
 
         if (business is null) throw new BusinessNotFoundForUserException(userId);
@@ -52,13 +54,16 @@ public class CreateFeaturedJobPostCommandHandler(
         return business;
     }
 
-    private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, string email)
+    private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, Guid userId, string email)
     {
-        if (business.StripeCustomerId is not null) return business.StripeCustomerId;
+        var membership = business.Members.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
+                         throw new BusinessMembershipNotFoundException(userId);
+
+        if (membership.stripeCustomerId is not null) return membership.stripeCustomerId;
 
         var stripeCustomerId =
             await paymentService.CreateStripeCustomer(email, business.Name, business.Id);
-        business.StripeCustomerId = stripeCustomerId;
+        membership.stripeCustomerId = stripeCustomerId;
 
         return stripeCustomerId;
     }
@@ -78,6 +83,8 @@ public class CreateFeaturedJobPostCommandHandler(
         BusinessEntity business,
         CancellationToken cancellationToken)
     {
+        var slug = GenerateSlug(command.CompanyName, command.Title);
+
         var jobPost = new JobPostEntity
         {
             BusinessId = business.Id,
@@ -96,6 +103,7 @@ public class CreateFeaturedJobPostCommandHandler(
             MinSalary = command.MinSalary,
             MaxSalary = command.MaxSalary,
             CurrencyId = command.CurrencyId,
+            Slug = slug,
             IsFeatured = true,
             IsPublished = false,
             PublishedAt = null
@@ -107,6 +115,14 @@ public class CreateFeaturedJobPostCommandHandler(
         await UpdateJobPostTagsAsync(jobPost, command.Tags, cancellationToken);
 
         return jobPost;
+    }
+
+    private static string GenerateSlug(string companyName, string title)
+    {
+        var slugHelper = new SlugHelper();
+        var randomString = Guid.NewGuid().ToString("N")[..6];
+
+        return slugHelper.GenerateSlug($"{randomString} {companyName} {title}");
     }
 
     private async Task UpdateJobPostCityAsync(JobPostEntity jobPost, string? cityName,

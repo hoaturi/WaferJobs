@@ -17,6 +17,7 @@ public class JobPostConfiguration : IEntityTypeConfiguration<JobPostEntity>
         builder.Property(jp => jp.CompanyLogoUrl).HasMaxLength(2048);
         builder.Property(jp => jp.CompanyWebsiteUrl).HasMaxLength(2048);
 
+        builder.HasIndex(jp => jp.Slug).IsUnique();
         builder.HasIndex(jp => jp.IsPublished);
         builder.HasIndex(jp => jp.IsDeleted);
         builder.HasIndex(jp => jp.PublishedAt);

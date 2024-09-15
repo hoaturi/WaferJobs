@@ -16,7 +16,7 @@ public class GetJobPostQueryHandler(AppDbContext dbContext)
     {
         var jobPost = await dbContext
             .JobPosts.AsNoTracking()
-            .Where(j => j.Id == command.Id && j.IsPublished)
+            .Where(j => j.Slug == command.Slug && j.IsPublished)
             .Select(j => new GetJobPostResponse(
                 j.Id,
                 j.Category.Label,
@@ -27,6 +27,7 @@ public class GetJobPostQueryHandler(AppDbContext dbContext)
                 j.IsRemote,
                 j.IsFeatured,
                 j.CompanyName,
+                j.Slug,
                 j.ExperienceLevel != null ? j.ExperienceLevel.Label : null,
                 j.City != null ? j.City.Label : null,
                 j.MinSalary,

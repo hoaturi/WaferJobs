@@ -9,10 +9,10 @@ namespace JobBoard.Features.JobPost.GetJobPost;
 [Route("api/jobs")]
 public class GetJobPostController(ISender sender) : ControllerBase
 {
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetJobPost(Guid id)
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetJobPost(string slug)
     {
-        var result = await sender.Send(new GetJobPostQuery(id));
+        var result = await sender.Send(new GetJobPostQuery(slug));
 
         return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
     }

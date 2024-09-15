@@ -3,6 +3,4 @@ using MediatR;
 
 namespace JobBoard.Features.JobPost.GetMyJobPost;
 
-public record GetMyJobPostQuery(Guid Id) : IRequest<Result<GetMyJobPostResponse, Error>>
-{
-}
+public record GetMyJobPostQuery(string Slug) : IRequest<Result<GetMyJobPostResponse, Error>>;

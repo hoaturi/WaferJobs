@@ -52,6 +52,7 @@ public class
                 !j.IsPublished && j.IsFeatured && j.Payments.Count != 0 &&
                 j.Payments.All(p => !p.IsProcessed),
                 j.ApplyCount,
+                j.Slug,
                 j.FeaturedStartDate,
                 j.FeaturedEndDate,
                 j.PublishedAt,

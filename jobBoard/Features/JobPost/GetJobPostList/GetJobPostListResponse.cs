@@ -12,6 +12,7 @@ public record JobPostDto(
     bool IsRemote,
     bool IsFeatured,
     string CompanyName,
+    string Slug,
     string? ExperienceLevel,
     string? City,
     int? MinSalary,

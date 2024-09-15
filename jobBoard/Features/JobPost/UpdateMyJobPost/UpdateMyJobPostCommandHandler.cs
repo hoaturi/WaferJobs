@@ -5,6 +5,7 @@ using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Slugify;
 
 namespace JobBoard.Features.JobPost.UpdateMyJobPost;
 
@@ -41,6 +42,8 @@ public class UpdateMyJobPostCommandHandler(
 
     private static void UpdateJobPostDetailsAsync(JobPostEntity jobPost, UpdateMyJobPostDto dto)
     {
+        var slug = GenerateSlug(dto.CompanyName, dto.Title);
+
         jobPost.CategoryId = dto.CategoryId;
         jobPost.CountryId = dto.CountryId;
         jobPost.EmploymentTypeId = dto.EmploymentTypeId;
@@ -55,6 +58,15 @@ public class UpdateMyJobPostCommandHandler(
         jobPost.MinSalary = dto.MinSalary;
         jobPost.MaxSalary = dto.MaxSalary;
         jobPost.CurrencyId = dto.CurrencyId;
+        jobPost.Slug = slug;
+    }
+
+    private static string GenerateSlug(string companyName, string title)
+    {
+        var slugHelper = new SlugHelper();
+        var randomString = Guid.NewGuid().ToString("N")[..6];
+
+        return slugHelper.GenerateSlug($"{randomString} {companyName} {title}");
     }
 
     private async Task UpdateJobPostCityAsync(JobPostEntity jobPost, string? cityName,

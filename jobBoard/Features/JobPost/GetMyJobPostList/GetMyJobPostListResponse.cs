@@ -14,6 +14,7 @@ public record GetMyJobPostDto(
     bool IsFeatured,
     bool RequiresPayment,
     int ApplyCount,
+    string Slug,
     DateTime? FeaturedStartDate,
     DateTime? FeaturedEndDate,
     DateTime? PublishedAt,
