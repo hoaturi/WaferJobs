@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore;
 namespace JobBoard.Features.Business.GetBusiness;
 
 public class GetBusinessQueryHandler(
-    AppDbContext appDbContext,
-    ILogger<GetBusinessQueryHandler> logger)
+    AppDbContext dbContext)
     : IRequestHandler<GetBusinessQuery, Result<GetBusinessResponse, Error>>
 {
     public async Task<Result<GetBusinessResponse, Error>> Handle(
         GetBusinessQuery query,
         CancellationToken cancellationToken)
     {
-        var businessResponse = await appDbContext
+        var businessResponse = await dbContext
             .Businesses
             .AsNoTracking()
             .Where(b => b.Slug == query.Slug)
