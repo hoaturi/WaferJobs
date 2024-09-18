@@ -2,12 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.JobPost.GetJobPostList;
+namespace JobBoard.Features.JobPost.GetJobPosts;
 
 [Tags("Job Post")]
 [ApiController]
 [Route("api/jobs")]
-public class GetJobPostListController(ISender sender) : ControllerBase
+public class GetJobPostsController(ISender sender) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetJobPostList(
@@ -25,7 +25,7 @@ public class GetJobPostListController(ISender sender) : ControllerBase
     )
     {
         var result = await sender.Send(
-            new GetJobPostListQuery(keyword, city, country, experienceLevels, remoteOnly, postedDate, categories,
+            new GetJobPostsQuery(keyword, city, country, experienceLevels, remoteOnly, postedDate, categories,
                 employmentTypes, minSalary, take, page)
         );
 

@@ -1,9 +1,9 @@
 using JobBoard.Common.Models;
 using MediatR;
 
-namespace JobBoard.Features.JobPost.GetJobPostList;
+namespace JobBoard.Features.JobPost.GetJobPosts;
 
-public record GetJobPostListQuery(
+public record GetJobPostsQuery(
     string? Keyword,
     int? City,
     int? Country,
@@ -15,4 +15,4 @@ public record GetJobPostListQuery(
     int? MinSalary,
     int Take,
     int Page
-) : IRequest<Result<GetJobPostListResponse, Error>>;
+) : IRequest<Result<GetJobPostsResponse, Error>>;
