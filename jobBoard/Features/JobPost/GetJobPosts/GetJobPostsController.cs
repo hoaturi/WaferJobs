@@ -1,4 +1,5 @@
 ﻿using JobBoard.Common.Extensions;
+using JobBoard.Features.JobPost.GetJobPosts.GetHomeJobPosts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,7 @@ namespace JobBoard.Features.JobPost.GetJobPosts;
 public class GetJobPostsController(ISender sender) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetJobPostList(
+    public async Task<IActionResult> GetJobPosts(
         [FromQuery(Name = "keyword")] string? keyword,
         [FromQuery(Name = "city")] int? city,
         [FromQuery(Name = "country")] int? country,
@@ -28,6 +29,14 @@ public class GetJobPostsController(ISender sender) : ControllerBase
             new GetJobPostsQuery(keyword, city, country, experienceLevels, remoteOnly, postedDate, categories,
                 employmentTypes, minSalary, take, page)
         );
+
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
+    }
+
+    [HttpGet("home")]
+    public async Task<IActionResult> GetHomeJobPosts()
+    {
+        var result = await sender.Send(new GetHomeJobPostsQuery());
 
         return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
