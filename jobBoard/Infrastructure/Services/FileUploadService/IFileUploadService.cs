@@ -2,5 +2,5 @@
 
 public interface IFileUploadService
 {
-    Task<string> UploadBusinessLogoAsync(string fileName, Stream file);
+    Task<string> UploadLogoAsync(string fileName, Stream fileStream, LogoTypes logoTypes);
 }

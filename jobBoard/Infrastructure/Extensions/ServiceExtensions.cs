@@ -251,7 +251,8 @@ public static class ServiceExtensions
             .Bind(configuration.GetSection(DbConnectionOptions.Key))
             .ValidateDataAnnotations();
 
-        services.AddOptionsWithValidateOnStart<AzureOptions>().Bind(configuration.GetSection(AzureOptions.Key))
+        services.AddOptionsWithValidateOnStart<CloudFlareOptions>()
+            .Bind(configuration.GetSection(CloudFlareOptions.Key))
             .ValidateDataAnnotations();
 
         services.AddOptionsWithValidateOnStart<EmailOptions>().Bind(configuration.GetSection(EmailOptions.Key))
