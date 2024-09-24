@@ -3,22 +3,20 @@ using JobBoard.Common.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.JobPost.UploadJobPostLogo;
+namespace JobBoard.Features.Conference.UploadConferenceLogo;
 
-[Tags("Job Post")]
+[Tags("Conference")]
+[Route("/api/conferences/logo")]
 [ApiController]
-[Route("api/jobs/logo")]
-public class UploadJobPostLogoController(ISender sender) : ControllerBase
+public class UploadConferenceLogoController(ISender sender) : ControllerBase
 {
     [HttpPost]
     // Limit the size of the uploaded file to 5MB
     [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 5)]
     public async Task<IActionResult> UploadLogo([FromForm] [ValidateImageFile] IFormFile file)
     {
-        var command = new UploadJobPostLogoCommand(file);
+        var result = await sender.Send(new UploadConferenceLogoCommand(file));
 
-        var result = await sender.Send(command);
-
-        return !result.IsSuccess ? this.HandleError(result.Error) : Ok(result.Value);
+        return result.IsSuccess ? Ok(result.Value) : this.HandleError(result.Error);
     }
 }

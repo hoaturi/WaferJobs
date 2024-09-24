@@ -17,12 +17,13 @@ public class
             .AsNoTracking()
             .Where(c => c.IsPublished && c.EndDate > DateTime.UtcNow)
             .OrderBy(c => c.StartDate)
-            .Select(c => new ConferenceDto(
+            .Select(c => new ConferenceItem(
                 c.Title,
                 c.Organiser,
                 c.OrganiserEmail,
                 c.Location,
                 c.WebsiteUrl,
+                c.LogoUrl,
                 c.StartDate,
                 c.EndDate
             ))

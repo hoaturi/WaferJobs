@@ -17,9 +17,10 @@ public class
         var originalFileExtension = Path.GetExtension(command.File.FileName);
         var fileName = $"{Guid.NewGuid()}{originalFileExtension}";
 
-        var uploadedLogoUrl = await fileUploadService.UploadBusinessLogoAsync(
+        var uploadedLogoUrl = await fileUploadService.UploadLogoAsync(
             fileName,
-            command.File.OpenReadStream());
+            command.File.OpenReadStream(),
+            LogoTypes.Company);
 
         return new UpdateBusinessLogoResponse(uploadedLogoUrl);
     }

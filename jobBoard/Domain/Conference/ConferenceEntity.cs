@@ -12,6 +12,7 @@ public class ConferenceEntity : BaseEntity
     public required string OrganiserEmail { get; set; }
     public required string Location { get; set; }
     public required string WebsiteUrl { get; set; }
+    public string? LogoUrl { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public bool IsVerified { get; set; }

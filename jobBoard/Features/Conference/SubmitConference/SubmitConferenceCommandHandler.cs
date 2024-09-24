@@ -25,6 +25,7 @@ public class SubmitConferenceCommandHandler(
             OrganiserEmail = command.OrganiserEmail,
             Location = command.Location,
             WebsiteUrl = command.WebsiteUrl,
+            LogoUrl = command.LogoUrl,
             StartDate = DateTime.SpecifyKind(DateTime.Parse(command.StartDate), DateTimeKind.Utc),
             EndDate = DateTime.SpecifyKind(DateTime.Parse(command.EndDate), DateTimeKind.Utc),
             IsVerified = false,

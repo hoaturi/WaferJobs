@@ -11,6 +11,7 @@ public record SubmitConferenceCommand(
     string OrganiserEmail,
     string Location,
     string WebsiteUrl,
+    string? LogoUrl,
     string StartDate,
     string EndDate
 ) : IRequest<Result<Unit, Error>>;

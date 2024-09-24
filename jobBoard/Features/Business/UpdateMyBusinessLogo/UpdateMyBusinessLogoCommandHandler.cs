@@ -1,5 +1,4 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.Business;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
@@ -35,9 +34,10 @@ public class UpdateMyBusinessLogoCommandHandler(
         var originalFileExtension = Path.GetExtension(command.File.FileName);
         var fileName = $"{business.Id}{originalFileExtension}";
 
-        var uploadedLogoUrl = await fileUploadService.UploadBusinessLogoAsync(
+        var uploadedLogoUrl = await fileUploadService.UploadLogoAsync(
             fileName,
-            command.File.OpenReadStream());
+            command.File.OpenReadStream(),
+            LogoTypes.Company);
 
         business.LogoUrl = uploadedLogoUrl;
 
