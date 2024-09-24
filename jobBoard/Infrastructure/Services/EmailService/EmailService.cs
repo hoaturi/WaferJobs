@@ -263,6 +263,6 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Conference submission review email sent to: {Email}", _emailOptions.SenderEmail);
+        logger.LogInformation("Conference submission review email sent for conference {Title}", dto.Title);
     }
 }
