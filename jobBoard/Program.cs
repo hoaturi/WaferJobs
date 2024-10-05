@@ -1,18 +1,44 @@
 using FluentValidation;
 using JobBoard.Infrastructure.Extensions;
-using Serilog;
+using JobBoard.Infrastructure.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+// Configure logging
 builder.Host.UseSerilogWithSeq();
 
+// Add core services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddApplicationServices(configuration);
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddHttpContextAccessor();
+
+// Add validation
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.ConfigureApiBehaviorOptions();
+
+// Add database and caching
+builder.Services.AddDbContexts(configuration);
+builder.Services.AddRedisCache(configuration);
+
+// Add authentication and authorization
+builder.Services.AddAuthentications(configuration);
+
+// Add infrastructure services
+builder.Services.AddCorsPolicy(configuration);
+builder.Services.AddOutputCaches();
+builder.Services.AddHangfire(configuration);
+builder.Services.AddSendGrid(configuration);
+builder.Services.AddTypedHttpClient(configuration);
+
+// Add application services
+builder.Services.AddInfrastructureServices();
+builder.Services.AddMediatrAndBehaviors();
+builder.Services.AddMiddleWares();
+
+// Add configuration options
+builder.Services.AddConfigOptions(configuration);
 
 var app = builder.Build();
 
@@ -22,9 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
-app.UseCors("CorsPolicy");
-app.UseCustomExceptionHandler();
+app.UseCors(CorsOptions.PolicyName);
+app.UseMiddleWares();
 app.UseHangfireJobs();
 
 app.UseAuthentication();

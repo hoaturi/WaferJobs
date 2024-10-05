@@ -9,7 +9,7 @@ namespace JobBoard.Infrastructure.Extensions;
 
 public static class ApplicationExtensions
 {
-    public static IApplicationBuilder UseHangfireJobs(this IApplicationBuilder app)
+    public static void UseHangfireJobs(this IApplicationBuilder app)
     {
         app.UseHangfireDashboard("/hangfire", new DashboardOptions
         {
@@ -39,11 +39,9 @@ public static class ApplicationExtensions
             x => x.ExecuteAsync(CancellationToken.None),
             "*/30 * * * *"
         );
-
-        return app;
     }
 
-    public static void UseCustomExceptionHandler(this IApplicationBuilder app)
+    public static void UseMiddleWares(this IApplicationBuilder app)
     {
         app.UseMiddleware<ExceptionHandlingMiddleware>();
     }

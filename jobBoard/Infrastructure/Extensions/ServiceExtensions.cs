@@ -31,34 +31,13 @@ namespace JobBoard.Infrastructure.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services
-            .AddCorsPolicy(configuration)
-            .ConfigureApiBehaviorOptions()
-            .AddDbContexts(configuration)
-            .AddRedisCache(configuration)
-            .AddAuthentications(configuration)
-            .AddOutputCaches()
-            .AddHangfire(configuration)
-            .AddSendGrid(configuration)
-            .AddInfrastructureServices()
-            .AddTypedHttpClient(configuration)
-            .AddMediatrAndBehaviors()
-            .AddMiddleWares()
-            .AddConfigOptions(configuration);
-
-        return services;
-    }
-
-    private static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+    public static void AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
     {
         var corsOptions = configuration.GetSection(CorsOptions.Key).Get<CorsOptions>()!;
 
         services.AddCors(options =>
         {
-            options.AddPolicy("CorsPolicy", builder =>
+            options.AddPolicy(CorsOptions.PolicyName, builder =>
             {
                 builder.WithOrigins(corsOptions.AllowedOrigins)
                     .AllowAnyHeader()
@@ -66,11 +45,9 @@ public static class ServiceExtensions
                     .AllowCredentials();
             });
         });
-
-        return services;
     }
 
-    private static IServiceCollection ConfigureApiBehaviorOptions(this IServiceCollection services)
+    public static void ConfigureApiBehaviorOptions(this IServiceCollection services)
     {
         services.Configure<ApiBehaviorOptions>(options =>
         {
@@ -86,22 +63,20 @@ public static class ServiceExtensions
                 );
             };
         });
-
-        return services;
     }
 
-    private static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
+    public static void AddDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
         var dbOptions = configuration.GetSection(DbConnectionOptions.Key).Get<DbConnectionOptions>()!;
         services.AddDbContext<AppDbContext>(option => option.UseNpgsql(dbOptions.WaferJobsDb));
-        return services;
     }
 
-    private static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
+    public static void AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         var redisOptions = configuration.GetSection(RedisOptions.Key).Get<RedisOptions>()!;
 
-        IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(redisOptions.ConnectionString);
+        var connectionString = $"{redisOptions.Host}:{redisOptions.Port},password={redisOptions.Password}";
+        IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
 
         services.AddSingleton(connectionMultiplexer);
 
@@ -109,11 +84,9 @@ public static class ServiceExtensions
         {
             option.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer);
         });
-
-        return services;
     }
 
-    private static IServiceCollection AddAuthentications(this IServiceCollection services, IConfiguration configuration)
+    public static void AddAuthentications(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtOptions = configuration.GetSection(JwtOptions.Key).Get<JwtOptions>()!;
 
@@ -144,11 +117,9 @@ public static class ServiceExtensions
             .AddRoles<ApplicationRoleEntity>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
-        return services;
     }
 
-    private static IServiceCollection AddOutputCaches(this IServiceCollection services)
+    public static void AddOutputCaches(this IServiceCollection services)
     {
         services.AddOutputCache(options =>
         {
@@ -160,7 +131,6 @@ public static class ServiceExtensions
                 options.AddPolicy(policyName, builder => builder.Expire(TimeSpan.FromMinutes(minutes)));
             }
         });
-        return services;
     }
 
     private static void ConfigureIdentityOptions(IdentityOptions options)
@@ -174,7 +144,7 @@ public static class ServiceExtensions
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     }
 
-    private static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
+    public static void AddHangfire(this IServiceCollection services, IConfiguration configuration)
     {
         var dbOptions = configuration.GetSection(DbConnectionOptions.Key).Get<DbConnectionOptions>()!;
 
@@ -185,17 +155,15 @@ public static class ServiceExtensions
             .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(dbOptions.WaferJobsDb)));
 
         services.AddHangfireServer();
-        return services;
     }
 
-    private static IServiceCollection AddSendGrid(this IServiceCollection services, IConfiguration configuration)
+    public static void AddSendGrid(this IServiceCollection services, IConfiguration configuration)
     {
         var sendGridOptions = configuration.GetSection(SendGridOptions.Key).Get<SendGridOptions>()!;
         services.AddSendGrid(options => options.ApiKey = sendGridOptions.ApiKey);
-        return services;
     }
 
-    private static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddSingleton<IEmailService, EmailService>();
         services.AddSingleton<IJwtService, JwtService>();
@@ -207,33 +175,28 @@ public static class ServiceExtensions
         services.AddScoped<IJobMetricService, JobMetricService>();
 
         services.AddScoped<IEntityConstraintChecker, EntityConstraintChecker>();
-        return services;
     }
 
-    private static IServiceCollection AddTypedHttpClient(this IServiceCollection services, IConfiguration configuration)
+    public static void AddTypedHttpClient(this IServiceCollection services, IConfiguration configuration)
     {
         var currencyOptions = configuration.GetSection(CurrencyOptions.Key).Get<CurrencyOptions>()!;
 
         services.AddHttpClient<CurrencyExchangeRateUpdater>()
             .ConfigureHttpClient(client => { client.BaseAddress = new Uri(currencyOptions.BaseUrl); });
-
-        return services;
     }
 
-    private static IServiceCollection AddMediatrAndBehaviors(this IServiceCollection services)
+    public static void AddMediatrAndBehaviors(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining<Program>();
             cfg.AddOpenBehavior(typeof(RequestValidationBehavior<,>));
         });
-        return services;
     }
 
-    private static IServiceCollection AddMiddleWares(this IServiceCollection services)
+    public static void AddMiddleWares(this IServiceCollection services)
     {
         services.AddSingleton<ExceptionHandlingMiddleware>();
-        return services;
     }
 
     public static IHostBuilder UseSerilogWithSeq(this IHostBuilder hostBuilder)
@@ -242,7 +205,7 @@ public static class ServiceExtensions
             loggerConfig.ReadFrom.Configuration(context.Configuration));
     }
 
-    private static IServiceCollection AddConfigOptions(this IServiceCollection services, IConfiguration configuration)
+    public static void AddConfigOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptionsWithValidateOnStart<JwtOptions>().Bind(configuration.GetSection(JwtOptions.Key))
             .ValidateDataAnnotations();
@@ -272,7 +235,5 @@ public static class ServiceExtensions
 
         services.AddOptionsWithValidateOnStart<CurrencyOptions>().Bind(configuration.GetSection(CurrencyOptions.Key))
             .ValidateDataAnnotations();
-
-        return services;
     }
 }
