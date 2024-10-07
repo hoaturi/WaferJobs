@@ -21,6 +21,5 @@ public record CreateFeaturedJobPostGuestCommand(
     int? MinSalary,
     int? MaxSalary,
     int? CurrencyId,
-    List<string>? Tags,
-    Guid? BusinessId
+    List<string>? Tags
 ) : IRequest<Result<CreateJobPostCheckoutSessionResponse, Error>>;

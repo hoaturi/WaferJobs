@@ -25,7 +25,7 @@ public class BusinessConfiguration : IEntityTypeConfiguration<BusinessEntity>
             .IsUnique();
 
         builder
-            .HasMany(b => b.Members)
+            .HasMany(b => b.Memberships)
             .WithOne(m => m.Business)
             .HasForeignKey(m => m.BusinessId)
             .IsRequired()

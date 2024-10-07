@@ -20,7 +20,7 @@ public class UpdateJobAlertCommandHandler(
 
         if (jobAlert is null)
         {
-            logger.LogWarning("Update attempt for job alert with token {Token} failed: Alert not found", request.Token);
+            logger.LogWarning("Job alert subscription with token {Token} not found", request.Token);
             return JobAlertError.JobAlertNotFound;
         }
 
@@ -59,7 +59,7 @@ public class UpdateJobAlertCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Job alert with token {Token} successfully updated", request.Token);
+        logger.LogInformation("Updated job alert subscription with token: {Token}", request.Token);
         return Unit.Value;
     }
 }

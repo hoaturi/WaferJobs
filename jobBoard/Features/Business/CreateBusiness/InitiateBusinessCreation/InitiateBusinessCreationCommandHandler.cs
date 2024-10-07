@@ -23,13 +23,13 @@ public class InitiateBusinessCreationCommandHandler(
     ILogger<InitiateBusinessCreationCommandHandler> logger)
     : IRequestHandler<InitiateBusinessCreationCommand, Result<Unit, Error>>
 {
-    public async Task<Result<Unit, Error>> Handle(InitiateBusinessCreationCommand creationCommand,
+    public async Task<Result<Unit, Error>> Handle(InitiateBusinessCreationCommand command,
         CancellationToken cancellationToken)
     {
         var (userId, userEmail) = (currentUserService.GetUserId(), currentUserService.GetUserEmail());
 
         var userEmailDomain = userEmail.Split('@')[1];
-        var businessDomain = new Uri(creationCommand.WebsiteUrl).Host.Replace("www.", "");
+        var businessDomain = new Uri(command.WebsiteUrl).Host.Replace("www.", "");
 
         if (!userEmailDomain.Equals(businessDomain)) throw new EmailDomainMismatchException(userId);
         if (await domainValidationService.IsPublicEmailDomainAsync(userEmailDomain))
@@ -42,8 +42,8 @@ public class InitiateBusinessCreationCommandHandler(
         var token = new BusinessCreationTokenEntity
         {
             UserId = userId,
-            Name = creationCommand.Name,
-            WebsiteUrl = creationCommand.WebsiteUrl,
+            Name = command.Name,
+            WebsiteUrl = command.WebsiteUrl,
             Domain = businessDomain,
             Token = Guid.NewGuid().ToBase64String(),
             ExpiresAt = DateTime.UtcNow.AddMinutes(TokenConstants.ExpiresIn30Minutes)
@@ -54,15 +54,14 @@ public class InitiateBusinessCreationCommandHandler(
 
         var encodedToken = HttpUtility.UrlEncode(token.Token);
         var emailDto =
-            new CompleteBusinessCreationEmailDto(userId, userEmail, creationCommand.Name,
+            new CompleteBusinessCreationEmailDto(userId, userEmail, command.Name,
                 encodedToken,
                 TokenConstants.ExpiresIn30Minutes);
 
         backgroundJobClient.Enqueue<IEmailService>(x =>
             x.SendCompleteBusinessCreationAsync(emailDto));
 
-        logger.LogInformation("User {userId} has requested to create a business {businessName}",
-            userId, creationCommand.Name);
+        logger.LogInformation("User {UserId} initiated business creation: {BusinessName}", userId, command.Name);
 
         return Unit.Value;
     }

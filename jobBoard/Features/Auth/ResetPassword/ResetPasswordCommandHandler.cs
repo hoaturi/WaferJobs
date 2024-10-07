@@ -22,15 +22,21 @@ public class ResetPasswordCommandHandler(
 
         var resetResult = await userManager.ResetPasswordAsync(user, command.Token, command.Password);
 
-        if (resetResult.Succeeded)
+        if (!resetResult.Errors.Any())
         {
-            logger.LogInformation("Password reset successful for user with id: {UserId}", user.Id);
+            logger.LogInformation("Reset password for user: {UserId}", user.Id);
             return Unit.Value;
         }
 
-        if (resetResult.Errors.Any(e => e.Code == "InvalidToken"))
-            throw new InvalidPasswordResetTokenException(user.Id);
+        var passwordResetError = resetResult.Errors.First();
 
-        throw new InvalidOperationException("Unexpected error occurred while resetting password");
+        if (passwordResetError.Code == nameof(IdentityErrorDescriber.InvalidToken))
+        {
+            logger.LogWarning("User {UserId} provided an invalid token for password reset.", user.Id);
+            throw new InvalidPasswordResetTokenException(user.Id);
+        }
+
+        var errorMessages = string.Join(", ", resetResult.Errors.Select(e => e.Description));
+        throw new InvalidOperationException($"Failed to reset password for user {user.Id}. Errors: {errorMessages}");
     }
 }

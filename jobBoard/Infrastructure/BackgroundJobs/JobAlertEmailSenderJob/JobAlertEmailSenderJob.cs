@@ -7,17 +7,17 @@ using JobBoard.Infrastructure.Services.EmailService;
 using JobBoard.Infrastructure.Services.EmailService.Dtos;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
+namespace JobBoard.Infrastructure.BackgroundJobs.JobAlertEmailSenderJob;
 
-public class JobAlertSender(
+public class JobAlertEmailSenderJob(
     AppDbContext dbContext,
     IBackgroundJobClient backgroundJobClient,
-    ILogger<JobAlertSender> logger)
+    ILogger<JobAlertEmailSenderJob> logger)
     : IRecurringJobBase
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Starting Send Job Alerts Job execution");
+        logger.LogInformation("Sending job alerts emails.");
 
         var jobAlerts = await GetJobAlertsToSend(cancellationToken);
 
@@ -25,7 +25,7 @@ public class JobAlertSender(
         {
             var jobPostsToSend = await GetJobPostsToSend(jobAlert, cancellationToken);
 
-            if (jobPostsToSend?.TotalCount > 0)
+            if (jobPostsToSend?.TotalMatchCount > 0)
             {
                 var jobAlertEmailDto = new JobAlertEmailDto(
                     jobAlert.Email,
@@ -35,7 +35,6 @@ public class JobAlertSender(
                     jobAlert.EmploymentTypes.Select(et => et.Label).ToList(),
                     jobAlert.Token,
                     GenerateFilterQueryString(jobAlert),
-                    jobAlert.LastSentAt ?? jobAlert.CreatedAt,
                     jobPostsToSend
                 );
 
@@ -47,11 +46,10 @@ public class JobAlertSender(
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        logger.LogInformation("Completed Send Job Alerts Job execution. Processed {JobAlertCount} alerts",
-            jobAlerts.Count);
+        logger.LogInformation("Completed Sending {JobAlertCount} job alerts emails.", jobAlerts.Count);
     }
 
-    private async Task<JobPostsWithCountDto> GetJobPostsToSend(JobAlertEntity jobAlert,
+    private async Task<JobAlertEmailContentDto> GetJobPostsToSend(JobAlertEntity jobAlert,
         CancellationToken cancellationToken)
     {
         var referenceDate = jobAlert.LastSentAt ?? jobAlert.CreatedAt;
@@ -79,7 +77,7 @@ public class JobAlertSender(
             .ThenByDescending(jp => jp.PublishedAt)
             .ThenByDescending(jp =>
                 jobAlert.Keyword != null ? jp.SearchVector.Rank(EF.Functions.ToTsQuery(jobAlert.Keyword)) : 0)
-            .Select(jp => new JobPostToSendDto(
+            .Select(jp => new JobAlertEmailJobPostDto(
                 jp.Id,
                 jp.Title,
                 jp.City != null ? $"{jp.City.Label}, {jp.Country.Label}" : jp.Country.Label,
@@ -93,7 +91,7 @@ public class JobAlertSender(
             .Take(15)
             .ToListAsync(cancellationToken);
 
-        return new JobPostsWithCountDto(jobPosts, totalCount);
+        return new JobAlertEmailContentDto(jobPosts, totalCount);
     }
 
     private async Task<List<JobAlertEntity>> GetJobAlertsToSend(CancellationToken cancellationToken)

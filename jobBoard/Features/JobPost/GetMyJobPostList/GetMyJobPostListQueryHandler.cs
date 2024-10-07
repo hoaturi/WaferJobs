@@ -22,7 +22,7 @@ public class
 
         var jobPostListQuery = appDbContext.JobPosts.AsNoTracking()
             .Where(j => j.Business != null &&
-                        j.Business.Members.Any(m => m.UserId == currentUserId));
+                        j.Business.Memberships.Any(m => m.UserId == currentUserId));
 
         jobPostListQuery = query.Status switch
         {

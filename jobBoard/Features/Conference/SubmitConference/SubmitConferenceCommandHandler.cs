@@ -38,7 +38,7 @@ public class SubmitConferenceCommandHandler(
         backgroundJobClient.Enqueue<IEmailService>(x =>
             x.SendConferenceSubmissionReviewAsync(new ConferenceSubmissionReviewEmailDto(newConference.Title)));
 
-        logger.LogInformation("A new conference has been submitted with ID: {ConferenceId}", newConference.Id);
+        logger.LogInformation("Conference {ConferenceId} submitted for review", newConference.Id);
 
         return Unit.Value;
     }

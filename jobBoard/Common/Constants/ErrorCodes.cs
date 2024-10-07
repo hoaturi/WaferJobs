@@ -17,16 +17,16 @@ public class ErrorCodes
     public static readonly ErrorCodes EmailNotVerified = new("AU006");
     public static readonly ErrorCodes EmailChangeRequestNotFound = new("AU007");
     public static readonly ErrorCodes EmailChangeNotAllowed = new("AU008");
-    public static readonly ErrorCodes EmailUnChanged = new("AU009");
+    public static readonly ErrorCodes EmailNotChanged = new("AU009");
 
     // Business Errors (BU)
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
     public static readonly ErrorCodes BusinessNotFoundForUser = new("BU002");
     public static readonly ErrorCodes UserAlreadyMember = new("BU003");
-    public static readonly ErrorCodes BusinessClaimRequestNotFound = new("BU004");
-    public static readonly ErrorCodes EmailDomainMismatch = new("BU005");
-    public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU006");
-    public static readonly ErrorCodes BusinessMembershipNotFound = new("BU007");
+    public static readonly ErrorCodes EmailDomainMismatch = new("BU004");
+    public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU005");
+    public static readonly ErrorCodes BusinessMembershipNotFound = new("BU006");
+    public static readonly ErrorCodes BusinessMemberNotAdmin = new("BU007");
 
     // Job Post Errors (JP)
     public static readonly ErrorCodes JobPostNotFound = new("JP001");

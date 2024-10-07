@@ -115,7 +115,7 @@ public class EmailService(
             employmentTypes = joinedEmploymentTypes,
             token = dto.Token,
             filterQuery = dto.FilterQuery,
-            totalCount = dto.JobPosts.TotalCount,
+            totalCount = dto.JobPosts.TotalMatchCount,
             jobPosts = dto.JobPosts.JobPosts
         };
 

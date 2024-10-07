@@ -15,20 +15,7 @@ public class JobMetricService(
     private readonly IDatabase _db = redis.GetDatabase();
     private readonly IServer _server = redis.GetServer(redis.GetEndPoints().First());
 
-    public async Task IncrementApplyCountAsync(Guid jobId, CancellationToken cancellationToken)
-    {
-        var ipAddress = httpContext.HttpContext?.Connection.RemoteIpAddress?.ToString();
-        if (string.IsNullOrWhiteSpace(ipAddress)) return;
-        if (await IsAlreadyApplied(ipAddress, jobId, cancellationToken)) return;
-
-        var cacheKey = $"{CacheKeys.ApplyClickCount}:{jobId}";
-        var cacheKeyWithIp = $"{CacheKeys.ApplyClickCount}:{jobId}:{ipAddress}";
-
-        await _db.StringIncrementAsync(cacheKey);
-        await _db.StringSetAsync(cacheKeyWithIp, 1, TimeSpan.FromDays(1));
-    }
-
-    public async Task PersistApplyCountAsync(CancellationToken cancellationToken)
+    public async Task PersistApplicationCountAsync(CancellationToken cancellationToken)
     {
         var keys = _server.Keys(0, $"{CacheKeys.ApplyClickCount}:*").ToArray();
 
@@ -61,10 +48,24 @@ public class JobMetricService(
 
         await _db.KeyDeleteAsync(keys);
 
-        logger.LogInformation("Persisted and cleared apply count for {Count} jobs", keys.Length);
+        logger.LogInformation("Persisted {JobCount} temporary job application counts from memory to database",
+            jobPosts.Count);
     }
 
-    private async Task<bool> IsAlreadyApplied(string ipAddress, Guid jobId, CancellationToken cancellationToken)
+    public async Task IncrementApplicationCountJob(Guid jobId, CancellationToken cancellationToken)
+    {
+        var ipAddress = httpContext.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        if (string.IsNullOrWhiteSpace(ipAddress)) return;
+        if (await IsAlreadyApplied(ipAddress, jobId)) return;
+
+        var cacheKey = $"{CacheKeys.ApplyClickCount}:{jobId}";
+        var cacheKeyWithIp = $"{CacheKeys.ApplyClickCount}:{jobId}:{ipAddress}";
+
+        await _db.StringIncrementAsync(cacheKey);
+        await _db.StringSetAsync(cacheKeyWithIp, 1, TimeSpan.FromDays(1));
+    }
+
+    private async Task<bool> IsAlreadyApplied(string ipAddress, Guid jobId)
     {
         var cacheKey = $"{CacheKeys.ApplyClickCount}:{jobId}:{ipAddress}";
 

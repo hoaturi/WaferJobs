@@ -23,7 +23,9 @@ public class VerifyConferenceCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Conference with ID: {ConferenceId} has been verified", conference.Id);
+        logger.LogInformation("Completed verification for conference: {ConferenceId}. Result: {Result}",
+            conference.Id,
+            conference.IsVerified ? "Approved" : "Rejected");
 
         return Unit.Value;
     }

@@ -37,8 +37,8 @@ public class CreateFeaturedJobPostCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("{business} created a featured job post with id: {jobPostId}",
-            business.Name, jobPost.Id);
+        logger.LogInformation("Created featured job post {JobPostId} for business {BusinessId}",
+            jobPost.Id, business.Id);
 
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }
@@ -46,8 +46,8 @@ public class CreateFeaturedJobPostCommandHandler(
     private async Task<BusinessEntity> GetBusinessByUserId(Guid userId, CancellationToken cancellationToken)
     {
         var business = await dbContext.Businesses
-            .Include(b => b.Members)
-            .FirstOrDefaultAsync(b => b.Members.Any(m => m.UserId == userId), cancellationToken);
+            .Include(b => b.Memberships)
+            .FirstOrDefaultAsync(b => b.Memberships.Any(m => m.UserId == userId), cancellationToken);
 
         if (business is null) throw new BusinessNotFoundForUserException(userId);
 
@@ -56,7 +56,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
     private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, Guid userId, string email)
     {
-        var membership = business.Members.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
+        var membership = business.Memberships.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
                          throw new BusinessMembershipNotFoundException(userId);
 
         if (membership.stripeCustomerId is not null) return membership.stripeCustomerId;

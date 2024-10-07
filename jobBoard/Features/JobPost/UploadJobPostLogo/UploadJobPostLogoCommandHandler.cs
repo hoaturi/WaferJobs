@@ -7,7 +7,8 @@ namespace JobBoard.Features.JobPost.UploadJobPostLogo;
 
 public class
     UploadJobPostLogoCommandHandler(
-        IFileUploadService fileUploadService
+        IFileUploadService fileUploadService,
+        ILogger<UploadJobPostLogoCommandHandler> logger
     ) : IRequestHandler<UploadJobPostLogoCommand,
     Result<UpdateBusinessLogoResponse, Error>>
 {
@@ -22,6 +23,7 @@ public class
             command.File.OpenReadStream(),
             LogoTypes.Company);
 
+        logger.LogInformation("Uploaded job post logo. Url: {UploadedLogoUrl}", uploadedLogoUrl);
         return new UpdateBusinessLogoResponse(uploadedLogoUrl);
     }
 }

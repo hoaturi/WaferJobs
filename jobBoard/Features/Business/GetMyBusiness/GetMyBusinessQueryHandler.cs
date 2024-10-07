@@ -24,7 +24,7 @@ public class GetMyBusinessQueryHandler(
             await appDbContext
                 .Businesses
                 .AsNoTracking()
-                .Where(b => b.Members.Any(m => m.UserId == currentUserId))
+                .Where(b => b.Memberships.Any(m => m.UserId == currentUserId))
                 .Select(b => new GetBusinessResponse(
                     b.Id,
                     b.Name,

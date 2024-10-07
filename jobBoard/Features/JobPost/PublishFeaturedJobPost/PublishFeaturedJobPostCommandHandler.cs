@@ -26,8 +26,7 @@ public class PublishFeaturedJobPostCommandHandler(
 
         if (jobPostPayment.IsProcessed)
         {
-            logger.LogWarning("Job post with id: {JobPostId} has already been processed",
-                jobPostPayment.JobPost!.Id);
+            logger.LogWarning("Job post {JobPostId} has already been processed", jobPostPayment.JobPost.Id);
             return Unit.Value;
         }
 
@@ -40,7 +39,7 @@ public class PublishFeaturedJobPostCommandHandler(
         jobPostPayment.IsProcessed = true;
 
         await appDbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Published job post with id: {JobPostId}", jobPostPayment.JobPost!.Id);
+        logger.LogInformation("Published featured job post {JobPostId}", jobPostPayment.JobPost.Id);
 
         return Unit.Value;
     }

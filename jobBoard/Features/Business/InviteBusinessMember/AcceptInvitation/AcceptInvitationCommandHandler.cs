@@ -26,7 +26,11 @@ public class AcceptInvitationCommandHandler(
                 x.Token == command.Token && !x.IsAccepted && x.ExpiresAt >= DateTime.UtcNow,
             cancellationToken);
 
-        if (invitation is null) return BusinessErrors.InvalidInvitationToken;
+        if (invitation is null)
+        {
+            logger.LogWarning("User attempted to accept invitation with invalid token: {Token}", command.Token);
+            return BusinessErrors.InvalidInvitationToken;
+        }
 
         var user = new ApplicationUserEntity
         {
@@ -36,10 +40,25 @@ public class AcceptInvitationCommandHandler(
 
         var createResult = await userManager.CreateAsync(user, command.Password);
 
-        if (createResult.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
-            return AuthErrors.EmailAlreadyInUse;
+        if (!createResult.Succeeded)
+        {
+            if (createResult.Errors.All(e => e.Code == nameof(IdentityErrorDescriber.DuplicateEmail)))
+            {
+                logger.LogWarning("User attempted to accept invitation with email that already exists.");
+                return AuthErrors.EmailAlreadyInUse;
+            }
 
-        await userManager.AddToRoleAsync(user, nameof(UserRoles.Business));
+            var errorMessages = string.Join(", ", createResult.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to create user. Errors: {errorMessages}");
+        }
+
+        var addRoleResult = await userManager.AddToRoleAsync(user, nameof(UserRoles.Business));
+
+        if (!addRoleResult.Succeeded)
+        {
+            var errorMessages = string.Join(", ", addRoleResult.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to add user to role. Errors: {errorMessages}");
+        }
 
         var confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmEmailDto = new ConfirmEmailDto(user.Email, user.Id, confirmToken);
@@ -61,7 +80,7 @@ public class AcceptInvitationCommandHandler(
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendEmailConfirmAsync(confirmEmailDto));
 
-        logger.LogInformation("User {UserId} accepted invitation for business {BusinessId}", user.Id,
+        logger.LogInformation("User {UserId} accepted invitation for business: {BusinessId}", user.Id,
             invitation.BusinessId);
 
         return Unit.Value;

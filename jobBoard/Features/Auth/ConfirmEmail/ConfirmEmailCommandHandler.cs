@@ -15,23 +15,24 @@ public class ConfirmEmailCommandHandler(
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
 
-        if (user is null)
-        {
-            logger.LogWarning("User {UserId} not found", command.UserId);
-            throw new UserNotFoundException(command.UserId);
-        }
+        if (user is null) throw new UserNotFoundException(command.UserId);
 
         var result = await userManager.ConfirmEmailAsync(user, command.Token);
 
         if (result.Succeeded)
         {
-            logger.LogInformation("Email confirmed for user with id: {UserId}", user.Id);
+            logger.LogInformation("Confirmed email for user: {UserId}.", command.UserId);
             return Unit.Value;
         }
 
-        if (result.Errors.Any(e => e.Code == "InvalidToken"))
-            throw new InvalidEmailConfirmTokenException(user.Id);
+        if (result.Errors.All(e => e.Code != nameof(IdentityErrorDescriber.InvalidToken)))
+        {
+            var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException(
+                $"Failed to confirm email for user: {command.UserId}. Errors: {errorMessages}");
+        }
 
-        throw new InvalidOperationException("Unexpected error occurred while confirming email");
+        logger.LogWarning("User {UserId} provided an invalid token for email confirmation.", command.UserId);
+        return AuthErrors.InvalidEmailConfirmationToken;
     }
 }

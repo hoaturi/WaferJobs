@@ -18,19 +18,19 @@ public class DeleteMyJobPostCommandHandler(
 
         var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
-            .ThenInclude(businessProfileEntity => businessProfileEntity!.Members)
+            .ThenInclude(businessProfileEntity => businessProfileEntity!.Memberships)
             .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
 
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
-        if (jobPost.Business is not null && jobPost.Business.Members.Any(m => m.UserId != currentUserId))
+        if (jobPost.Business is not null && jobPost.Business.Memberships.Any(m => m.UserId != currentUserId))
             throw new UnauthorizedJobPostAccessException(command.Id, currentUserId);
 
         dbContext.Remove(jobPost);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Job post {Id} deleted by user {UserId}", command.Id, currentUserId);
-
+        logger.LogInformation("Deleted job post {JobPostId} for company {CompanyId} by user {UserId}", command.Id,
+            jobPost.Business?.Id, currentUserId);
         return Unit.Value;
     }
 }

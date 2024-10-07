@@ -1,9 +1,9 @@
 ﻿using Hangfire;
 using JobBoard.Common.Middlewares;
-using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
-using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
-using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
-using JobBoard.Infrastructure.BackgroundJobs.PersistApplyCountJob;
+using JobBoard.Infrastructure.BackgroundJobs.CurrencyRateRefreshJob;
+using JobBoard.Infrastructure.BackgroundJobs.FeaturedJobStatusUpdateJob;
+using JobBoard.Infrastructure.BackgroundJobs.JobAlertEmailSenderJob;
+using JobBoard.Infrastructure.BackgroundJobs.PersistApplicationCountJob;
 
 namespace JobBoard.Infrastructure.Extensions;
 
@@ -16,26 +16,26 @@ public static class ApplicationExtensions
             StatsPollingInterval = 60000
         });
 
-        RecurringJob.AddOrUpdate<JobAlertSender>(
-            "JobAlertSender",
+        RecurringJob.AddOrUpdate<JobAlertEmailSenderJob>(
+            "JobAlertEmailSenderJob",
             x => x.ExecuteAsync(CancellationToken.None),
             "0 */6 * * *"
         );
 
-        RecurringJob.AddOrUpdate<FeaturedJobExpirationChecker>(
-            "FeaturedJobExpirationChecker",
+        RecurringJob.AddOrUpdate<FeaturedJobStatusUpdateJob>(
+            "FeaturedJobStatusUpdateJob",
             x => x.ExecuteAsync(CancellationToken.None),
             Cron.Hourly
         );
 
-        RecurringJob.AddOrUpdate<CurrencyExchangeRateUpdater>(
-            "CurrencyExchangeRateUpdater",
+        RecurringJob.AddOrUpdate<CurrencyRateRefreshJob>(
+            "CurrencyRateRefreshJob",
             x => x.ExecuteAsync(CancellationToken.None),
             Cron.Daily
         );
 
-        RecurringJob.AddOrUpdate<PersistApplyCountJob>(
-            "PersistApplyCountJob",
+        RecurringJob.AddOrUpdate<PersistApplicationCountJob>(
+            "PersistApplicationCountJob",
             x => x.ExecuteAsync(CancellationToken.None),
             "*/30 * * * *"
         );

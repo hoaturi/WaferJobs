@@ -18,7 +18,7 @@ public class BusinessEntity : BaseEntity
     public string? LinkedinUrl { get; set; }
     public bool IsClaimed { get; set; }
     public bool IsActive { get; set; }
-    public List<BusinessMembershipEntity> Members { get; init; } = [];
+    public List<BusinessMembershipEntity> Memberships { get; init; } = [];
     public List<JobPostEntity> JobPosts { get; init; } = [];
     public BusinessSizeEntity? BusinessSize { get; init; }
 }

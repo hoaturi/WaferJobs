@@ -30,9 +30,11 @@ public class SendInvitationCommandHandler(
 
         var membership = await dbContext.BusinessMemberships
                              .AsNoTracking()
-                             .Where(x => x.UserId == userId && x.IsActive && x.IsAdmin)
+                             .Where(x => x.UserId == userId && x.IsActive)
                              .FirstOrDefaultAsync(cancellationToken)
                          ?? throw new BusinessMembershipNotFoundException(userId);
+
+        if (!membership.IsAdmin) throw new BusinessMemberNotAdminException(membership.BusinessId, userId);
 
         var newInvitation = new BusinessMemberInvitationEntity
         {
@@ -58,8 +60,8 @@ public class SendInvitationCommandHandler(
         );
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessMemberInvitationAsync(emailDto));
 
-        logger.LogInformation("New member invitation sent for business {BusinessId}. Invited by user {UserId}.",
-            membership.BusinessId, userId);
+        logger.LogInformation("Invitation for business {BusinessId} sent by user: {UserId}", membership.BusinessId,
+            userId);
 
         return Unit.Value;
     }

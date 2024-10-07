@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Auth.CloseAccount;
+namespace JobBoard.Features.Auth.DeleteAccount;
 
 [Tags("Auth")]
-[Route("api/auth/close-account")]
+[Route("api/auth/account")]
 [ApiController]
-public class CloseAccountController(ISender sender) : ControllerBase
+public class DeleteAccountController(ISender sender) : ControllerBase
 {
     [Authorize]
     [HttpDelete]
-    public async Task<IActionResult> CloseAccount([FromBody] CloseAccountCommand command)
+    public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountCommand command)
     {
         var result = await sender.Send(command);
 

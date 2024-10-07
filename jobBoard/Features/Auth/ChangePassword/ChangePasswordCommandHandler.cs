@@ -25,15 +25,19 @@ public class ChangePasswordCommandHandler(
 
         if (!changeResult.Errors.Any())
         {
-            logger.LogInformation("User {UserId} changed their password", userId);
+            logger.LogInformation("Changed password for user: {UserId}", userId);
             return Unit.Value;
         }
 
         var passwordUpdateError = changeResult.Errors.First();
 
-        if (passwordUpdateError.Code == "PasswordMismatch")
+        if (passwordUpdateError.Code == nameof(IdentityErrorDescriber.PasswordMismatch))
+        {
+            logger.LogWarning("User {UserId} provided an incorrect current password for password change.", userId);
             return AuthErrors.InvalidCurrentPassword;
+        }
 
-        throw new InvalidOperationException("Failed to change password");
+        var errorMessages = string.Join(", ", changeResult.Errors.Select(e => e.Description));
+        throw new InvalidOperationException($"Failed to change password for user {userId}. Errors: {errorMessages}");
     }
 }

@@ -21,22 +21,24 @@ public class UpdateMyJobPostCommandHandler(
 
         var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
-            .ThenInclude(b => b!.Members)
+            .ThenInclude(b => b!.Memberships)
             .Include(j => j.City)
             .Include(j => j.Tags)
             .FirstOrDefaultAsync(j => j.Id == command.Id, cancellationToken);
 
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
-        if (jobPost.Business!.Members.Any(m => m.UserId != userId))
+        if (jobPost.Business!.Memberships.Any(m => m.UserId != userId))
             throw new UnauthorizedJobPostAccessException(command.Id, userId);
 
         UpdateJobPostDetailsAsync(jobPost, command.Dto);
         await UpdateJobPostTagsAsync(jobPost, command.Dto.Tags, cancellationToken);
         await UpdateJobPostCityAsync(jobPost, command.Dto.City, cancellationToken);
 
-        logger.LogInformation("Job post with id: {Id} was updated by user with id: {UserId}", command.Id, userId);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
+        logger.LogInformation("Updated job post {JobPostId} for business {BusinessId} by user {UserId}", jobPost.Id,
+            jobPost.Business.Id, userId);
         return Unit.Value;
     }
 

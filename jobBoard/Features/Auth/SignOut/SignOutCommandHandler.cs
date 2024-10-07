@@ -18,21 +18,22 @@ public class SignOutCommandHandler(
         var isTokenRevoked = await jwtService.IsRefreshTokenRevoked(command.RefreshToken, cancellationToken);
         if (isTokenRevoked)
         {
-            logger.LogWarning("Attempt to log out with an already revoked refresh token");
+            logger.LogWarning("User attempted to sign out with a revoked refresh token: {RefreshToken}",
+                command.RefreshToken);
             return Unit.Value;
         }
 
         var isTokenValid = await jwtService.ValidateToken(command.RefreshToken, JwtTypes.RefreshToken);
         if (!isTokenValid)
         {
-            logger.LogWarning("Attempt to log out with an invalid refresh token");
+            logger.LogWarning("User attempted to sign out with an invalid refresh token: {RefreshToken}",
+                command.RefreshToken);
             return Unit.Value;
         }
 
         await jwtService.RevokeRefreshToken(command.RefreshToken, cancellationToken);
 
-        logger.LogInformation("User successfully logged out and refresh token revoked");
-
+        logger.LogInformation("Signed out user with refresh token: {refreshToken}", command.RefreshToken);
         return Unit.Value;
     }
 }

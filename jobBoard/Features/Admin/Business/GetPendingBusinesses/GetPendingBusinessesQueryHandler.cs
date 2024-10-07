@@ -17,11 +17,11 @@ public class GetPendingBusinessesQueryHandler(AppDbContext dbContext)
             .Select(b => new PendingBusinessDto(
                 b.Id,
                 b.Name,
-                b.WebsiteUrl ?? string.Empty,
-                b.Domain ?? string.Empty,
-                b.Members.FirstOrDefault(m => m.IsAdmin)!.User.Email!,
-                $"{b.Members.FirstOrDefault(m => m.IsAdmin)!.FirstName} {b.Members.FirstOrDefault(m => m.IsAdmin)!.LastName}",
-                b.Members.FirstOrDefault(m => m.IsAdmin)!.Title,
+                b.WebsiteUrl,
+                b.Domain,
+                b.Memberships.FirstOrDefault(m => m.IsAdmin)!.User.Email!,
+                $"{b.Memberships.FirstOrDefault(m => m.IsAdmin)!.FirstName} {b.Memberships.FirstOrDefault(m => m.IsAdmin)!.LastName}",
+                b.Memberships.FirstOrDefault(m => m.IsAdmin)!.Title,
                 b.CreatedAt
             ))
             .ToListAsync(cancellationToken);

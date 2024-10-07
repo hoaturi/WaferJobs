@@ -20,13 +20,11 @@ public class UnsubscribeToJobAlertCommandHandler(
 
         if (deletedCount == 0)
         {
-            logger.LogWarning("Unsubscribe attempt for job alert with token {UnsubscribeToken} failed: Alert not found",
-                command.Token);
+            logger.LogWarning("Job alert with token {UnsubscribeToken} not found", command.Token);
             return JobAlertError.JobAlertNotFound;
         }
 
-        logger.LogInformation("Job alert with token {UnsubscribeToken} successfully unsubscribed",
-            command.Token);
+        logger.LogInformation("Deleted job alert subscription with token: {UnsubscribeToken}", command.Token);
 
         return Unit.Value;
     }

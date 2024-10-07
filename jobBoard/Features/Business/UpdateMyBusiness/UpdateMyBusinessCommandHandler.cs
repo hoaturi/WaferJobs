@@ -1,5 +1,4 @@
 using JobBoard.Common.Models;
-using JobBoard.Domain.Business;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
@@ -22,14 +21,13 @@ public class UpdateMyBusinessCommandHandler(
         var currentUserId = currentUser.GetUserId();
 
         var business = await appDbContext
-            .Businesses
-            .FirstOrDefaultAsync(b => b.Members.Any(m => m.UserId == currentUserId), cancellationToken);
+                           .Businesses
+                           .Where(b => b.Memberships.Any(m => m.UserId == currentUserId && m.IsActive))
+                           .FirstOrDefaultAsync(cancellationToken)
+                       ?? throw new BusinessNotFoundException(currentUserId);
 
-        if (business is null)
-        {
-            logger.LogWarning("Business not found for user with id {UserId}", currentUserId);
-            throw new BusinessNotFoundForUserException(currentUserId);
-        }
+        var membership = business.Memberships.First(m => m.UserId == currentUserId);
+        if (!membership.IsAdmin) throw new BusinessMemberNotAdminException(business.Id, currentUserId);
 
         business.Name = command.Name;
         business.Description = command.Description;
@@ -41,7 +39,7 @@ public class UpdateMyBusinessCommandHandler(
 
         await appDbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Successfully updated business with id {BusinessId}", business.Id);
+        logger.LogInformation("Updated business {BusinessId} for user {UserId}", business.Id, currentUserId);
 
         return Unit.Value;
     }

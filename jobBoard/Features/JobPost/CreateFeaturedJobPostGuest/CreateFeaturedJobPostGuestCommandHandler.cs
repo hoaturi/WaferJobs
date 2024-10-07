@@ -30,8 +30,8 @@ public class CreateFeaturedJobPostGuestCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Guest company {CompanyName} created a featured job post with id: {JobPostId}",
-            command.CompanyName, jobPostId);
+        logger.LogInformation("Created featured job post {JobPostId} for guest company {CompanyName}", jobPostId,
+            command.CompanyName);
 
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }

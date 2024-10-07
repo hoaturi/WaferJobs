@@ -36,8 +36,7 @@ public class SubscribeToJobAlertCommandHandler(
             dbContext.JobAlerts.Add(jobAlert);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Job alert with token {SubscribeToken} successfully subscribed", jobAlert.Token);
-
+            logger.LogInformation("Create new job alert subscription: {jobAlertId}", jobAlert.Id);
             return Unit.Value;
         }
         catch (DbUpdateException ex)
@@ -46,7 +45,7 @@ public class SubscribeToJobAlertCommandHandler(
                 !constraintChecker.IsUniqueConstraintViolation<JobAlertEntity>(nameof(JobAlertEntity.Email),
                     pgEx.SqlState, pgEx.ConstraintName)) throw;
 
-            logger.LogWarning("Job alert already exists for email {Email}, updating...", command.Email);
+            logger.LogInformation("Provided email is already subscribed to a job alert");
 
             dbContext.ChangeTracker.Clear();
             await UpdateExistingJobAlert(command, cancellationToken);
@@ -78,7 +77,7 @@ public class SubscribeToJobAlertCommandHandler(
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Job alert updated for email {Email}", command.Email);
+            logger.LogInformation("Updated existing job alert subscription: {jobAlertId}", existingJobAlert.Id);
         }
     }
 

@@ -21,7 +21,8 @@ public class InitiateBusinessClaimCommandHandler(
     AppDbContext dbContext,
     UserManager<ApplicationUserEntity> userManager,
     ICurrentUserService currentUserService,
-    IBackgroundJobClient backgroundJobClient
+    IBackgroundJobClient backgroundJobClient,
+    ILogger<InitiateBusinessClaimCommandHandler> logger
 )
     : IRequestHandler<InitiateBusinessClaimCommand, Result<Unit, Error>>
 {
@@ -71,6 +72,7 @@ public class InitiateBusinessClaimCommandHandler(
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendCompleteBusinessClaimAsync(emailDto));
 
+        logger.LogInformation("User {UserId} initiated business claim for business {BusinessId}", userId, business.Id);
         return Unit.Value;
     }
 }

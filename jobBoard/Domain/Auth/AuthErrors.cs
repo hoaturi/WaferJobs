@@ -32,6 +32,9 @@ public static class AuthErrors
         new(ErrorCodes.EmailChangeNotAllowed, HttpStatusCode.Forbidden,
             "Email change not allowed for users with business membership");
 
-    public static readonly Error EmailUnChanged =
-        new(ErrorCodes.EmailUnChanged, HttpStatusCode.BadRequest, "Email unchanged");
+    public static readonly Error EmailNotChanged =
+        new(ErrorCodes.EmailNotChanged, HttpStatusCode.BadRequest, "Email not changed");
+
+    public static readonly Error InvalidEmailConfirmationToken =
+        new(ErrorCodes.InvalidToken, HttpStatusCode.BadRequest, "Invalid email confirmation token");
 }

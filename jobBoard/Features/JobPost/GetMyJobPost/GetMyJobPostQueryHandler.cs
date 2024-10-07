@@ -20,7 +20,7 @@ public class GetMyJobPostQueryHandler(
         var jobPost = await appDbContext.JobPosts
             .AsNoTracking()
             .Where(j => j.Slug == query.Slug && j.Business != null &&
-                        j.Business.Members.Any(m => m.UserId == userId))
+                        j.Business.Memberships.Any(m => m.UserId == userId))
             .Select(j => new GetMyJobPostResponse(
                 j.Id,
                 j.Category.Label,

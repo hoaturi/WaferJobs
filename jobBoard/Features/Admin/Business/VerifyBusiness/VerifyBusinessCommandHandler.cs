@@ -46,8 +46,9 @@ public class VerifyBusinessCommandHandler(
             new BusinessReviewResultEmailDto(business.Id, member.User.Email!, business.Name, command.IsApproved);
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessReviewResultAsync(emailDto));
 
-        logger.LogInformation("Business {BusinessId} was {Status}", business.Id,
-            command.IsApproved ? "approved" : "rejected");
+        logger.LogInformation("Completed verification for business: {BusinessId}: {Result}",
+            business.Id,
+            command.IsApproved ? "Approved" : "Rejected");
 
         return Unit.Value;
     }

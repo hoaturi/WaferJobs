@@ -1,4 +1,4 @@
-﻿using JobBoard.Infrastructure.BackgroundJobs.JobAlertSender;
+﻿using JobBoard.Infrastructure.BackgroundJobs.JobAlertEmailSenderJob;
 
 namespace JobBoard.Infrastructure.Services.EmailService.Dtos;
 
@@ -10,6 +10,5 @@ public record JobAlertEmailDto(
     List<string>? EmploymentTypes,
     string Token,
     string? FilterQuery,
-    DateTime? LastSentAt,
-    JobPostsWithCountDto JobPosts
+    JobAlertEmailContentDto JobPosts
 );

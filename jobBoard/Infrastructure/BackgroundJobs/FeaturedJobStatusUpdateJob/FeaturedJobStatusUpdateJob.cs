@@ -1,16 +1,16 @@
 ﻿using JobBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoard.Infrastructure.BackgroundJobs.FeaturedJobExpirationChecker;
+namespace JobBoard.Infrastructure.BackgroundJobs.FeaturedJobStatusUpdateJob;
 
-public class FeaturedJobExpirationChecker(AppDbContext dbContext, ILogger<FeaturedJobExpirationChecker> logger)
+public class FeaturedJobStatusUpdateJob(AppDbContext dbContext, ILogger<FeaturedJobStatusUpdateJob> logger)
     : IRecurringJobBase
 {
     private const int ExpirationDays = 35;
 
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Starting Featured Job Expiration Check");
+        logger.LogInformation("Starting featured job posts status update");
 
         var expirationDate = DateTime.UtcNow.AddDays(-ExpirationDays);
 
@@ -22,7 +22,7 @@ public class FeaturedJobExpirationChecker(AppDbContext dbContext, ILogger<Featur
                 , cancellationToken);
 
         logger.LogInformation(
-            "Completed Featured Job Expiration Check. Downgraded {JobPostCount} featured jobs to regular jobs.",
+            "Completed featured job posts status update. Reverted {UpdatedCount} posts to regular status",
             updatedCount);
     }
 }

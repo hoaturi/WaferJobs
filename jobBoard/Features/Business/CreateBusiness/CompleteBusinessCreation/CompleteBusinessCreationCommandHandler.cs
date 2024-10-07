@@ -29,7 +29,11 @@ public class CompleteBusinessCreationCommandHandler(
                 x => x.UserId == userId && x.Token == command.Token && x.ExpiresAt >= DateTime.UtcNow,
                 cancellationToken);
 
-        if (token is null || token.IsUsed) return BusinessErrors.InvalidCreationToken;
+        if (token is null || token.IsUsed)
+        {
+            logger.LogWarning("User {UserId} attempted to create business with invalid token: {token}", userId, token);
+            return BusinessErrors.InvalidCreationToken;
+        }
 
         var userEmailDomain = userEmail.Split('@')[1];
         if (token.Domain != userEmailDomain) throw new EmailDomainMismatchException(userId);
@@ -61,15 +65,14 @@ public class CompleteBusinessCreationCommandHandler(
         };
 
         dbContext.Businesses.Add(business);
-        business.Members.Add(member);
+        business.Memberships.Add(member);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var emailDto = new BusinessCreationReviewEmailDto(userEmail, business.Name);
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessCreationReviewAsync(emailDto));
 
-        logger.LogInformation("Business created successfully for user {UserId}", userId);
-
+        logger.LogInformation("Business {BusinessId} created by user: {UserId}", business.Id, userId);
         return Unit.Value;
     }
 }

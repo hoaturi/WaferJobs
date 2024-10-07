@@ -24,7 +24,11 @@ public class CompleteBusinessClaimCommandHandler(
                 x => x.Token == command.Token && x.UserId == userId && !x.IsUsed && x.ExpiresAt > DateTime.UtcNow,
                 cancellationToken);
 
-        if (token is null) return BusinessErrors.InvalidClaimToken;
+        if (token is null)
+        {
+            logger.LogWarning("User {UserId} attempted to claim business with invalid token: {token}", userId, token);
+            return BusinessErrors.InvalidClaimToken;
+        }
 
         var business = await dbContext.Businesses.FirstOrDefaultAsync(x => x.Id == token.BusinessId,
             cancellationToken) ?? throw new BusinessNotFoundException(token.BusinessId);
@@ -53,7 +57,7 @@ public class CompleteBusinessClaimCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("User {UserId} successfully claimed business {BusinessId}", userId, business.Id);
+        logger.LogInformation("Business {BusinessId} claimed by user {UserId}", business.Id, userId);
 
         return Unit.Value;
     }

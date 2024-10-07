@@ -2,7 +2,7 @@
 
 public interface IJobMetricService
 {
-    Task IncrementApplyCountAsync(Guid jobId, CancellationToken cancellationToken);
+    Task IncrementApplicationCountJob(Guid jobId, CancellationToken cancellationToken);
 
-    Task PersistApplyCountAsync(CancellationToken cancellationToken);
+    Task PersistApplicationCountAsync(CancellationToken cancellationToken);
 }

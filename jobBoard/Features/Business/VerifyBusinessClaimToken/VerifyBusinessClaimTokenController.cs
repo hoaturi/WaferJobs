@@ -3,16 +3,16 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoard.Features.Business.ValidateBusinessClaimToken;
+namespace JobBoard.Features.Business.VerifyBusinessClaimToken;
 
 [Tags("Business")]
-[Route("api/businesses/claim/validate-token")]
+[Route("api/businesses/claim/verify-token")]
 [ApiController]
-public class ValidateBusinessClaimTokenController(ISender sender) : ControllerBase
+public class VerifyBusinessClaimTokenController(ISender sender) : ControllerBase
 {
     [Authorize(nameof(UserRoles.Business))]
     [HttpPost]
-    public async Task<IActionResult> ValidateBusinessClaimToken([FromBody] ValidateBusinessClaimTokenQuery query)
+    public async Task<IActionResult> VerifyBusinessClaimToken([FromBody] VerifyBusinessClaimTokenQuery query)
     {
         var result = await sender.Send(query);
 

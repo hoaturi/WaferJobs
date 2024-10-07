@@ -25,11 +25,14 @@ public class SignInCommandHandler(
         if (user is null) return AuthErrors.InvalidCredentials;
 
         if (!await ValidateUserCredentials(user, command.Password))
+        {
+            logger.LogWarning("User {UserId} provided invalid credentials", user.Id);
             return AuthErrors.InvalidCredentials;
+        }
 
         if (!user.EmailConfirmed)
         {
-            logger.LogWarning("Failed login attempt: Email not verified for user ID {UserId}", user.Id);
+            logger.LogWarning("User {UserId} attempted to sign in with an unverified email", user.Id);
             return AuthErrors.EmailNotVerified;
         }
 
@@ -38,7 +41,7 @@ public class SignInCommandHandler(
 
         var (accessToken, refreshToken) = jwtService.GenerateTokens(user, roles);
 
-        logger.LogInformation("Successful login: User ID {UserId} authenticated", user.Id);
+        logger.LogInformation("Authenticated user: {UserId}. Roles: {Roles}", user.Id, string.Join(", ", roles));
 
         var userDto = new UserDto(user.Id, user.Email!, roles.ToArray(), hasCompletedOnboarding);
 
@@ -49,22 +52,25 @@ public class SignInCommandHandler(
     {
         var isCorrectPassword = await userManager.CheckPasswordAsync(user, password);
 
-        if (isCorrectPassword) return true;
-
-        logger.LogWarning("Failed login attempt: Incorrect password for user ID {UserId}", user.Id);
-        return false;
+        return isCorrectPassword;
     }
 
     private async Task<bool> CheckOnboardingStatus(ApplicationUserEntity user, IList<string> roles,
         CancellationToken cancellationToken)
     {
         if (roles.Contains(nameof(UserRoles.JobSeeker)))
-            return await dbContext.JobSeekers.AsNoTracking()
+        {
+            var hasCompletedOnboarding = await dbContext.JobSeekers.AsNoTracking()
                 .AnyAsync(x => x.UserId == user.Id, cancellationToken);
+            return hasCompletedOnboarding;
+        }
 
         if (roles.Contains(nameof(UserRoles.Business)))
-            return await dbContext.BusinessMemberships.AsNoTracking()
+        {
+            var hasCompletedOnboarding = await dbContext.BusinessMemberships.AsNoTracking()
                 .AnyAsync(x => x.UserId == user.Id, cancellationToken);
+            return hasCompletedOnboarding;
+        }
 
         return false;
     }

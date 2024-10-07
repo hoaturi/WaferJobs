@@ -7,7 +7,7 @@ using JobBoard.Common.Exceptions;
 using JobBoard.Common.Middlewares;
 using JobBoard.Common.Security;
 using JobBoard.Domain.Auth;
-using JobBoard.Infrastructure.BackgroundJobs.CurrencyExchangeRateUpdater;
+using JobBoard.Infrastructure.BackgroundJobs.CurrencyRateRefreshJob;
 using JobBoard.Infrastructure.Options;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Persistence.Utils;
@@ -181,7 +181,7 @@ public static class ServiceExtensions
     {
         var currencyOptions = configuration.GetSection(CurrencyOptions.Key).Get<CurrencyOptions>()!;
 
-        services.AddHttpClient<CurrencyExchangeRateUpdater>()
+        services.AddHttpClient<CurrencyRateRefreshJob>()
             .ConfigureHttpClient(client => { client.BaseAddress = new Uri(currencyOptions.BaseUrl); });
     }
 

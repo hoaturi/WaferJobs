@@ -31,6 +31,9 @@ public class CompleteEmailChangeCommandHandler(
         {
             changeRequest.Attempts++;
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogWarning("User {UserId} provided incorrect email change pin. Attempts: {AttemptsCount}", userId,
+                changeRequest.Attempts);
             return AuthErrors.InvalidEmailChangePin;
         }
 
@@ -43,16 +46,32 @@ public class CompleteEmailChangeCommandHandler(
         var setUserNameResult = await userManager.SetUserNameAsync(user, changeRequest.NewEmail);
         user.EmailConfirmed = true;
 
-        if (!setEmailResult.Succeeded || !setUserNameResult.Succeeded)
-            throw new InvalidOperationException($"Failed to update user email with id {userId}");
+        var errorMessages = ExtractIdentityErrors(setEmailResult, setUserNameResult);
+
+        if (!string.IsNullOrEmpty(errorMessages))
+            throw new InvalidOperationException(
+                $"Failed to update email or username for user: {userId}. Errors: {errorMessages}");
 
         changeRequest.IsVerified = true;
         changeRequest.VerifiedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Email changed successfully for user {UserId}", userId);
+        logger.LogInformation("Completed email change for user: {UserId}", userId);
 
         return Unit.Value;
+    }
+
+    private static string ExtractIdentityErrors(IdentityResult setEmailResult, IdentityResult setUserNameResult)
+    {
+        var errors = new List<string>();
+
+        if (!setEmailResult.Succeeded)
+            errors.AddRange(setEmailResult.Errors.Select(e => e.Description));
+
+        if (!setUserNameResult.Succeeded)
+            errors.AddRange(setUserNameResult.Errors.Select(e => e.Description));
+
+        return errors.Count != 0 ? string.Join(", ", errors) : string.Empty;
     }
 }

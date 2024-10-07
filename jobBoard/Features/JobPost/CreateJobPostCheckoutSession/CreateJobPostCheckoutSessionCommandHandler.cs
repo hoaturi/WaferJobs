@@ -26,12 +26,12 @@ public class CreateJobPostCheckoutSessionCommandHandler(
 
         var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
-            .Where(j => j.Id == command.Id && j.Business != null && j.Business.Members.Any(m => m.UserId == userId))
+            .Where(j => j.Id == command.Id && j.Business != null && j.Business.Memberships.Any(m => m.UserId == userId))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
-        var membership = jobPost.Business!.Members.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
+        var membership = jobPost.Business!.Memberships.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
                          throw new BusinessMembershipNotFoundException(userId);
 
         if (membership.stripeCustomerId is null)
@@ -47,9 +47,10 @@ public class CreateJobPostCheckoutSessionCommandHandler(
             { JobPostId = jobPost.Id, CheckoutSessionId = session.Id };
 
         await dbContext.JobPostPayments.AddAsync(payment, cancellationToken);
-        logger.LogInformation("Creating job post payment: {paymentId}", payment.Id);
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Created checkout session {SessionId} for job post {JobPostId}", session.Id, jobPost.Id);
 
         return new CreateJobPostCheckoutSessionResponse(session.Url);
     }
