@@ -32,7 +32,7 @@ public class SendInvitationCommandHandler(
                              .AsNoTracking()
                              .Where(x => x.UserId == userId && x.IsActive)
                              .FirstOrDefaultAsync(cancellationToken)
-                         ?? throw new BusinessMembershipNotFoundException(userId);
+                         ?? throw new UserHasNoBusinessMembershipException(userId);
 
         if (!membership.IsAdmin) throw new BusinessMemberNotAdminException(membership.BusinessId, userId);
 

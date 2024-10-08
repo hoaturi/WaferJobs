@@ -1,5 +1,5 @@
 ﻿using JobBoard.Common.Models;
-using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPost.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
@@ -24,7 +24,7 @@ public class DeleteMyJobPostCommandHandler(
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
         if (jobPost.Business is not null && jobPost.Business.Memberships.Any(m => m.UserId != currentUserId))
-            throw new UnauthorizedJobPostAccessException(command.Id, currentUserId);
+            throw new UnauthorizedJobPostAccessException(currentUserId, command.Id);
 
         dbContext.Remove(jobPost);
         await dbContext.SaveChangesAsync(cancellationToken);

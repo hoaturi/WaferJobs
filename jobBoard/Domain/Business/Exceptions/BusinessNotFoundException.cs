@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Business.Exceptions;
 public class BusinessNotFoundException(Guid businessId) : CustomException(
     ErrorCodes.BusinessNotFound,
     HttpStatusCode.NotFound,
-    $"Business profile with id {businessId} not found"
+    $"Business {businessId} not found."
 );

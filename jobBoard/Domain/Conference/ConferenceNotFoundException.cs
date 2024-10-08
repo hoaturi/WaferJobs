@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Conference;
 public class ConferenceNotFoundException(int conferenceId) : CustomException(
     ErrorCodes.ConferenceNotFound,
     HttpStatusCode.NotFound,
-    $"Conference with id {conferenceId} was not found."
+    $"Conference {conferenceId} not found."
 );

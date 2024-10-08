@@ -27,18 +27,20 @@ public class CompleteEmailChangeCommandHandler(
             .FirstOrDefaultAsync(x => x.UserId == userId && !x.IsVerified && x.ExpiresAt > DateTime.UtcNow,
                 cancellationToken) ?? throw new EmailChangeRequestNotFoundException(userId);
 
-        if (!changeRequest.Pin.Equals(command.Pin))
+        switch (changeRequest.Attempts)
         {
-            changeRequest.Attempts++;
-            await dbContext.SaveChangesAsync(cancellationToken);
+            case <= PinConstants.MaxPinAttempts when !changeRequest.Pin.Equals(command.Pin):
+                changeRequest.Attempts++;
+                await dbContext.SaveChangesAsync(cancellationToken);
 
-            logger.LogWarning("User {UserId} provided incorrect email change pin. Attempts: {AttemptsCount}", userId,
-                changeRequest.Attempts);
-            return AuthErrors.InvalidEmailChangePin;
+                logger.LogWarning("User {UserId} provided incorrect pin for email change. Attempts: {AttemptsCount}",
+                    userId,
+                    changeRequest.Attempts);
+                return AuthErrors.InvalidChangeEmailPin;
+            case >= PinConstants.MaxPinAttempts:
+                logger.LogWarning("User {UserId} reached max email change pin attempts", userId);
+                return AuthErrors.MaxPinAttemptsReached;
         }
-
-        if (changeRequest.Attempts >= PinConstants.MaxPinAttempts)
-            throw new TooManyVerificationAttemptsException(userId);
 
         var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
@@ -50,7 +52,7 @@ public class CompleteEmailChangeCommandHandler(
 
         if (!string.IsNullOrEmpty(errorMessages))
             throw new InvalidOperationException(
-                $"Failed to update email or username for user: {userId}. Errors: {errorMessages}");
+                $"Failed to update email or username for user: {userId} Errors: {errorMessages}");
 
         changeRequest.IsVerified = true;
         changeRequest.VerifiedAt = DateTime.UtcNow;

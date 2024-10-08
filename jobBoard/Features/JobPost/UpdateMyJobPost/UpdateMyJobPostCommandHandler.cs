@@ -1,6 +1,7 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Common;
 using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPost.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;
 using MediatR;
@@ -10,14 +11,14 @@ using Slugify;
 namespace JobBoard.Features.JobPost.UpdateMyJobPost;
 
 public class UpdateMyJobPostCommandHandler(
-    ICurrentUserService currentUser,
+    ICurrentUserService currentUserService,
     AppDbContext dbContext,
     ILogger<UpdateMyJobPostCommandHandler> logger)
     : IRequestHandler<UpdateMyJobPostCommand, Result<Unit, Error>>
 {
     public async Task<Result<Unit, Error>> Handle(UpdateMyJobPostCommand command, CancellationToken cancellationToken)
     {
-        var userId = currentUser.GetUserId();
+        var userId = currentUserService.GetUserId();
 
         var jobPost = await dbContext.JobPosts
             .Include(j => j.Business)
@@ -29,7 +30,7 @@ public class UpdateMyJobPostCommandHandler(
         if (jobPost is null) throw new JobPostNotFoundException(command.Id);
 
         if (jobPost.Business!.Memberships.Any(m => m.UserId != userId))
-            throw new UnauthorizedJobPostAccessException(command.Id, userId);
+            throw new UnauthorizedJobPostAccessException(userId, command.Id);
 
         UpdateJobPostDetailsAsync(jobPost, command.Dto);
         await UpdateJobPostTagsAsync(jobPost, command.Dto.Tags, cancellationToken);

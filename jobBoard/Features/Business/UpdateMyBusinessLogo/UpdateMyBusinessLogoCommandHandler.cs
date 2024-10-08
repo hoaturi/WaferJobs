@@ -25,7 +25,7 @@ public class
 
         var business = await appDbContext.Businesses
             .Where(b => b.Memberships.Any(m => m.UserId == currentUserId && m.IsActive))
-            .FirstOrDefaultAsync(cancellationToken) ?? throw new BusinessMembershipNotFoundException(currentUserId);
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new UserHasNoBusinessMembershipException(currentUserId);
 
         var membership = business.Memberships.First(m => m.UserId == currentUserId);
         if (!membership.IsAdmin) throw new BusinessMemberNotAdminException(business.Id, currentUserId);

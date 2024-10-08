@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Auth.Exceptions;
 public class EmailChangeRequestNotFoundException(Guid userId) : CustomException(
     ErrorCodes.EmailChangeRequestNotFound,
     HttpStatusCode.NotFound,
-    $"No valid email change request found for user {userId}"
+    $"Email change request for user {userId} not found."
 );

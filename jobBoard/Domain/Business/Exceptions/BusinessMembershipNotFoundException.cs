@@ -4,8 +4,7 @@ using JobBoard.Common.Exceptions;
 
 namespace JobBoard.Domain.Business.Exceptions;
 
-public class BusinessMembershipNotFoundException(Guid userId) : CustomException(
+public class BusinessMembershipNotFoundException(Guid businessId) : CustomException(
     ErrorCodes.BusinessMembershipNotFound,
     HttpStatusCode.NotFound,
-    $"Business membership not found for user {userId}"
-);
+    $"No members found for business {businessId}");

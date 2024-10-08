@@ -37,7 +37,7 @@ public class GetMyBusinessQueryHandler(
                     b.BusinessSize != null ? b.BusinessSize.Label : null
                 ))
                 .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new BusinessNotFoundForUserException(currentUserId);
+            ?? throw new UserHasNoBusinessMembershipException(currentUserId);
 
         return businessResponse;
     }

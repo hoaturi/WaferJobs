@@ -25,7 +25,7 @@ public static class AuthErrors
     public static readonly Error EmailNotVerified =
         new(ErrorCodes.EmailNotVerified, HttpStatusCode.BadRequest, "Email not verified");
 
-    public static readonly Error InvalidEmailChangePin =
+    public static readonly Error InvalidChangeEmailPin =
         new(ErrorCodes.InvalidPin, HttpStatusCode.BadRequest, "Invalid pin");
 
     public static readonly Error EmailChangeNotAllowedForBusinessMembers =
@@ -37,4 +37,10 @@ public static class AuthErrors
 
     public static readonly Error InvalidEmailConfirmationToken =
         new(ErrorCodes.InvalidToken, HttpStatusCode.BadRequest, "Invalid email confirmation token");
+
+    public static readonly Error InvalidPasswordResetToken =
+        new(ErrorCodes.InvalidToken, HttpStatusCode.BadRequest, "Invalid password reset token");
+
+    public static readonly Error MaxPinAttemptsReached =
+        new(ErrorCodes.MaxPinAttemptsReached, HttpStatusCode.BadRequest, "Max pin attempts reached");
 }

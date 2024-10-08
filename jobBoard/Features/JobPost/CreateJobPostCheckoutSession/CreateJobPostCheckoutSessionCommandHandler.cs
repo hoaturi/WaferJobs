@@ -1,6 +1,7 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.Business.Exceptions;
 using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPost.Exceptions;
 using JobBoard.Features.Payment;
 using JobBoard.Infrastructure.Persistence;
 using JobBoard.Infrastructure.Services.CurrentUserService;

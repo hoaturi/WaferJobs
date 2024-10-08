@@ -1,5 +1,6 @@
 ﻿using JobBoard.Common.Models;
 using JobBoard.Domain.JobPost;
+using JobBoard.Domain.JobPost.Exceptions;
 using JobBoard.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

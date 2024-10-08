@@ -10,7 +10,7 @@ public class EmailDomainMismatchException : CustomException
         : base(
             ErrorCodes.EmailDomainMismatch,
             HttpStatusCode.BadRequest,
-            $"The email domain of the user with id {userId} does not match the business website domain."
+            $"The email domain of the user {userId} does not match the domain of the business."
         )
     {
     }
@@ -19,7 +19,7 @@ public class EmailDomainMismatchException : CustomException
         : base(
             ErrorCodes.EmailDomainMismatch,
             HttpStatusCode.BadRequest,
-            $"The email domain of the user with id {userId} does not match the domain of the business with id {businessId}."
+            $"The email domain of the user {userId} does not match the domain of the business {businessId}"
         )
     {
     }

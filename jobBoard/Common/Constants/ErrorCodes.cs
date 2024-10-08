@@ -4,7 +4,7 @@ public class ErrorCodes
 {
     // Common Errors (CO)
     public static readonly ErrorCodes InvalidPin = new("CO001");
-    public static readonly ErrorCodes TooManyVerificationAttempts = new("CO002");
+    public static readonly ErrorCodes MaxPinAttemptsReached = new("CO002");
     public static readonly ErrorCodes ValidationFailed = new("CO003");
     public static readonly ErrorCodes InternalServerError = new("CO004");
 
@@ -27,6 +27,7 @@ public class ErrorCodes
     public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU005");
     public static readonly ErrorCodes BusinessMembershipNotFound = new("BU006");
     public static readonly ErrorCodes BusinessMemberNotAdmin = new("BU007");
+    public static readonly ErrorCodes UserHasNoBusinessMembership = new("BU008");
 
     // Job Post Errors (JP)
     public static readonly ErrorCodes JobPostNotFound = new("JP001");

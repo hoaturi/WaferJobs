@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Business.Exceptions;
 public class DuplicateMembershipException(Guid userId) : CustomException(
     ErrorCodes.UserAlreadyMember,
     HttpStatusCode.BadRequest,
-    $"User {userId} is already a member of the business."
+    $"User {userId} is already a member of a business."
 );

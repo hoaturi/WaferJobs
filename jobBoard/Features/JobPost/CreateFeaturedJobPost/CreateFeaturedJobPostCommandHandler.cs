@@ -30,7 +30,7 @@ public class CreateFeaturedJobPostCommandHandler(
 
         var jobPost = await CreateJobPostEntity(command, business, cancellationToken);
 
-        var stripeCustomerId = await GetOrCreateStripeCustomerId(business, currentUserId, command.CompanyEmail);
+        var stripeCustomerId = await GetOrCreateStripeCustomerId(business, command.CompanyEmail);
         var session = await paymentService.CreateCheckoutSession(stripeCustomerId, jobPost.Id);
 
         await CreateJobPostPayment(jobPost.Id, session.Id, cancellationToken);
@@ -46,18 +46,17 @@ public class CreateFeaturedJobPostCommandHandler(
     private async Task<BusinessEntity> GetBusinessByUserId(Guid userId, CancellationToken cancellationToken)
     {
         var business = await dbContext.Businesses
-            .Include(b => b.Memberships)
+            .Include(b => b.Memberships.Where(m => m.UserId == userId))
             .FirstOrDefaultAsync(b => b.Memberships.Any(m => m.UserId == userId), cancellationToken);
 
-        if (business is null) throw new BusinessNotFoundForUserException(userId);
+        if (business is null) throw new UserHasNoBusinessMembershipException(userId);
 
         return business;
     }
 
-    private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, Guid userId, string email)
+    private async Task<string> GetOrCreateStripeCustomerId(BusinessEntity business, string email)
     {
-        var membership = business.Memberships.FirstOrDefault(m => m.UserId == userId && m.IsActive) ??
-                         throw new BusinessMembershipNotFoundException(userId);
+        var membership = business.Memberships.First();
 
         if (membership.stripeCustomerId is not null) return membership.stripeCustomerId;
 

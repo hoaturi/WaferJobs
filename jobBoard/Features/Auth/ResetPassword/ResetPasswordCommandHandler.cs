@@ -32,8 +32,8 @@ public class ResetPasswordCommandHandler(
 
         if (passwordResetError.Code == nameof(IdentityErrorDescriber.InvalidToken))
         {
-            logger.LogWarning("User {UserId} provided an invalid token for password reset.", user.Id);
-            throw new InvalidPasswordResetTokenException(user.Id);
+            logger.LogWarning("User {UserId} provided invalid password reset token {token}", user.Id, command.Token);
+            return AuthErrors.InvalidPasswordResetToken;
         }
 
         var errorMessages = string.Join(", ", resetResult.Errors.Select(e => e.Description));

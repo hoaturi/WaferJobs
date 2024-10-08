@@ -7,5 +7,5 @@ namespace JobBoard.Domain.Auth.Exceptions;
 public class UserNotFoundException(Guid userId) : CustomException(
     ErrorCodes.UserNotFound,
     HttpStatusCode.NotFound,
-    $"User {userId} not found"
+    $"User {userId} not found."
 );

@@ -33,7 +33,7 @@ public class InitiateBusinessCreationCommandHandler(
 
         if (!userEmailDomain.Equals(businessDomain)) throw new EmailDomainMismatchException(userId);
         if (await domainValidationService.IsPublicEmailDomainAsync(userEmailDomain))
-            throw new PublicEmailDomainNotAllowedException(userId);
+            throw new PublicEmailDomainNotAllowedException(userEmailDomain, userId);
 
         var userHasMembership = await dbContext.BusinessMemberships.AsNoTracking()
             .AnyAsync(b => b.UserId == userId, cancellationToken);
