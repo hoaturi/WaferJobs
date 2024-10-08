@@ -1,3 +1,3 @@
 ﻿namespace JobBoard.Infrastructure.Services.EmailService.Dtos;
 
-public record BusinessCreationReviewEmailDto(string RecipientEmail, string BusinessName);
+public record BusinessCreationReviewEmailDto(string RecipientEmail, Guid BusinessId);

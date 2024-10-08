@@ -43,7 +43,8 @@ public class VerifyBusinessCommandHandler(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var emailDto =
-            new BusinessReviewResultEmailDto(business.Id, member.User.Email!, business.Name, command.IsApproved);
+            new BusinessReviewResultEmailDto(business.Id, member.User.Id, member.User.Email!, business.Name,
+                command.IsApproved);
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessReviewResultAsync(emailDto));
 
         logger.LogInformation("Completed verification for business: {BusinessId}: {Result}",

@@ -39,7 +39,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Email confirmation email sent to: {Email}", dto.RecipientEmail);
+        logger.LogInformation("Sent email confirmation email for user {UserId}", dto.UserId);
     }
 
     public async Task SendPasswordResetAsync(PasswordResetEmailDto dto)
@@ -64,7 +64,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Password reset email sent to: {Email}", dto.User.Email);
+        logger.LogInformation("Sent password reset email for user {UserId}", dto.User.Id);
     }
 
     public async Task SendEmailChangeVerificationAsync(EmailChangeVerificationEmailDto dto)
@@ -85,7 +85,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Email change verification email sent to: {Email}", dto.NewEmail);
+        logger.LogInformation("Sent email change verification email for user {UserId}", dto.UserId);
     }
 
     public async Task SendJobAlertAsync(JobAlertEmailDto dto)
@@ -146,7 +146,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business claim verification email sent to user {userId}", dto.UserId);
+        logger.LogInformation("Sent business claim verification email for user {UserId}", dto.UserId);
     }
 
     public async Task SendCompleteBusinessCreationAsync(CompleteBusinessCreationEmailDto dto)
@@ -170,7 +170,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business creation verification email sent to user {userId}", dto.UserId);
+        logger.LogInformation("Sent business creation verification email for user {UserId}", dto.UserId);
     }
 
     public async Task SendBusinessCreationReviewAsync(BusinessCreationReviewEmailDto dto)
@@ -184,7 +184,7 @@ public class EmailService(
         var templateData = new
         {
             baseUrl = _emailOptions.BaseUrl,
-            businessName = dto.BusinessName
+            businessName = dto.BusinessId
         };
 
         email.AddTo(new EmailAddress(_emailOptions.SenderEmail, _emailOptions.SenderName));
@@ -192,7 +192,7 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business creation review email sent");
+        logger.LogInformation("Sent business creation review email for business {BusinessId}", dto.BusinessId);
     }
 
     public async Task SendBusinessReviewResultAsync(BusinessReviewResultEmailDto dto)
@@ -216,7 +216,8 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business review result email sent for business {BusinessId}", dto.BusinessId);
+        logger.LogInformation("Sent business review result email for business {BusinessId} to user {UserId}",
+            dto.BusinessId, dto.UserId);
     }
 
     public async Task SendBusinessMemberInvitationAsync(BusinessMemberInvitationEmailDto dto)
@@ -241,7 +242,8 @@ public class EmailService(
 
         await emailClient.SendEmailAsync(email);
 
-        logger.LogInformation("Business member invitation email sent for business: {BusinessId}", dto.BusinessId);
+        logger.LogInformation("Sent business member invitation email by user {UserId} for business {BusinessId} ",
+            dto.BusinessId, dto.InviterId);
     }
 
     public async Task SendConferenceSubmissionReviewAsync(ConferenceSubmissionReviewEmailDto dto)
@@ -262,7 +264,7 @@ public class EmailService(
         email.SetTemplateData(templateData);
 
         await emailClient.SendEmailAsync(email);
-
-        logger.LogInformation("Conference submission review email sent for conference {Title}", dto.Title);
+        logger.LogInformation("Sent conference submission review email for conference {ConferenceId}, {Title}",
+            dto.ConferenceId, dto.Title);
     }
 }

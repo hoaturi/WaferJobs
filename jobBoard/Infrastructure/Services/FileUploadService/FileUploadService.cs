@@ -40,7 +40,8 @@ public class FileUploadService : IFileUploadService
 
         await _s3Client.PutObjectAsync(request);
 
-        _logger.LogInformation("{LogoType} logo uploaded successfully: {FileName}", logoTypes, fileName);
+        _logger.LogInformation("Uploaded {Folder} logo file {FileName} to bucket {BucketName}", folder, fileName
+            , _cloudFlareOptions.S3BucketName);
 
         return $"{_cloudFlareOptions.BaseUrl}/{folder}/{fileName}";
     }

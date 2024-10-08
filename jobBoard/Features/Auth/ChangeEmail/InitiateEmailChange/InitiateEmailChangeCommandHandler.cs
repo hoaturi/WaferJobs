@@ -67,7 +67,7 @@ public class InitiateEmailChangeCommandHandler(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendEmailChangeVerificationAsync(
-            new EmailChangeVerificationEmailDto(command.NewEmail, pin)));
+            new EmailChangeVerificationEmailDto(userId, command.NewEmail, pin)));
 
         logger.LogInformation("Initiated email change for user: {UserId}", userId);
 

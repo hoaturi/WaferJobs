@@ -1,3 +1,3 @@
 ﻿namespace JobBoard.Infrastructure.Services.EmailService.Dtos;
 
-public record EmailChangeVerificationEmailDto(string NewEmail, string Pin);
+public record EmailChangeVerificationEmailDto(Guid UserId, string NewEmail, string Pin);

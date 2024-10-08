@@ -69,7 +69,7 @@ public class CompleteBusinessCreationCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var emailDto = new BusinessCreationReviewEmailDto(userEmail, business.Name);
+        var emailDto = new BusinessCreationReviewEmailDto(userEmail, business.Id);
         backgroundJobClient.Enqueue<IEmailService>(x => x.SendBusinessCreationReviewAsync(emailDto));
 
         logger.LogInformation("Business {BusinessId} created by user: {UserId}", business.Id, userId);

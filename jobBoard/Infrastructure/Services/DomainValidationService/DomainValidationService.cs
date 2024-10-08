@@ -43,7 +43,6 @@ public class DomainValidationService(ILogger<DomainValidationService> logger) : 
             domains.Add(line);
 
         _publicDomains = domains;
-        logger.LogInformation("Public email domains loaded successfully. {DomainCount} domains loaded.",
-            domains.Count);
+        logger.LogInformation("Loaded {Count} public email domains.", domains.Count);
     }
 }

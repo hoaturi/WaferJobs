@@ -36,7 +36,8 @@ public class SubmitConferenceCommandHandler(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         backgroundJobClient.Enqueue<IEmailService>(x =>
-            x.SendConferenceSubmissionReviewAsync(new ConferenceSubmissionReviewEmailDto(newConference.Title)));
+            x.SendConferenceSubmissionReviewAsync(
+                new ConferenceSubmissionReviewEmailDto(newConference.Id, newConference.Title)));
 
         logger.LogInformation("Conference {ConferenceId} submitted for review", newConference.Id);
 

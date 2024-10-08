@@ -53,6 +53,7 @@ public class SendInvitationCommandHandler(
         var emailDto = new BusinessMemberInvitationEmailDto(
             command.Email,
             membership.BusinessId,
+            userId,
             membership.Business.Name,
             $"{membership.FirstName} {membership.LastName}",
             newInvitation.Token,
