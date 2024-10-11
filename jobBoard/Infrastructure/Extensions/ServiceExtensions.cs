@@ -67,7 +67,7 @@ public static class ServiceExtensions
 
     public static void AddDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
-        var dbOptions = configuration.GetSection(DbConnectionOptions.Key).Get<DbConnectionOptions>()!;
+        var dbOptions = configuration.GetSection(DbOptions.Key).Get<DbOptions>()!;
         services.AddDbContext<AppDbContext>(option => option.UseNpgsql(dbOptions.WaferJobsDb));
     }
 
@@ -146,7 +146,7 @@ public static class ServiceExtensions
 
     public static void AddHangfire(this IServiceCollection services, IConfiguration configuration)
     {
-        var dbOptions = configuration.GetSection(DbConnectionOptions.Key).Get<DbConnectionOptions>()!;
+        var dbOptions = configuration.GetSection(DbOptions.Key).Get<DbOptions>()!;
 
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -214,8 +214,8 @@ public static class ServiceExtensions
         services.AddOptionsWithValidateOnStart<JwtOptions>().Bind(configuration.GetSection(JwtOptions.Key))
             .ValidateDataAnnotations();
 
-        services.AddOptionsWithValidateOnStart<DbConnectionOptions>()
-            .Bind(configuration.GetSection(DbConnectionOptions.Key))
+        services.AddOptionsWithValidateOnStart<DbOptions>()
+            .Bind(configuration.GetSection(DbOptions.Key))
             .ValidateDataAnnotations();
 
         services.AddOptionsWithValidateOnStart<CloudFlareOptions>()

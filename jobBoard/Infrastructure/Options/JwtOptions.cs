@@ -10,6 +10,6 @@ public class JwtOptions
     [Required] public required string Audience { get; init; }
     [Required] public required string AccessKey { get; init; }
     [Required] public required string RefreshKey { get; init; }
-    [Required] public required string AccessExpires { get; init; }
-    [Required] public required string RefreshExpires { get; init; }
+    [Required] public required string AccessExpireMinutes { get; init; }
+    [Required] public required string RefreshExpireDays { get; init; }
 }

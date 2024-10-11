@@ -82,8 +82,8 @@ public class JwtService(IOptions<JwtOptions> options, IDistributedCache cache) :
         JwtTypes jwtType)
     {
         var expires = jwtType == JwtTypes.AccessToken
-            ? DateTime.Now.AddMinutes(double.Parse(_jwtOptions.AccessExpires))
-            : DateTime.Now.AddDays(double.Parse(_jwtOptions.RefreshExpires));
+            ? DateTime.Now.AddMinutes(double.Parse(_jwtOptions.AccessExpireMinutes))
+            : DateTime.Now.AddDays(double.Parse(_jwtOptions.RefreshExpireDays));
 
         return new JwtSecurityToken(
             _jwtOptions.Issuer,

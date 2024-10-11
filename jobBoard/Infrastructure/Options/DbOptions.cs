@@ -2,8 +2,8 @@
 
 namespace JobBoard.Infrastructure.Options;
 
-public record DbConnectionOptions
+public record DbOptions
 {
-    public const string Key = "ConnectionStrings";
+    public const string Key = "Db";
     [Required] public required string WaferJobsDb { get; init; }
 }

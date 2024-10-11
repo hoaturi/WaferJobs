@@ -30,7 +30,7 @@ public class SignInController(IOptions<JwtOptions> jwtOptions, ISender sender) :
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddDays(double.Parse(_jwtOptions.RefreshExpires)),
+                Expires = DateTimeOffset.UtcNow.AddDays(double.Parse(_jwtOptions.RefreshExpireDays)),
                 Path = "/"
             }
         );
