@@ -199,10 +199,14 @@ public static class ServiceExtensions
         services.AddSingleton<ExceptionHandlingMiddleware>();
     }
 
-    public static IHostBuilder UseSerilogWithSeq(this IHostBuilder hostBuilder)
+    public static void UseLogging(this IHostBuilder hostBuilder)
     {
-        return hostBuilder.UseSerilog((context, loggerConfig) =>
-            loggerConfig.ReadFrom.Configuration(context.Configuration));
+        hostBuilder.UseSerilog((context, loggerConfig) =>
+        {
+            Console.WriteLine(context.HostingEnvironment.EnvironmentName);
+
+            loggerConfig.ReadFrom.Configuration(context.Configuration);
+        });
     }
 
     public static void AddConfigOptions(this IServiceCollection services, IConfiguration configuration)

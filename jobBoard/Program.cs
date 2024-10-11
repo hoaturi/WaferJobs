@@ -1,12 +1,11 @@
 using FluentValidation;
 using JobBoard.Infrastructure.Extensions;
 using JobBoard.Infrastructure.Options;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
 
-// Configure logging
-builder.Host.UseSerilogWithSeq();
+var configuration = builder.Configuration;
 
 // Add core services
 builder.Services.AddControllers();
@@ -40,7 +39,11 @@ builder.Services.AddMiddleWares();
 // Add configuration options
 builder.Services.AddConfigOptions(configuration);
 
+// Configure logging
+builder.Host.UseLogging();
+
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
