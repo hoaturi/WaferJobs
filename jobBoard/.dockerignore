@@ -1,0 +1,4 @@
+﻿.env
+*.http
+appsettings.Development.json
+Migrations
