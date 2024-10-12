@@ -43,6 +43,6 @@ public class FileUploadService : IFileUploadService
         _logger.LogInformation("Uploaded {Folder} logo file {FileName} to bucket {BucketName}", folder, fileName
             , _cloudFlareOptions.S3BucketName);
 
-        return $"{_cloudFlareOptions.BaseUrl}/{folder}/{fileName}";
+        return $"{_cloudFlareOptions.ImageBaseUrl}/{folder}/{fileName}";
     }
 }

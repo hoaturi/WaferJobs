@@ -1,12 +1,18 @@
-﻿namespace JobBoard.Infrastructure.Options;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JobBoard.Infrastructure.Options;
 
 public class CloudFlareOptions
 {
     public const string Key = "CloudFlare";
 
-    public required string AccessKeyId { get; init; }
-    public required string SecretAccessKey { get; init; }
-    public required string S3Endpoint { get; init; }
-    public required string S3BucketName { get; init; }
-    public required string BaseUrl { get; init; }
+    [Required] public required string AccessKeyId { get; init; }
+
+    [Required] public required string SecretAccessKey { get; init; }
+
+    [Required] public required string S3Endpoint { get; init; }
+
+    [Required] public required string S3BucketName { get; init; }
+
+    [Required] public required string ImageBaseUrl { get; init; }
 }
