@@ -203,8 +203,6 @@ public static class ServiceExtensions
     {
         hostBuilder.UseSerilog((context, loggerConfig) =>
         {
-            Console.WriteLine(context.HostingEnvironment.EnvironmentName);
-
             loggerConfig.ReadFrom.Configuration(context.Configuration);
         });
     }
