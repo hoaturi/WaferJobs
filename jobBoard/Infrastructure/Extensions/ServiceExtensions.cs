@@ -207,6 +207,11 @@ public static class ServiceExtensions
         });
     }
 
+    public static void AddApplicationInsights(this IServiceCollection services)
+    {
+        services.AddApplicationInsightsTelemetry();
+    }
+
     public static void AddConfigOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptionsWithValidateOnStart<JwtOptions>().Bind(configuration.GetSection(JwtOptions.Key))
