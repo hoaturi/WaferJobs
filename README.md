@@ -30,7 +30,7 @@
 
 ### 데이터베이스
 - **[PostgreSQL 16](https://www.postgresql.org/)**
-- **[Redis](https://redis.io/)** (캐싱)
+- **[Redis](https://redis.io/)**
   - 인메모리 캐싱으로 응답 시간 개선 및 서버 부하 감소
 
 ### 인프라
