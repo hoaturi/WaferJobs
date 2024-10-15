@@ -96,6 +96,50 @@
 - 게시된 채용공고의 위치 정보 조회
 - 개인 이메일(Gmail, Outlook 등) 도메인 필터링 및 유효성 검증
 
+### 기타
+- Stripe 웹훅 이벤트 처리
+- SendGrid 이메일 발송
+- 로고 이미지 업로드 및 저장
+- 환율 정보 조회 및 저장
+
 ### 시스템 최적화
 - 실시간성이 낮은 리소스에 대한 Output cache 적용으로 서버 부하 감소
 - Result 클래스를 활용한 요청 성공/실패 처리 간소화
+
+## 5. 화면 예시 (Nuxt.js 사용 개발중)
+<details>
+<summary>더보기</summary>
+
+### 로그인
+![스크린샷 2024-10-15 230305](https://github.com/user-attachments/assets/d44c872f-57c4-4874-a01b-21d409dcfc70)
+
+### 회원가입
+![스크린샷 2024-10-15 230251](https://github.com/user-attachments/assets/ffb281c3-3db0-4ae6-b375-4b417659fee6)
+
+### 비즈니스 프로필 생성
+![스크린샷 2024-10-15 224528](https://github.com/user-attachments/assets/9725488f-7c32-46d0-9243-7082a58a74f2)
+![스크린샷 2024-10-15 224157](https://github.com/user-attachments/assets/974e2f8c-d291-4e96-9198-0d93f1b1b45d)
+
+### 비즈니스 프로필 소유권 신청
+![스크린샷 2024-10-15 224228](https://github.com/user-attachments/assets/b0353b6c-e2b8-4f6f-9bf3-df61a1468e9b)
+
+### 채용공고 검색
+![스크린샷 2024-10-15 225206](https://github.com/user-attachments/assets/f47b4d12-6fc6-4dbf-9384-19615cf0533a)
+![스크린샷 2024-10-15 225348](https://github.com/user-attachments/assets/d0e4184e-639e-49c7-a6c8-cd67f3a4e7ea)
+
+### 채용공고 등록
+![스크린샷 2024-10-15 224620](https://github.com/user-attachments/assets/52e51a32-35d2-424e-ac61-0d2a7db32406)
+
+### 채용공고 상세
+![스크린샷 2024-10-15 232132](https://github.com/user-attachments/assets/bb9a4208-7ff6-469e-bbd0-e7dee264f2f0)
+
+### 컨퍼런스 조회
+![스크린샷 2024-10-15 230124](https://github.com/user-attachments/assets/dfd4a238-0d28-4a98-b06a-26c638409526)
+
+### 컨퍼런스 제출
+![스크린샷 2024-10-15 232155](https://github.com/user-attachments/assets/65fc6abd-857f-408f-9d3e-b344f24b3c0d)
+
+</details>
+
+## 6. 작성자
+- **[한태준](https://github.com/hoaturi)**
