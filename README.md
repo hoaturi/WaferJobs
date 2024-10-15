@@ -11,11 +11,11 @@
 ### 프레임워크 및 라이브러리
 - **[.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), [EF Core](https://docs.microsoft.com/en-us/ef/core/)**
 - **[MediatR](https://github.com/jbogard/MediatR)**
-    - CQRS 패턴 구현에 용이
-    - Pipeline behavior를 이용한 유효성 검사 및 예외 처리에 유용
+  - CQRS 패턴 구현에 용이
+  - Pipeline behaviour를 이용한 유효성 검사 및 예외 처리에 유용
 - **[Hangfire](https://www.hangfire.io/)**
-    - 백그라운드 작업 스케줄링 및 관리 용이
-    - 웹 대시보드를 통한 작업 모니터링 및 관리 기능 제공
+  - 백그라운드 작업 스케줄링 및 관리 용이
+  - 웹 대시보드를 통한 작업 모니터링 및 관리 기능 제공
 - **[Serilog](https://serilog.net/)**
 
 ### ERD & System Architecture
@@ -31,33 +31,33 @@
 ### 데이터베이스
 - **[PostgreSQL 16](https://www.postgresql.org/)**
 - **[Redis](https://redis.io/)** (캐싱)
-    - 인메모리 캐싱으로 응답 시간 개선 및 서버 부하 감소
+  - 인메모리 캐싱으로 응답 시간 개선 및 서버 부하 감소
 
 ### 인프라
 - **[Docker](https://www.docker.com/)**
-    - 일관된 개발 및 배포 환경 제공
-    - Azure App Service와 연계하여 손쉬운 배포 자동화 구현
+  - 일관된 개발 및 배포 환경 제공
+  - Azure App Service와 연계하여 손쉬운 배포 자동화 구현
 - **[Azure App Service](https://azure.microsoft.com/en-us/services/app-service/)**
-    - 도커 허브 웹훅을 이용한 간편한 배포 자동화
-    - 스케일링 및 관리의 용이성
+  - 도커 허브 웹훅을 이용한 간편한 배포 자동화
+  - 스케일링 및 관리의 용이성
 - **[Azure Database for PostgreSQL](https://azure.microsoft.com/en-us/services/postgresql/)**
 - **[Azure Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)**
-    - 애플리케이션 성능 및 사용성에 대한 심층적인 인사이트 제공
-    - 실시간 모니터링 및 알림 기능
+  - 애플리케이션 성능 및 사용성에 대한 심층적인 인사이트 제공
+  - 실시간 모니터링 및 알림 기능
 - **[AWS S3](https://aws.amazon.com/s3/) / [Cloudflare R2](https://www.cloudflare.com/products/r2/)**
-    - R2의 경우 타 스토리지 대비 저렴한 비용
-    - CDN 자동 적용으로 빠르고 효율적인 콘텐츠 제공
+  - R2의 경우 타 스토리지 대비 저렴한 비용
+  - CDN 자동 적용으로 빠르고 효율적인 콘텐츠 제공
 - **[RedisLabs](https://redislabs.com/)**
 - **[Stripe](https://stripe.com/)**
-    - 높은 인지도와 신뢰성
-    - 다양한 결제 옵션 및 쉬운 애플리케이션 연동
+  - 높은 인지도와 신뢰성
+  - 다양한 결제 옵션 및 쉬운 애플리케이션 연동
 - **[SendGrid](https://sendgrid.com/)**
-    - 동적 이메일 템플릿 기능으로 맞춤형 이메일 발송 용이
-    - 높은 전송률과 쉬운 API 연동
+  - 동적 이메일 템플릿 기능으로 맞춤형 이메일 발송 용이
+  - 높은 전송률과 쉬운 API 연동
 
 ### CI/CD
 - **[GitHub Actions](https://github.com/features/actions)**
-    - YAML 설정 파일을 통한 손쉬운 CI/CD 파이프라인 구성
+  - YAML 설정 파일을 통한 손쉬운 CI/CD 파이프라인 구성
 
 
 ## 4. 주요 기능
