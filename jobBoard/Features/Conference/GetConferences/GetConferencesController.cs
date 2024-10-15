@@ -1,6 +1,8 @@
-﻿using JobBoard.Common.Extensions;
+﻿using JobBoard.Common.Constants;
+using JobBoard.Common.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace JobBoard.Features.Conference.GetConferences;
 
@@ -10,6 +12,7 @@ namespace JobBoard.Features.Conference.GetConferences;
 public class GetConferencesController(ISender sender) : ControllerBase
 {
     [HttpGet]
+    [OutputCache(PolicyName = nameof(OutputCacheKeys.ExpireIn5Minutes))]
     public async Task<IActionResult> GetConferences()
     {
         var result = await sender.Send(new GetConferencesQuery());
