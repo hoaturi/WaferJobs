@@ -1,7 +1,7 @@
 using FluentValidation;
+using Serilog;
 using WaferJobs.Infrastructure.Extensions;
 using WaferJobs.Infrastructure.Options;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,8 +33,6 @@ builder.Services.AddMiddleWares();
 builder.Services.AddConfigOptions(configuration);
 
 builder.Host.UseLogging();
-
-builder.Services.AddApplicationInsights();
 
 var app = builder.Build();
 
