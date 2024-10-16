@@ -1,0 +1,3 @@
+﻿namespace WaferJobs.Features.Business.VerifyBusinessCreationToken;
+
+public record VerifyBusinessCreationTokenResponse(string BusinessName);
