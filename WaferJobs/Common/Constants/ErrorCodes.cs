@@ -21,19 +21,16 @@ public class ErrorCodes
 
     // Business Errors (BU)
     public static readonly ErrorCodes BusinessNotFound = new("BU001");
-    public static readonly ErrorCodes BusinessNotFoundForUser = new("BU002");
-    public static readonly ErrorCodes UserAlreadyMember = new("BU003");
-    public static readonly ErrorCodes EmailDomainMismatch = new("BU004");
-    public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU005");
-    public static readonly ErrorCodes BusinessMembershipNotFound = new("BU006");
-    public static readonly ErrorCodes BusinessMemberNotAdmin = new("BU007");
-    public static readonly ErrorCodes UserHasNoBusinessMembership = new("BU008");
+    public static readonly ErrorCodes UserAlreadyMember = new("BU002");
+    public static readonly ErrorCodes EmailDomainMismatch = new("BU003");
+    public static readonly ErrorCodes PublicEmailDomainNotAllowed = new("BU004");
+    public static readonly ErrorCodes BusinessMembershipNotFound = new("BU005");
+    public static readonly ErrorCodes BusinessMemberNotAdmin = new("BU006");
+    public static readonly ErrorCodes UserHasNoBusinessMembership = new("BU007");
 
     // Job Post Errors (JP)
     public static readonly ErrorCodes JobPostNotFound = new("JP001");
-    public static readonly ErrorCodes JobPostAlreadyDeleted = new("JP002");
-    public static readonly ErrorCodes UnauthorizedJobPostAccess = new("JP003");
-    public static readonly ErrorCodes JobPostAlreadyPublished = new("JP004");
+    public static readonly ErrorCodes UnauthorizedJobPostAccess = new("JP002");
 
     // Conference Errors (CF)
     public static readonly ErrorCodes ConferenceNotFound = new("CF001");
