@@ -33,7 +33,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./jobBoard
+          context: ./WaferJobs
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/waferjobs:latest
 
