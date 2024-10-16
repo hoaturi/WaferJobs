@@ -48,12 +48,15 @@
   - R2의 경우 타 스토리지 대비 저렴한 비용
   - CDN 자동 적용으로 빠르고 효율적인 콘텐츠 제공
 - **[RedisLabs](https://redislabs.com/)**
-- **[Stripe](https://stripe.com/)**
+- **[Stripe](https://stripe.com/)** (결제)
   - 높은 인지도와 신뢰성
   - 다양한 결제 옵션 및 쉬운 애플리케이션 연동
-- **[SendGrid](https://sendgrid.com/)**
+- **[SendGrid](https://sendgrid.com/)** (이메일)
   - 동적 이메일 템플릿 기능으로 맞춤형 이메일 발송 용이
   - 높은 전송률과 쉬운 API 연동
+- **[Currency Beacon](https://currencybeacon.com/)** (환율 정보)
+  - 타 서비스 대비 넉넉한 무료 티어 제공
+  - 사용성 높은 API 제공
 
 ### CI/CD
 - **[GitHub Actions](https://github.com/features/actions)**
@@ -91,20 +94,21 @@
 - 만료된 채용공고 재게시 결제 링크 생성
 - 채용공고 지원 클릭 수 저장
 
-### 데이터 조회
+### 룩업 데이터
 - 채용공고 내 자주 언급되는 키워드 및 빈도 조회
 - 게시된 채용공고의 위치 정보 조회
 - 개인 이메일(Gmail, Outlook 등) 도메인 필터링 및 유효성 검증
+
+### 시스템
+- 실시간성이 낮은 리소스에 대한 Output cache 적용으로 서버 부하 감소
+- Result 클래스를 활용한 요청 성공/실패 처리 간소화
+- Azure ApplicationInsights 연동을 통한 모니터링 및 로깅
 
 ### 기타
 - Stripe 웹훅 이벤트 처리
 - SendGrid 이메일 발송
 - 로고 이미지 업로드 및 저장
 - 환율 정보 조회 및 저장
-
-### 시스템 최적화
-- 실시간성이 낮은 리소스에 대한 Output cache 적용으로 서버 부하 감소
-- Result 클래스를 활용한 요청 성공/실패 처리 간소화
 
 ## 5. 화면 예시 (Nuxt.js 사용 개발중)
 <details>
